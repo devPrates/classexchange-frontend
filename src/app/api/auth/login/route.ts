@@ -1,17 +1,14 @@
 import { backendApi } from "@/lib/api";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { AxiosError } from "axios";
 
 export type LoginResponseType = {
-    accessToken?: string;
-    expiresIn: number;
+    token?: string;
     error?: string;
 };
 
 type BackendLoginResponseType = {
-    accessToken: string;
-    expiresIn: number;
-
+    token: string;
 };
 
 type BackendLoginErrorResponseType = {
@@ -25,6 +22,7 @@ export async function POST(request: NextRequest) {
 
     const { email, password } = await request.json();
 
+    // const data = JSON.stringify({email: email, password: password})
     const data = JSON.stringify({ email, password });
 
     var response: LoginResponseType;
@@ -32,8 +30,8 @@ export async function POST(request: NextRequest) {
     try {
 
         const result = await backendApi.post("/login", data);
-        const { accessToken, expiresIn  } = result.data;
-        response = { accessToken, expiresIn };
+        const { token } = result.data;
+        response = { token };
 
     } catch (e) {
         const axiosError = e as AxiosError;
@@ -41,14 +39,12 @@ export async function POST(request: NextRequest) {
         const { status, error } = axiosError.response?.data as BackendLoginErrorResponseType;
 
         if (status) {
-            response = { error, expiresIn: 0 };
+            response = { error };
         }
         else {
-            response = { error: axiosError.message, expiresIn: 0 };
+            response = { error: axiosError.message };
         }
     }
 
-    console.log(response);
-
-    return new Response(JSON.stringify(response))
+    return new Response(JSON.stringify(response));
 }

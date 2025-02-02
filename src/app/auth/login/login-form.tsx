@@ -1,10 +1,16 @@
 "use client"
 
+import { LoginResponseType } from "@/app/api/auth/login/route";
+import { CustomAlert, CustomAlertType } from "@/components/main/custon-alert";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { AuthContext } from "@/context/auth-context";
 import { frontendApi } from "@/lib/api";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
+import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -17,28 +23,65 @@ type LoginFormType = z.infer<typeof loginFormSchema>;
 
 export default function LoginForm() {
 
-  const loginForm = useForm<LoginFormType>({
-    resolver: zodResolver(loginFormSchema),
-    defaultValues: {
-      email: "",
-      password: ""
+  const [message, setMessage] = useState(<></>);
+
+    const authContext = useContext(AuthContext);
+
+    const router = useRouter();
+
+    const loginForm = useForm<LoginFormType>({
+        resolver: zodResolver(loginFormSchema),
+        defaultValues: {
+            email: "",
+            password: ""
+        }
+    });
+
+    async function handleLoginSubmit({ email, password }: LoginFormType) {
+
+        const data = JSON.stringify({
+            email,
+            password
+        });
+
+        try {
+            const result = await frontendApi.post("/auth/login", data);
+
+            const { token, error } = result.data as LoginResponseType;
+
+            if (token) {
+                authContext.signIn(token);
+                router.push("/dashboard");
+            }
+            else {
+                const message = <CustomAlert
+                    type={CustomAlertType.ERROR}
+                    title="Erro ao logar-se!"
+                    message={error || "Erro desconhecido"}
+                />;
+
+                setMessage(message);
+            }
+
+        } catch (e) {
+            const axiosError = e as AxiosError;
+
+            const message = <CustomAlert
+                type={CustomAlertType.ERROR}
+                title="Erro ao logar-se!"
+                message={axiosError.message}
+            />;
+
+            setMessage(message);
+        }
     }
-  })
-
-  async function handleLoginSubmit({ email, password }: LoginFormType) {
-    const data = JSON.stringify({ email, password });
-    
-    await frontendApi.post("/auth/login", data)
-  }
-
-
 
 
   return (
     <>
       <Form {...loginForm}>
         <form onSubmit={loginForm.handleSubmit(handleLoginSubmit)} className="space-y-3">
-
+          {message}
           <FormField
             control={loginForm.control}
             name="email"
