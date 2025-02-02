@@ -1,62 +1,79 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { frontendApi } from "@/lib/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const loginFormSchema = z.object({
-    email: z.string().email({message: "Email inválido"}),
-    password: z.string().min(2, {message: "Senha inválida"})
+  email: z.string().email({ message: "Email inválido" }),
+  password: z.string().min(2, { message: "Senha inválida" })
 })
 
 type LoginFormType = z.infer<typeof loginFormSchema>;
 
 export default function LoginForm() {
 
-    const loginForm = useForm<LoginFormType>({
-        resolver: zodResolver(loginFormSchema),
-        defaultValues: {
-            email: "",
-            password: ""
-        }
-    })
+  const loginForm = useForm<LoginFormType>({
+    resolver: zodResolver(loginFormSchema),
+    defaultValues: {
+      email: "",
+      password: ""
+    }
+  })
 
-        function handleLoginSubmit({ email, password }: LoginFormType) {
-            console.log(email, password)
-        }k
+  async function handleLoginSubmit({ email, password }: LoginFormType) {
+    const data = JSON.stringify({ email, password });
+    
+    await frontendApi.post("/auth/login", data)
+  }
 
 
-    return (
-        <>
-        <form >
-        <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="example@example.com"
-                  required
-                />
-              </div>
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Senha</Label>
-                  <a
-                    href="#"
-                    className="ml-auto text-sm underline-offset-2 hover:underline"
-                  >
-                    Esqueceu sua senha?
-                  </a>
-                </div>
-                <Input id="password" type="password" placeholder="****" required />
-              </div>
-              <Button type="submit" className="w-full mt-6">
-                Login
-              </Button>
+
+
+  return (
+    <>
+      <Form {...loginForm}>
+        <form onSubmit={loginForm.handleSubmit(handleLoginSubmit)} className="space-y-3">
+
+          <FormField
+            control={loginForm.control}
+            name="email"
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input type="text" placeholder="example@ifms.edu.br" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )
+            }}
+          />
+
+          <FormField
+            control={loginForm.control}
+            name="password"
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormLabel>Senha</FormLabel>
+                  <FormControl>
+                    <Input type="password" placeholder="****" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )
+            }}
+          />
+          <Button type="submit" className="w-full mt-4">Login</Button>
         </form>
-        </>
-    )
+      </Form>
+
+    </>
+  )
 }
