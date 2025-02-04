@@ -19,7 +19,7 @@ export const data = {
     user: {
         name: "Administrador",
         email: "admin@example.com",
-        avatar: "/user.png",
+        avatar: "",
     },
     navMain: [
         {
