@@ -10,7 +10,7 @@ import { frontendApi } from "@/lib/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
-import { useContext, useState } from "react";
+import { useContext, useState, Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -23,6 +23,7 @@ type LoginFormType = z.infer<typeof loginFormSchema>;
 
 export default function LoginForm() {
 
+  const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState(<></>);
 
     const authContext = useContext(AuthContext);
@@ -38,6 +39,7 @@ export default function LoginForm() {
     });
 
     async function handleLoginSubmit({ email, password }: LoginFormType) {
+        setIsLoading(true);
 
         const data = JSON.stringify({
             email,
@@ -73,6 +75,8 @@ export default function LoginForm() {
             />;
 
             setMessage(message);
+        } finally {
+          setIsLoading(false);
         }
     }
 
@@ -113,7 +117,11 @@ export default function LoginForm() {
               )
             }}
           />
-          <Button type="submit" className="w-full mt-4">Login</Button>
+           <Suspense fallback={<Button className="w-full mt-4" disabled>Carregando...</Button>}>
+          <Button type="submit" className="w-full mt-4" disabled={isLoading}>
+            {isLoading ? "Entrando..." : "Login"}
+          </Button>
+        </Suspense>
         </form>
       </Form>
 
