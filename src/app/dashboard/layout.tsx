@@ -4,6 +4,7 @@ import Link from "next/link";
 import { BellRing, PowerOff, Search, Settings } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import AppSidebar from "@/components/admin/app-sidebar";
+import { Button } from "@/components/ui/button";
 
 
 export const metadata: Metadata = {
@@ -31,14 +32,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                     className="w-full rounded-md border border-input bg-background pl-8 pr-4 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                                 />
                             </div>
+
                             <Link href='/'>
-                                <Settings className="h-5 w-5" />
+                                <Button variant={'outline'} size={'icon'} >
+                                    <BellRing className="stroke-yellow-500" />
+                                </Button>
                             </Link>
                             <Link href='/'>
-                                <BellRing className="h-5 w-5" />
-                            </Link>
-                            <Link href='/'>
-                                <PowerOff className="h-5 w-5 text-red-500" />
+                                <Button variant={'outline'} size={'icon'} >
+                                    <PowerOff className="stroke-red-500" />
+                                </Button>
                             </Link>
                         </div>
                     </div>

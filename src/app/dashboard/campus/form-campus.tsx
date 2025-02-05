@@ -11,7 +11,9 @@ import {
 } from "@/components/ui/dialog"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+
 import { CampusTableContext } from "@/context/campus-context"
+import { useToast } from "@/hooks/use-toast"
 import { frontendApi } from "@/lib/api"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AxiosError } from "axios"
@@ -21,15 +23,16 @@ import { z } from "zod"
 
 
 const insertFormSchema = z.object({
-    name: z.string({required_error: "Insira um nome"}),
-    sigla: z.string({required_error: "Insira uma sigla"}).min(2, {message: "A sigla deve ter no mínimo 2 caracteres"}),
-    endereco: z.string({required_error: "Insira um endereço"}),
+    name: z.string({ required_error: "Insira um nome" }),
+    sigla: z.string({ required_error: "Insira uma sigla" }).min(2, { message: "A sigla deve ter no mínimo 2 caracteres" }),
+    endereco: z.string({ required_error: "Insira um endereço" }),
 })
 
 type InsertFormType = z.infer<typeof insertFormSchema>
 
 export default function FormCampus() {
     const [open, setOpen] = useState(false)
+    const { toast } = useToast();
     const [insertMessage, setInsertMessage] = useState<JSX.Element>(<></>)
 
     const campusTableContext = useContext(CampusTableContext)
@@ -43,19 +46,29 @@ export default function FormCampus() {
         }
     })
 
-    async function onInsertFormSubmit({ name, sigla, endereco}: InsertFormType) {
+    async function onInsertFormSubmit({ name, sigla, endereco }: InsertFormType) {
         const formatedDate = JSON.stringify({ name, sigla, endereco })
 
         try {
             const response = await frontendApi.post("/campus", formatedDate)
-
-            setInsertMessage(<p className="text-green-500">Inserido com sucesso!</p>)
+            // Exibe o toast de sucesso
+            toast({
+                title: "Sucesso!",
+                description: "Campus salvo com sucesso!",
+                variant: "default",
+            });
             campusTableContext.refreshTable()
         } catch (e) {
             const axiosError = e as AxiosError
+            console.log(axiosError)
 
-            setInsertMessage(<p className="text-red-500">Deu ruim !</p>)
-        
+            // Exibe o toast de erro
+            toast({
+                title: "Erro ao salvar",
+                description: axiosError.message || "Ocorreu um erro ao salvar",
+                variant: "destructive",
+            });
+
         }
 
         setOpen(false)
@@ -64,7 +77,7 @@ export default function FormCampus() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline">Adicionar Campus</Button>
+                <Button >Adicionar Campus</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
@@ -123,7 +136,7 @@ export default function FormCampus() {
                                     )
                                 }}
                             />
-                                <Button type="submit">Salvar</Button>
+                            <Button type="submit">Salvar</Button>
                         </form>
                         {insertMessage}
                     </Form>
