@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { useContext, useState, Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import jwt from "jsonwebtoken";
 
 const loginFormSchema = z.object({
   email: z.string().email({ message: "Email inválido" }),
@@ -21,64 +22,77 @@ const loginFormSchema = z.object({
 
 type LoginFormType = z.infer<typeof loginFormSchema>;
 
+interface DecodedToken {
+  scope: "ADMIN" | "BASIC"; // Tipagem para o campo scope
+}
+
 export default function LoginForm() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState(<></>);
 
-    const authContext = useContext(AuthContext);
+  const authContext = useContext(AuthContext);
 
-    const router = useRouter();
+  const router = useRouter();
 
-    const loginForm = useForm<LoginFormType>({
-        resolver: zodResolver(loginFormSchema),
-        defaultValues: {
-            email: "",
-            password: ""
-        }
+  const loginForm = useForm<LoginFormType>({
+    resolver: zodResolver(loginFormSchema),
+    defaultValues: {
+      email: "",
+      password: ""
+    }
+  });
+
+  async function handleLoginSubmit({ email, password }: LoginFormType) {
+    setIsLoading(true);
+
+    const data = JSON.stringify({
+      email,
+      password
     });
 
-    async function handleLoginSubmit({ email, password }: LoginFormType) {
-        setIsLoading(true);
+    try {
+      const result = await frontendApi.post("/auth/login", data);
 
-        const data = JSON.stringify({
-            email,
-            password
-        });
+      const { token, error } = result.data as LoginResponseType;
 
-        try {
-            const result = await frontendApi.post("/auth/login", data);
+      if (token) {
+        const decoded = jwt.decode(token) as DecodedToken | null;
+        authContext.signIn(token);
 
-            const { token, error } = result.data as LoginResponseType;
-
-            if (token) {
-                authContext.signIn(token);
-                router.push("/dashboard");
-            }
-            else {
-                const message = <CustomAlert
-                    type={CustomAlertType.ERROR}
-                    title="Erro ao logar-se!"
-                    message={error || "Erro desconhecido"}
-                />;
-
-                setMessage(message);
-            }
-
-        } catch (e) {
-            const axiosError = e as AxiosError;
-
-            const message = <CustomAlert
-                type={CustomAlertType.ERROR}
-                title="Erro ao logar-se!"
-                message={axiosError.message}
-            />;
-
-            setMessage(message);
-        } finally {
-          setIsLoading(false);
+        // Verificar o escopo e redirecionar
+        if (decoded?.scope === "ADMIN") {
+          router.push("/dashboard");
+        } else if (decoded?.scope === "BASIC") {
+          router.push("/dashboard/horarios");
+        } else {
+          throw new Error("Scope inválido");
         }
+      }
+      else {
+        const message = <CustomAlert
+          type={CustomAlertType.ERROR}
+          title="Erro ao logar-se!"
+          message={error || "Erro desconhecido"}
+        />;
+
+        setMessage(message);
+      }
+
+    } catch (e) {
+      const axiosError = e as AxiosError;
+
+      const message = <CustomAlert
+        type={CustomAlertType.ERROR}
+        title="Erro ao logar-se!"
+        message={axiosError.message}
+      />;
+
+      setMessage(message);
+    } finally {
+      setIsLoading(false);
     }
+  }
 
 
   return (
@@ -117,11 +131,11 @@ export default function LoginForm() {
               )
             }}
           />
-           <Suspense fallback={<Button className="w-full mt-4" disabled>Carregando...</Button>}>
-          <Button type="submit" className="w-full mt-4" disabled={isLoading}>
-            {isLoading ? "Entrando..." : "Login"}
-          </Button>
-        </Suspense>
+          <Suspense fallback={<Button className="w-full mt-4" disabled>Carregando...</Button>}>
+            <Button type="submit" className="w-full mt-4" disabled={isLoading}>
+              {isLoading ? "Entrando..." : "Login"}
+            </Button>
+          </Suspense>
         </form>
       </Form>
 
