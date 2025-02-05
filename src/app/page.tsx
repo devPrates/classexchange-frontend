@@ -1,13 +1,13 @@
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import Hero from "@/components/main/hero";
+import Navbar from "@/components/main/navbar";
+
 
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center p-24">
-      <Link href='/auth/login' >Fazer Login</Link>
-      <Link href='/dashboard' >Dashboard</Link>
-      <Button>Click me</Button>
+    <main >
+      <Navbar />
+      <Hero />
     </main>
   );
 }
