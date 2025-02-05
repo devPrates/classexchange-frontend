@@ -7,7 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '../ui/button';
 
-const SECTIONS = ["home", "horários", "sobre", "serviços", "contato"];
+const SECTIONS = ["home", "sobre",  "contato"];
 
 const scrollToSection = (id: string) => {
   const element = document.getElementById(id);
@@ -62,7 +62,7 @@ export default function Navbar() {
 
 const Logo = () => (
   <div className="flex lg:flex-1">
-    <Image src="/ClassExchange.svg" alt="Logo do projeto" width={250} height={150} />
+    <Image src="/ClassExchange.svg" alt="Logo do projeto" width={200} height={100} />
   </div>
 );
 

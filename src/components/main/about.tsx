@@ -1,60 +1,79 @@
-import { ChevronRight, FileText, GitPullRequest, GitPullRequestClosed, MailCheckIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, BellRing, Settings2 } from "lucide-react";
 
 export default function About() {
     return (
-        <section className="py-24 ">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <div className="mb-10 lg:mb-16 flex justify-center items-center flex-col gap-x-0 gap-y-6 lg:gap-y-0 lg:flex-row lg:justify-between max-md:max-w-lg max-md:mx-auto">
-                  <div className="relative w-full text-center lg:text-left lg:w-2/4">
-                      <h2 className="text-4xl font-extrabold leading-[3.25rem] lg:mb-6 mx-auto max-w-max lg:max-w-md lg:mx-0">Conheça o Software Class Exchange</h2>
-                  </div>
-                  <div className="relative w-full text-center  lg:text-left lg:w-2/4">
-                      <p className="text-lg font-normal text-gray-500 mb-5">Oferecemos todas as vantagens que podem simplificar todas as suas trocas ou substiuições de aula sem quaisquer complicações</p> 
-                      <a href="#" className="flex flex-row items-center justify-center gap-2 text-base font-semibold text-green-600 lg:justify-start hover:text-green-700 ">Entre em contato <ChevronRight />
-                          </a> 
-                  </div>
-              </div>
-              <div className="flex justify-center items-center  gap-x-5 gap-y-8 lg:gap-y-0 flex-wrap md:flex-wrap lg:flex-nowrap lg:flex-row lg:justify-between lg:gap-x-8">
-                  <div className="group relative w-full bg-gray-100 rounded-2xl p-4 transition-all duration-500 max-md:max-w-md max-md:mx-auto md:w-2/5 md:h-64 xl:p-7 xl:w-1/4 hover:bg-indigo-600">
-                      <div className="bg-white rounded-full flex justify-center items-center mb-5 w-14 h-14 ">
-                          <GitPullRequest />
-                              
-                      </div>
-                      <h4 className="text-xl font-semibold text-gray-900 mb-3 capitalize transition-all duration-500 group-hover:text-white">Easy Payment</h4>
-                      <p className="text-sm font-normal text-gray-500 transition-all duration-500 leading-5 group-hover:text-white">
-                          We Provide Various Methods For You To Carry Out All Transactions Related To Your Finances 
-                      </p>
-                  </div>
-                  <div className="group relative w-full bg-gray-100 rounded-2xl p-4 transition-all duration-500 max-md:max-w-md max-md:mx-auto md:w-2/5 md:h-64 xl:p-7 xl:w-1/4 hover:bg-indigo-600">
-                      <div className="bg-white rounded-full flex justify-center items-center mb-5 w-14 h-14 ">
-                          <GitPullRequestClosed />
-                              
-                      </div>
-                      <h4 className="text-xl font-semibold text-gray-900 mb-3 capitalize transition-all duration-500 group-hover:text-white">Safe Transaction</h4>
-                      <p className="text-sm font-normal text-gray-500 transition-all duration-500 leading-5 group-hover:text-white">
-                          We have the most up-to-date security to support the security of all our customers in carrying out all transactions.  
-                      </p>
-                  </div>
-                  <div className="group relative w-full bg-gray-100 rounded-2xl p-4 transition-all duration-500 max-md:max-w-md max-md:mx-auto md:w-2/5 md:h-64 xl:p-7 xl:w-1/4 hover:bg-indigo-600">
-                      <div className="bg-white rounded-full flex justify-center items-center mb-5 w-14 h-14 ">
-                         <FileText />
-                      </div>
-                      <h4 className="text-xl font-semibold text-gray-900 mb-3 capitalize transition-all duration-500 group-hover:text-white">Fast Customer Service </h4>
-                      <p className="text-sm font-normal text-gray-500 transition-all duration-500 leading-5 group-hover:text-white">
-                          Provide Customer Service For Those Of You Who Have Problems 24 Hours A Week  
-                      </p>
-                  </div>
-                  <div className="group relative w-full bg-gray-100 rounded-2xl p-4 transition-all duration-500 max-md:max-w-md max-md:mx-auto md:w-2/5 md:h-64 xl:p-7 xl:w-1/4 hover:bg-indigo-600">
-                      <div className="bg-white rounded-full flex justify-center items-center mb-5 w-14 h-14 ">
-                         <MailCheckIcon />
-                      </div>
-                      <h4 className="text-xl font-semibold text-gray-900 mb-3 capitalize transition-all duration-500 group-hover:text-white">Quick Transaction</h4>
-                      <p className="text-sm font-normal text-gray-500 transition-all duration-500 leading-5 group-hover:text-white">
-                          We provide faster transaction speeds than competitors, so money arrives and is received faster. 
-                      </p>
-                  </div>
-              </div>
+        <div className="min-h-screen flex items-center justify-center" id="sobre">
+            <div className="w-full max-w-screen-lg mx-auto py-12 px-6">
+                <h2 className="text-3xl leading-10 sm:text-4xl md:text-[40px] md:leading-[3.25rem] font-black tracking-tight">
+                    Economize seu tempo: <br />
+                    Troca ou Substituição em Minutos
+                </h2>
+                <div className="mt-8 grid sm:grid-cols-2 md:grid-cols-5 lg:grid-cols-3 gap-6">
+                    {/* Card 1 */}
+                    <div className="bg-muted rounded-xl pt-6 md:pt-8 pb-6 px-6 col-span-1 md:col-span-2 lg:col-span-1">
+                        {/* Media 1 Mobile */}
+                        <div className="md:hidden mb-6 aspect-video w-full bg-background border rounded-xl"></div>
+                        <span className="text-2xl font-bold tracking-tight">
+                            Troca de Aula
+                        </span>
+                        <ul className="mt-6 space-y-4">
+                            <li>
+                                <div className="flex items-start gap-3">
+                                    <Settings2 className="shrink-0" />
+                                    <p className="-mt-0.5">
+                                        Realize uma troca apenas selecionado qual aula deseja trocar e o sistema procurara um professor disponível para realizar a troca.
+                                    </p>
+                                </div>
+                            </li>
+                            <li>
+                                <div className="flex items-start gap-3">
+                                    <BellRing className="shrink-0" />
+                                    <p className="-mt-0.5">
+                                        O sistema irá notificar o professor que você deseja realizar uma troca.
+                                    </p>
+                                </div>
+                            </li>
+                        </ul>
+                        <Button className="mt-12 w-full">
+                            Começar Agora <ArrowRight />
+                        </Button>
+                    </div>
+                    {/* Media 1 Desktop */}
+                    <div className="hidden md:block border border-border/80 bg-muted rounded-xl col-span-1 md:col-span-3 lg:col-span-2"></div>
+                    {/* Media 2 Desktop */}
+                    <div className="hidden md:block border border-border/80 bg-muted rounded-xl col-span-1 md:col-span-3 lg:col-span-2"></div>
+                    {/* Card 2 */}
+                    <div className="bg-muted rounded-xl pt-6 md:pt-8 pb-6 px-6 col-span-1 md:col-span-2 lg:col-span-1">
+                        {/* Media 2 Mobile */}
+                        <div className="md:hidden mb-6 aspect-video w-full bg-background border rounded-xl"></div>
+                        <span className="text-2xl font-bold tracking-tight">
+                            Substituição de Aula
+                        </span>
+                        <ul className="mt-6 space-y-4">
+                            <li>
+                                <div className="flex items-start gap-3">
+                                    <Settings2 className="shrink-0" />
+                                    <p className="-mt-0.5">
+                                        Realize uma substituição apenas selecionado qual aula deseja e o sistema procurara um professor disponível para realizar a substituição.
+                                    </p>
+                                </div>
+                            </li>
+                            <li>
+                                <div className="flex items-start gap-3">
+                                    <BellRing className="shrink-0" />
+                                    <p className="-mt-0.5">
+                                    O sistema irá notificar o professor que você deseja realizar uma substituição.
+                                    </p>
+                                </div>
+                            </li>
+                        </ul>
+                        <Button className="mt-12 w-full">
+                            Começar Agora <ArrowRight />
+                        </Button>
+                    </div>
+                </div>
+            </div>
         </div>
-      </section>
     )
 }
