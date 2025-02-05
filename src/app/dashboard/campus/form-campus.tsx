@@ -11,10 +11,11 @@ import {
 } from "@/components/ui/dialog"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { CampusTableContext } from "@/context/campus-context"
 import { frontendApi } from "@/lib/api"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AxiosError } from "axios"
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
@@ -30,6 +31,8 @@ type InsertFormType = z.infer<typeof insertFormSchema>
 export default function FormCampus() {
     const [open, setOpen] = useState(false)
     const [insertMessage, setInsertMessage] = useState<JSX.Element>(<></>)
+
+    const campusTableContext = useContext(CampusTableContext)
 
     const insertForm = useForm<InsertFormType>({
         resolver: zodResolver(insertFormSchema),
@@ -47,7 +50,7 @@ export default function FormCampus() {
             const response = await frontendApi.post("/campus", formatedDate)
 
             setInsertMessage(<p className="text-green-500">Inserido com sucesso!</p>)
-
+            campusTableContext.refreshTable()
         } catch (e) {
             const axiosError = e as AxiosError
 

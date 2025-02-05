@@ -48,14 +48,14 @@ export async function POST(request: NextRequest) {
     }
 }
 
-type CampusType = {
+export type CampusType = {
     campusId: number
     name: string
     sigla: string
     endereco: string
 }
 
-type listCampus = {
+export type listCampus = {
     campus: CampusType[]
 }
 
