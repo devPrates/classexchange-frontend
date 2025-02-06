@@ -12,7 +12,7 @@ export function RecentActivities() {
       {activities.map((activity) => (
         <div key={activity.id} className="flex items-center">
           <Avatar className="h-9 w-9">
-            <AvatarImage src={`/avatars/${activity.id}.png`} alt={activity.user} />
+            <AvatarImage alt={activity.user} />
             <AvatarFallback>{activity.avatar}</AvatarFallback>
           </Avatar>
           <div className="ml-4 space-y-1">
