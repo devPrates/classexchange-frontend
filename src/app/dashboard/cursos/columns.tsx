@@ -1,6 +1,6 @@
 "use client"
 
-import RemoveButton from "@/components/admin/remove-button"
+import RemoveButton from "@/components/admin/remove-curso"
 import { Button } from "@/components/ui/button"
 import { ColumnDef } from "@tanstack/react-table"
 import { SquarePen, ArrowUpDown } from "lucide-react"

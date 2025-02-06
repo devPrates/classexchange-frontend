@@ -1,6 +1,6 @@
 "use client"
 
-import RemoveButton from "@/components/admin/remove-button"
+import RemoveUsers from "@/components/admin/remove-users"
 import { Button } from "@/components/ui/button"
 import { ColumnDef } from "@tanstack/react-table"
 import { SquarePen, ArrowUpDown } from "lucide-react"
@@ -46,7 +46,7 @@ export const columns: ColumnDef<users>[] = [
       return (
         <div className="flex space-x-2">
           <Button variant={'outline'} size={'icon'}><SquarePen className="stroke-yellow-500"/></Button>
-          <RemoveButton id={id}/>
+          <RemoveUsers id={id}/>
         </div>
       )
     }

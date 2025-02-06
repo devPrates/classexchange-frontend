@@ -24,7 +24,7 @@ import { z } from "zod"
 const insertFormSchema = z.object({
     name: z.string({ required_error: "Insira um nome" }),
     sigla: z.string({ required_error: "Insira um nome" }),
-    campusId: z.number({ required_error: "Insira um valor" })
+    campusId: z.coerce.number({ required_error: "Insira um valor" })
 })
 
 type InsertFormType = z.infer<typeof insertFormSchema>
@@ -49,7 +49,7 @@ export default function FormCursos() {
         const formatedDate = JSON.stringify({ name, sigla, campusId })
 
         try {
-            const response = await frontendApi.post("/cursos", formatedDate)
+            const response = await frontendApi.post("/curso", formatedDate)
             // Exibe o toast de sucesso
             toast({
                 title: "Sucesso!",

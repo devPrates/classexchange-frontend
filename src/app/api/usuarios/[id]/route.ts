@@ -22,7 +22,7 @@ export async function DELETE(request: NextRequest, { params }: DeleteUsersType) 
         return new Response(JSON.stringify(new Error("Usuário não autorizado")), { status: 401 });
 
     try {
-        const url = `/api/users/${params.id}`;
+        const url = `/users/${params.id}`;
 
         const result = await backendApi.delete(url, {
             headers: {
