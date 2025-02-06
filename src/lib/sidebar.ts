@@ -1,6 +1,6 @@
 import {
     BellRing,
-    BookType,
+    CalendarDays,
     FileText,
     Frame,
     LayoutDashboard,
@@ -43,9 +43,9 @@ export const data = {
             icon: WalletCards,
         },
         {
-            title: "Turmas",
-            url: "/dashboard/turmas",
-            icon: BookType,
+            title: "Horarios",
+            url: "/dashboard/horarios",
+            icon: CalendarDays,
         },
         {
             title: "Substituição",
