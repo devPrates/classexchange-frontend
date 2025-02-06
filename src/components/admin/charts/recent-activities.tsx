@@ -4,6 +4,8 @@ const activities = [
   { id: 1, user: "Maria Silva", action: "Cadastrou nova turma", time: "Há 5 min", avatar: "MS" },
   { id: 2, user: "João Oliveira", action: "Atualizou horário de aula", time: "Há 15 min", avatar: "JO" },
   { id: 3, user: "Ana Santos", action: "Registrou substituição de professor", time: "Há 1 hora", avatar: "AS" },
+  { id: 4, user: "Maria batista", action: "Registrou troca de professor", time: "Há 2 hora", avatar: "AS" },
+  { id: 4, user: "Vitoria Duarte", action: "Registrou troca de professor", time: "Há 2 hora", avatar: "AS" },
 ]
 
 export function RecentActivities() {

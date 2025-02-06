@@ -3,12 +3,12 @@
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
 
 const data = [
-  { campus: "Campus A", turmas: 64 },
-  { campus: "Campus B", turmas: 58 },
-  { campus: "Campus C", turmas: 45 },
-  { campus: "Campus D", turmas: 39 },
-  { campus: "Campus E", turmas: 30 },
-  { campus: "Campus F", turmas: 20 },
+  { campus: "Naviraí", turmas: 64 },
+  { campus: "Dourados", turmas: 58 },
+  { campus: "C. Grande", turmas: 45 },
+  { campus: "N. Andradina", turmas: 39 },
+  { campus: "Coxim", turmas: 30 },
+  { campus: "T. Lagoas", turmas: 20 },
 ]
 
 export function CampusDistribution() {

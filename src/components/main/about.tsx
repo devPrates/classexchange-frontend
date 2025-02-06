@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BellRing, Settings2 } from "lucide-react";
+import Image from "next/image";
 
 export default function About() {
     return (
@@ -40,9 +41,21 @@ export default function About() {
                         </Button>
                     </div>
                     {/* Media 1 Desktop */}
-                    <div className="hidden md:block border border-border/80 bg-muted rounded-xl col-span-1 md:col-span-3 lg:col-span-2"></div>
+                        <Image 
+                            src={"/descktop.png"}
+                            width={700}
+                            height={600}
+                            alt=""
+                            className="hidden md:block border border-border/80 rounded-xl col-span-1 md:col-span-3 lg:col-span-2"
+                        />
                     {/* Media 2 Desktop */}
-                    <div className="hidden md:block border border-border/80 bg-muted rounded-xl col-span-1 md:col-span-3 lg:col-span-2"></div>
+                    <Image 
+                            src={"/descktop.png"}
+                            width={700}
+                            height={600}
+                            alt=""
+                            className="hidden md:block border border-border/80 bg-muted rounded-xl col-span-1 md:col-span-3 lg:col-span-2"
+                        />
                     {/* Card 2 */}
                     <div className="bg-muted rounded-xl pt-6 md:pt-8 pb-6 px-6 col-span-1 md:col-span-2 lg:col-span-1">
                         {/* Media 2 Mobile */}

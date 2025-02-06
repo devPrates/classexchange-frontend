@@ -7,7 +7,7 @@ const data = [
   { name: "Humanas", value: 80 },
   { name: "Biológicas", value: 70 },
   { name: "Engenharias", value: 90 },
-  { name: "Artes", value: 60 },
+  { name: "Tecnológicas", value: 60 },
 ]
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"]
