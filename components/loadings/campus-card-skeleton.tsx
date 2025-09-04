@@ -1,6 +1,7 @@
 "use client";
 
 import { Building2, MapPin, Phone, Mail, Users, GraduationCap, UserCheck, BookOpen } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -23,7 +24,14 @@ export function CampusCardSkeleton() {
               <Skeleton className="h-4 w-32" />
             </div>
           </div>
-          <Skeleton className="h-9 w-16" />
+          <Button
+            variant="outline"
+            size="sm"
+            disabled
+            className="border-primary/20 hover:bg-primary/5 hover:border-primary/40"
+          >
+            Editar
+          </Button>
         </div>
       </CardHeader>
 
@@ -45,7 +53,7 @@ export function CampusCardSkeleton() {
             <div className="flex items-center gap-3">
               <Phone className="h-4 w-4 text-muted-foreground" />
               <p className="text-sm font-medium text-foreground">Telefone:</p>
-              <Skeleton className="h-4 w-28" />
+              <Skeleton className="h-4 w-32" />
             </div>
             <div className="flex items-center gap-3">
               <Mail className="h-4 w-4 text-muted-foreground" />

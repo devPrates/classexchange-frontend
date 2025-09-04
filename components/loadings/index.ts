@@ -1,0 +1,1 @@
+export { CampusCardSkeleton } from './campus-card-skeleton';
