@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { GraduationCap, Users, BookOpen, Calendar, Trash2, Edit, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -23,6 +24,7 @@ interface CursoCardProps {
 
 export function CursoCard({ curso, onEdit, onDelete }: CursoCardProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const router = useRouter();
 
   const handleDeleteConfirm = () => {
     if (onDelete) {
@@ -31,8 +33,19 @@ export function CursoCard({ curso, onEdit, onDelete }: CursoCardProps) {
     setIsDeleteDialogOpen(false);
   };
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Evita navegação se clicou em botões de ação
+    if ((e.target as HTMLElement).closest('button')) {
+      return;
+    }
+    router.push(`/dashboard/cursos/${curso.id}`);
+  };
+
   return (
-    <Card className="group relative overflow-hidden bg-gradient-to-br from-white via-blue-50/30 to-blue-100/50 dark:from-gray-900 dark:via-blue-950/30 dark:to-blue-900/20 border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+    <Card 
+      className="group relative overflow-hidden bg-gradient-to-br from-white via-blue-50/30 to-blue-100/50 dark:from-gray-900 dark:via-blue-950/30 dark:to-blue-900/20 border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer"
+      onClick={handleCardClick}
+    >
       {/* Borda decorativa */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700"></div>
       
