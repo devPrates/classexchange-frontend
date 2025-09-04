@@ -1,16 +1,36 @@
 "use client";
 
-import { Building2, MapPin, Phone, Mail, Users, GraduationCap, UserCheck, BookOpen } from "lucide-react";
+import { useState } from "react";
+import { Building2, MapPin, Phone, Mail, Users, GraduationCap, UserCheck, BookOpen, Trash2, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import type { Campus } from "@/types/Campus";
 
 interface CampusCardProps {
   campus: Campus;
   onEdit?: (campus: Campus) => void;
+  onDelete?: (campus: Campus) => void;
 }
 
-export function CampusCard({ campus, onEdit }: CampusCardProps) {
+export function CampusCard({ campus, onEdit, onDelete }: CampusCardProps) {
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  const handleDeleteConfirm = () => {
+    if (onDelete) {
+      onDelete(campus);
+    }
+    setIsDeleteDialogOpen(false);
+  };
+
   return (
     <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-primary bg-gradient-to-r from-background to-muted/20">
       {/* Header Principal - Estilo Cabeçalho de Documento */}
@@ -35,16 +55,56 @@ export function CampusCard({ campus, onEdit }: CampusCardProps) {
               </p>
             </div>
           </div>
-          {onEdit && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onEdit(campus)}
-              className="border-primary/20 hover:bg-primary/5 hover:border-primary/40"
-            >
-              Editar
-            </Button>
-          )}
+          <div className="flex gap-2">
+            {onEdit && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onEdit(campus)}
+                className="border-yellow-200 text-yellow-600 hover:bg-yellow-50 hover:border-yellow-300 dark:border-yellow-800 dark:text-yellow-400 dark:hover:bg-yellow-950 dark:hover:border-yellow-700"
+              >
+                <Edit className="h-4 w-4 mr-1" />
+                Editar
+              </Button>
+            )}
+            {onDelete && (
+              <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950 dark:hover:border-red-700"
+                  >
+                    <Trash2 className="h-4 w-4 mr-1" />
+                    Excluir
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Confirmar Exclusão</DialogTitle>
+                    <DialogDescription>
+                      Tem certeza que deseja excluir o campus <strong>{campus.nome}</strong>?
+                      Esta ação não pode ser desfeita.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter>
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsDeleteDialogOpen(false)}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      onClick={handleDeleteConfirm}
+                    >
+                      Excluir
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            )}
+          </div>
         </div>
       </CardHeader>
 

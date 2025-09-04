@@ -1,6 +1,6 @@
 "use client";
 
-import { Building2, MapPin, Phone, Mail, Users, GraduationCap, UserCheck, BookOpen } from "lucide-react";
+import { Building2, MapPin, Phone, Mail, Users, GraduationCap, UserCheck, BookOpen, Trash2, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -24,14 +24,26 @@ export function CampusCardSkeleton() {
               <Skeleton className="h-4 w-32" />
             </div>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            disabled
-            className="border-primary/20 hover:bg-primary/5 hover:border-primary/40"
-          >
-            Editar
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled
+              className="border-yellow-200 text-yellow-600 hover:bg-yellow-50 hover:border-yellow-300 dark:border-yellow-800 dark:text-yellow-400 dark:hover:bg-yellow-950 dark:hover:border-yellow-700"
+            >
+              <Edit className="h-4 w-4 mr-1" />
+              Editar
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled
+              className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950 dark:hover:border-red-700"
+            >
+              <Trash2 className="h-4 w-4 mr-1" />
+              Excluir
+            </Button>
+          </div>
         </div>
       </CardHeader>
 

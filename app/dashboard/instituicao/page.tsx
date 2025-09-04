@@ -2,13 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import { useCampusListStore } from "@/store/campus-store";
-import { useCampusQuery } from "@/hooks/use-campus";
+import { useCampusQuery, useDeleteCampus } from "@/hooks/use-campus";
 import { CampusCard } from "@/components/dashboard/campus-card";
 import { CampusCardSkeleton } from "@/components/loadings";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import type { Campus } from "@/types/Campus";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export default function InstituicaoPage() {
   const router = useRouter();
@@ -16,6 +17,7 @@ export default function InstituicaoPage() {
   const setSearch = useCampusListStore((s) => s.setSearch);
 
   const { data, isLoading, isError, refetch } = useCampusQuery();
+  const deleteCampusMutation = useDeleteCampus();
 
   const filteredCampus = (data ?? []).filter((campus) =>
     campus.nome.toLowerCase().includes(search.toLowerCase())
@@ -23,6 +25,16 @@ export default function InstituicaoPage() {
 
   const handleEditCampus = (campus: Campus) => {
     router.push(`/dashboard/instituicao/editar/${campus.id}`);
+  };
+
+  const handleDeleteCampus = async (campus: Campus) => {
+    try {
+      await deleteCampusMutation.mutateAsync(campus.id);
+      toast.success(`Campus "${campus.nome}" excluído com sucesso!`);
+    } catch (error) {
+      console.error('Erro ao excluir campus:', error);
+      toast.error('Erro ao excluir campus. Tente novamente.');
+    }
   };
 
   return (
@@ -70,6 +82,7 @@ export default function InstituicaoPage() {
               key={campus.id}
               campus={campus}
               onEdit={handleEditCampus}
+              onDelete={handleDeleteCampus}
             />
           ))}
         </div>
