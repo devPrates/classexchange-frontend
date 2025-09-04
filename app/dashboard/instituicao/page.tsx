@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useCampusListStore } from "@/store/campus-store";
 import { useCampusQuery } from "@/hooks/use-campus";
 import { CampusCard } from "@/components/dashboard/campus-card";
@@ -10,6 +11,7 @@ import type { Campus } from "@/types/Campus";
 import Link from "next/link";
 
 export default function InstituicaoPage() {
+  const router = useRouter();
   const search = useCampusListStore((s) => s.search);
   const setSearch = useCampusListStore((s) => s.setSearch);
 
@@ -20,8 +22,7 @@ export default function InstituicaoPage() {
   );
 
   const handleEditCampus = (campus: Campus) => {
-    // TODO: Implementar navegação para página de edição
-    console.log('Editar campus:', campus);
+    router.push(`/dashboard/instituicao/editar/${campus.id}`);
   };
 
   return (

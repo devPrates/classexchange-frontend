@@ -18,6 +18,17 @@ export async function fetchCampusServer(): Promise<Campus[]> {
   }
 }
 
+// Função para buscar um campus específico por ID
+export async function fetchCampusByIdServer(id: string): Promise<Campus> {
+  try {
+    const { data } = await serverApi.get<Campus>(`/campus/${id}`);
+    return data;
+  } catch (error) {
+    console.error("Erro ao buscar campus por ID:", error);
+    throw new Error("Falha ao carregar dados do campus");
+  }
+}
+
 // Função para criar um novo campus
 export async function createCampusServer(campus: Omit<Campus, "id" | "createdAt" | "updatedAt">): Promise<Campus> {
   try {

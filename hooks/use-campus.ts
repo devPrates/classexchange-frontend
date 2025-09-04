@@ -1,11 +1,21 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchCampusServer, createCampusServer, updateCampusServer, deleteCampusServer } from "@/services/campus-service";
+import { fetchCampusServer, fetchCampusByIdServer, createCampusServer, updateCampusServer, deleteCampusServer } from "@/services/campus-service";
 import type { Campus } from "@/types/Campus";
 
 export const useCampusQuery = () => {
   return useQuery({
     queryKey: ["campus"],
     queryFn: fetchCampusServer,
+    staleTime: 1000 * 60 * 5,
+  });
+};
+
+// Hook para buscar um campus específico por ID
+export const useCampusByIdQuery = (id: string) => {
+  return useQuery({
+    queryKey: ["campus", id],
+    queryFn: () => fetchCampusByIdServer(id),
+    enabled: !!id,
     staleTime: 1000 * 60 * 5,
   });
 };
