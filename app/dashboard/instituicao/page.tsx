@@ -7,6 +7,7 @@ import { CampusCardSkeleton } from "@/components/loadings";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import type { Campus } from "@/types/Campus";
+import Link from "next/link";
 
 export default function InstituicaoPage() {
   const search = useCampusListStore((s) => s.search);
@@ -38,8 +39,10 @@ export default function InstituicaoPage() {
             placeholder="Buscar campus por nome..."
             className="w-full sm:w-80"
           />
-          <Button>
-            Novo Campus
+          <Button asChild>
+            <Link href="/dashboard/instituicao/novo">
+              Novo Campus
+            </Link>
           </Button>
         </div>
       </div>

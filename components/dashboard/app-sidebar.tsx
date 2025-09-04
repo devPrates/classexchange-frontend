@@ -4,16 +4,11 @@ import * as React from "react"
 import {
   AudioWaveform,
   BookOpen,
-  Bot,
   Building2,
   Command,
-  Frame,
   GalleryVerticalEnd,
   LayoutDashboard,
-  Map,
-  PieChart,
   Settings2,
-  SquareTerminal,
 } from "lucide-react"
 
 import { NavMain } from "@/components/dashboard/nav-main"
@@ -33,13 +28,13 @@ const data = {
   user: {
     name: "shadcn",
     email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    avatar: "",
   },
   teams: [
     {
-      name: "Acme Inc",
+      name: "Class Exchange",
       logo: GalleryVerticalEnd,
-      plan: "Enterprise",
+      plan: "Painel ADMIN",
     },
     {
       name: "Acme Corp.",
@@ -71,20 +66,11 @@ const data = {
   ],
   projects: [
     {
-      name: "Design Engineering",
+      name: "Configurações",
       url: "#",
-      icon: Frame,
+      icon: Settings2,
     },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
+
   ],
 }
 

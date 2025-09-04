@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchCampusServer, createCampusServer, updateCampusServer, deleteCampusServer } from "@/services/server-api";
+import { fetchCampusServer, createCampusServer, updateCampusServer, deleteCampusServer } from "@/services/campus-service";
 import type { Campus } from "@/types/Campus";
 
 export const useCampusQuery = () => {
