@@ -1,18 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Building2, MapPin, Phone, Mail, Users, GraduationCap, UserCheck, BookOpen, Trash2, Edit } from "lucide-react";
+import { Building2, MapPin, Phone, Mail, Users, GraduationCap, UserCheck, BookOpen, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { DeleteConfirmationDialog } from "@/components/dashboard/delete-confirmation-dialog";
 import type { Campus } from "@/types/Campus";
 
 interface CampusCardProps {
@@ -68,41 +60,13 @@ export function CampusCard({ campus, onEdit, onDelete }: CampusCardProps) {
               </Button>
             )}
             {onDelete && (
-              <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950 dark:hover:border-red-700"
-                  >
-                    <Trash2 className="h-4 w-4 mr-1" />
-                    Excluir
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Confirmar Exclusão</DialogTitle>
-                    <DialogDescription>
-                      Tem certeza que deseja excluir o campus <strong>{campus.nome}</strong>?
-                      Esta ação não pode ser desfeita.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <DialogFooter>
-                    <Button
-                      variant="outline"
-                      onClick={() => setIsDeleteDialogOpen(false)}
-                    >
-                      Cancelar
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      onClick={handleDeleteConfirm}
-                    >
-                      Excluir
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
+              <DeleteConfirmationDialog
+                isOpen={isDeleteDialogOpen}
+                onOpenChange={setIsDeleteDialogOpen}
+                onConfirm={handleDeleteConfirm}
+                itemName={campus.nome}
+                itemType="o campus"
+              />
             )}
           </div>
         </div>

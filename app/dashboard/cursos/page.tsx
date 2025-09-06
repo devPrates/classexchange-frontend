@@ -65,12 +65,10 @@ export default function CursosPage() {
 
       {/* Lista de cards */}
       {isLoading ? (
-        <div className="flex flex-wrap gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Mostra 6 skeletons durante o carregamento */}
           {Array.from({ length: 6 }).map((_, index) => (
-            <div key={index} className="flex-1 min-w-[300px] max-w-[400px]">
-              <CursoCardSkeleton />
-            </div>
+            <CursoCardSkeleton key={index} />
           ))}
         </div>
       ) : isError ? (
@@ -81,15 +79,14 @@ export default function CursosPage() {
           </Button>
         </div>
       ) : filteredCursos.length > 0 ? (
-        <div className="flex flex-wrap gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredCursos.map((curso) => (
-            <div key={curso.id} className="flex-1 min-w-[300px] max-w-[400px]">
-              <CursoCard
-                curso={curso}
-                onEdit={handleEditCurso}
-                onDelete={handleDeleteCurso}
-              />
-            </div>
+            <CursoCard
+              key={curso.id}
+              curso={curso}
+              onEdit={handleEditCurso}
+              onDelete={handleDeleteCurso}
+            />
           ))}
         </div>
       ) : (
