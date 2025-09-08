@@ -4,7 +4,7 @@
 import { useRouter } from "next/navigation";
 import { useCursoListStore } from "@/store/curso-store";
 import { useCursoQuery, useDeleteCurso } from "@/hooks/use-curso";
-import { CursoCard } from "@/components/dashboard/curso-card";
+import { CursoCard } from "@/components/dashboard/curso/curso-card";
 import { CursoCardSkeleton } from "@/components/loadings/curso-card-skeleton";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";

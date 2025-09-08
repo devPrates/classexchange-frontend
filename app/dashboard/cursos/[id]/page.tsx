@@ -1,6 +1,7 @@
 
 'use client'
 
+import { useState } from 'react'
 import { ArrowLeft, BookOpen, Edit, GraduationCap, Plus, Users, MapPin, Clock, Calendar, Timer, CheckCircle, Zap, UserCheck, Home, Trash2 } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import { useCursoByIdQuery } from '@/hooks/use-curso'
@@ -8,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/dashboard/data-table'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
 import { Badge } from '@/components/ui/badge'
+import { CreateDisciplinaForm } from '@/components/dashboard/disciplina/create-disciplina-form'
 import { disciplinasColumns, turmasColumns } from './columns'
 import type { DisciplinaSimplificada } from '@/types/disciplina'
 import type { TurmaSimplificada } from '@/types/turma'
@@ -16,6 +18,7 @@ export default function CursoDetailPage() {
   const params = useParams()
   const router = useRouter()
   const cursoId = params.id as string
+  const [isCreateDisciplinaOpen, setIsCreateDisciplinaOpen] = useState(false)
 
   const { data: curso, isLoading, error } = useCursoByIdQuery(cursoId)
 
@@ -232,15 +235,9 @@ export default function CursoDetailPage() {
 
         {/* Seção de Disciplinas */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <BookOpen className="h-5 w-5 text-muted-foreground" />
-              <h2 className="text-lg font-semibold text-foreground">DISCIPLINAS</h2>
-            </div>
-            <Button className="bg-green-600 hover:bg-green-700 text-white">
-              <Plus className="h-4 w-4 mr-2" />
-              Nova Disciplina
-            </Button>
+          <div className="flex items-center gap-2">
+            <BookOpen className="h-5 w-5 text-muted-foreground" />
+            <h2 className="text-lg font-semibold text-foreground">DISCIPLINAS</h2>
           </div>
 
           <DataTable<DisciplinaSimplificada, any>
@@ -248,8 +245,17 @@ export default function CursoDetailPage() {
             columns={disciplinasColumns}
             searchPlaceholder="Buscar disciplinas..."
             emptyMessage="Nenhuma disciplina cadastrada"
-            showColumnVisibility={false}
+            showColumnVisibility={true}
             showPagination={false}
+            headerActions={
+              <Button 
+                className="bg-green-600 hover:bg-green-700 text-white"
+                onClick={() => setIsCreateDisciplinaOpen(true)}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Nova Disciplina
+              </Button>
+            }
           />
         </div>
 
@@ -276,6 +282,13 @@ export default function CursoDetailPage() {
           />
         </div>
       </div>
+
+      {/* Modal de Criação de Disciplina */}
+      <CreateDisciplinaForm 
+        open={isCreateDisciplinaOpen}
+        onOpenChange={setIsCreateDisciplinaOpen}
+        cursoId={cursoId}
+      />
     </div>
   );
 }

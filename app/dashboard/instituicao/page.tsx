@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useCampusListStore } from "@/store/campus-store";
 import { useCampusQuery, useDeleteCampus } from "@/hooks/use-campus";
-import { CampusCard } from "@/components/dashboard/campus-card";
+import { CampusCard } from "@/components/dashboard/campus/campus-card";
 import { CampusCardSkeleton } from "@/components/loadings";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
