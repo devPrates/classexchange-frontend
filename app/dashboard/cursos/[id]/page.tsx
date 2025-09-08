@@ -1,31 +1,21 @@
 
 'use client'
 
-import { ArrowLeft, BookOpen, Edit, GraduationCap, Plus, Users, MapPin, Clock, Calendar, Timer, CheckCircle, Zap, UserCheck, Home } from 'lucide-react'
+import { ArrowLeft, BookOpen, Edit, GraduationCap, Plus, Users, MapPin, Clock, Calendar, Timer, CheckCircle, Zap, UserCheck, Home, Trash2 } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import { useCursoByIdQuery } from '@/hooks/use-curso'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { DeleteConfirmationDialog } from '@/components/dashboard/delete-confirmation-dialog'
+
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
-import { useState } from 'react'
+
 import { Badge } from '@/components/ui/badge'
 
 export default function CursoDetailPage() {
   const params = useParams()
   const router = useRouter()
   const cursoId = params.id as string
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
   const { data: curso, isLoading, error } = useCursoByIdQuery(cursoId)
-
-  const handleDeleteConfirm = () => {
-    // TODO: Implementar lógica de exclusão do curso
-    console.log('Excluindo curso:', curso?.nome)
-    setIsDeleteDialogOpen(false)
-    // Redirecionar para lista de cursos após exclusão
-    router.push('/dashboard/cursos')
-  }
 
   if (isLoading) {
     return (
@@ -123,13 +113,14 @@ export default function CursoDetailPage() {
                 <Edit className="h-4 w-4 mr-1" />
                 Editar
               </Button>
-              <DeleteConfirmationDialog
-                isOpen={isDeleteDialogOpen}
-                onOpenChange={setIsDeleteDialogOpen}
-                onConfirm={handleDeleteConfirm}
-                itemName={curso?.nome || ''}
-                itemType="o curso"
-              />
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950 dark:hover:border-red-700"
+              >
+                <Trash2 className="h-4 w-4 mr-1" />
+                Excluir
+              </Button>
             </div>
           </div>
         </div>
@@ -260,10 +251,27 @@ export default function CursoDetailPage() {
               <div>TIPO</div>
               <div>AÇÕES</div>
             </div>
-            {/* Linha vazia para mostrar estrutura */}
-            <div className="p-4 text-center text-muted-foreground text-sm">
-              Nenhuma disciplina cadastrada
-            </div>
+            {curso.disciplinas && curso.disciplinas.length > 0 ? (
+              curso.disciplinas.map((disciplina) => (
+                <div key={disciplina.id} className="grid grid-cols-7 gap-4 p-4 border-b border-border/30 text-sm">
+                  <div className="font-medium text-foreground">{disciplina.nome}</div>
+                  <div className="text-muted-foreground">{disciplina.id}</div>
+                  <div className="text-muted-foreground">-</div>
+                  <div className="text-muted-foreground">-</div>
+                  <div className="text-muted-foreground">{disciplina.cargaHoraria}h</div>
+                  <div className="text-muted-foreground">-</div>
+                  <div className="flex gap-1">
+                    <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
+                      <Edit className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="p-4 text-center text-muted-foreground text-sm">
+                Nenhuma disciplina cadastrada
+              </div>
+            )}
           </div>
         </div>
 
@@ -291,10 +299,28 @@ export default function CursoDetailPage() {
               <div>ANO</div>
               <div>AÇÕES</div>
             </div>
-            {/* Linha vazia para mostrar estrutura */}
-            <div className="p-4 text-center text-muted-foreground text-sm">
-              Nenhuma turma cadastrada
-            </div>
+            {curso.turmas && curso.turmas.length > 0 ? (
+              curso.turmas.map((turma) => (
+                <div key={turma.id} className="grid grid-cols-8 gap-4 p-4 border-b border-border/30 text-sm">
+                  <div className="font-medium text-foreground">{turma.nome}</div>
+                  <div className="text-muted-foreground">{turma.id}</div>
+                  <div className="text-muted-foreground">-</div>
+                  <div className="text-muted-foreground">-</div>
+                  <div className="text-muted-foreground">-</div>
+                  <div className="text-muted-foreground">-</div>
+                  <div className="text-muted-foreground">-</div>
+                  <div className="flex gap-1">
+                    <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
+                      <Edit className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="p-4 text-center text-muted-foreground text-sm">
+                Nenhuma turma cadastrada
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -1,3 +1,5 @@
+import { DisciplinaSimplificada } from "./disciplina";
+import { TurmaSimplificada } from "./turma";
 
 export type curso = {
     id: string;
@@ -5,6 +7,8 @@ export type curso = {
     sigla: string;
     campusId: string;
     campusNome: string;
+    disciplinas: DisciplinaSimplificada[];
+    turmas: TurmaSimplificada[];
     createdAt: string;
     updatedAt: string;
 }
