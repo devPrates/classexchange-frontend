@@ -5,10 +5,12 @@ import { ArrowLeft, BookOpen, Edit, GraduationCap, Plus, Users, MapPin, Clock, C
 import { useParams, useRouter } from 'next/navigation'
 import { useCursoByIdQuery } from '@/hooks/use-curso'
 import { Button } from '@/components/ui/button'
-
+import { DataTable } from '@/components/dashboard/data-table'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
-
 import { Badge } from '@/components/ui/badge'
+import { disciplinasColumns, turmasColumns } from './columns'
+import type { DisciplinaSimplificada } from '@/types/disciplina'
+import type { TurmaSimplificada } from '@/types/turma'
 
 export default function CursoDetailPage() {
   const params = useParams()
@@ -241,38 +243,14 @@ export default function CursoDetailPage() {
             </Button>
           </div>
 
-          <div className="bg-background border rounded-lg">
-            <div className="grid grid-cols-7 gap-4 p-4 border-b bg-muted/50 text-sm font-medium text-muted-foreground">
-              <div>DISCIPLINA</div>
-              <div>CÓDIGO</div>
-              <div>PROFESSOR</div>
-              <div>PERÍODO</div>
-              <div>CARGA HORÁRIA</div>
-              <div>TIPO</div>
-              <div>AÇÕES</div>
-            </div>
-            {curso.disciplinas && curso.disciplinas.length > 0 ? (
-              curso.disciplinas.map((disciplina) => (
-                <div key={disciplina.id} className="grid grid-cols-7 gap-4 p-4 border-b border-border/30 text-sm">
-                  <div className="font-medium text-foreground">{disciplina.nome}</div>
-                  <div className="text-muted-foreground">{disciplina.id}</div>
-                  <div className="text-muted-foreground">-</div>
-                  <div className="text-muted-foreground">-</div>
-                  <div className="text-muted-foreground">{disciplina.cargaHoraria}h</div>
-                  <div className="text-muted-foreground">-</div>
-                  <div className="flex gap-1">
-                    <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
-                      <Edit className="h-3 w-3" />
-                    </Button>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="p-4 text-center text-muted-foreground text-sm">
-                Nenhuma disciplina cadastrada
-              </div>
-            )}
-          </div>
+          <DataTable<DisciplinaSimplificada, any>
+            data={curso.disciplinas || []}
+            columns={disciplinasColumns}
+            searchPlaceholder="Buscar disciplinas..."
+            emptyMessage="Nenhuma disciplina cadastrada"
+            showColumnVisibility={false}
+            showPagination={false}
+          />
         </div>
 
         {/* Seção Turmas */}
@@ -288,40 +266,14 @@ export default function CursoDetailPage() {
             </Button>
           </div>
 
-          <div className="bg-background border rounded-lg">
-            <div className="grid grid-cols-8 gap-4 p-4 border-b bg-muted/50 text-sm font-medium text-muted-foreground">
-              <div>TURMA</div>
-              <div>CÓDIGO</div>
-              <div>PERÍODO</div>
-              <div>TURNO</div>
-              <div>ALUNOS</div>
-              <div>STATUS</div>
-              <div>ANO</div>
-              <div>AÇÕES</div>
-            </div>
-            {curso.turmas && curso.turmas.length > 0 ? (
-              curso.turmas.map((turma) => (
-                <div key={turma.id} className="grid grid-cols-8 gap-4 p-4 border-b border-border/30 text-sm">
-                  <div className="font-medium text-foreground">{turma.nome}</div>
-                  <div className="text-muted-foreground">{turma.id}</div>
-                  <div className="text-muted-foreground">-</div>
-                  <div className="text-muted-foreground">-</div>
-                  <div className="text-muted-foreground">-</div>
-                  <div className="text-muted-foreground">-</div>
-                  <div className="text-muted-foreground">-</div>
-                  <div className="flex gap-1">
-                    <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
-                      <Edit className="h-3 w-3" />
-                    </Button>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="p-4 text-center text-muted-foreground text-sm">
-                Nenhuma turma cadastrada
-              </div>
-            )}
-          </div>
+          <DataTable<TurmaSimplificada, any>
+            data={curso.turmas || []}
+            columns={turmasColumns}
+            searchPlaceholder="Buscar turmas..."
+            emptyMessage="Nenhuma turma cadastrada"
+            showColumnVisibility={false}
+            showPagination={false}
+          />
         </div>
       </div>
     </div>
