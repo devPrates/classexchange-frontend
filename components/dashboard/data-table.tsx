@@ -123,7 +123,6 @@ export function DataTable<TData, TValue>({
 
         {/* Ações customizadas e visibilidade das colunas */}
         <div className="flex items-center gap-2">
-          {headerActions}
           {showColumnVisibility && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -152,6 +151,7 @@ export function DataTable<TData, TValue>({
               </DropdownMenuContent>
             </DropdownMenu>
           )}
+          {headerActions}
         </div>
       </div>
 

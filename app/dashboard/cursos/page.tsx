@@ -1,21 +1,24 @@
 
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Save, Search } from "lucide-react";
 import { useCursoListStore } from "@/store/curso-store";
 import { useCursoQuery, useDeleteCurso } from "@/hooks/use-curso";
 import { CursoCard } from "@/components/dashboard/curso/curso-card";
 import { CursoCardSkeleton } from "@/components/loadings/curso-card-skeleton";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { CreateCursoForm } from "@/components/dashboard/curso/create-curso-form";
 import type { curso } from "@/types/cursos";
-import Link from "next/link";
 import { toast } from "sonner";
 
 export default function CursosPage() {
   const router = useRouter();
   const search = useCursoListStore((s) => s.search);
   const setSearch = useCursoListStore((s) => s.setSearch);
+  const [isCreateCursoOpen, setIsCreateCursoOpen] = useState(false);
 
   const { data, isLoading, isError, refetch } = useCursoQuery();
   const deleteCursoMutation = useDeleteCurso();
@@ -49,16 +52,18 @@ export default function CursosPage() {
           <p className="text-gray-600 dark:text-gray-400">Gerencie os cursos da instituição</p>
         </div>
         <div className="flex gap-2">
-          <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar cursos por nome, sigla ou campus..."
-            className="w-full sm:w-80"
-          />
-          <Button asChild>
-            <Link href="/dashboard/cursos/novo">
-              Novo Curso
-            </Link>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Buscar cursos..."
+              className="w-full sm:w-64 pl-10"
+            />
+          </div>
+          <Button onClick={() => setIsCreateCursoOpen(true)}>
+            <Save className="h-4 w-4 mr-2" />
+            Novo Curso
           </Button>
         </div>
       </div>
@@ -101,6 +106,12 @@ export default function CursosPage() {
           )}
         </div>
       )}
+
+      {/* Modal de Criação de Curso */}
+      <CreateCursoForm 
+        open={isCreateCursoOpen}
+        onOpenChange={setIsCreateCursoOpen}
+      />
     </section>
   );
 }

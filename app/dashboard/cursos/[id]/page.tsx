@@ -2,7 +2,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowLeft, BookOpen, Edit, GraduationCap, Plus, Users, MapPin, Clock, Calendar, Timer, CheckCircle, Zap, UserCheck, Home, Trash2 } from 'lucide-react'
+import { ArrowLeft, BookOpen, Edit, GraduationCap, Plus, Users, MapPin, Clock, Calendar, Timer, CheckCircle, Zap, UserCheck, Home, Trash2, Save } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import { useCursoByIdQuery } from '@/hooks/use-curso'
 import { Button } from '@/components/ui/button'
@@ -10,6 +10,8 @@ import { DataTable } from '@/components/dashboard/data-table'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
 import { Badge } from '@/components/ui/badge'
 import { CreateDisciplinaForm } from '@/components/dashboard/disciplina/create-disciplina-form'
+import { EditCursoForm } from '@/components/dashboard/curso/edit-curso-form'
+import { DeleteCursoDialog } from '@/components/dashboard/curso/delete-curso-dialog'
 import { disciplinasColumns, turmasColumns } from './columns'
 import type { DisciplinaSimplificada } from '@/types/disciplina'
 import type { TurmaSimplificada } from '@/types/turma'
@@ -19,6 +21,8 @@ export default function CursoDetailPage() {
   const router = useRouter()
   const cursoId = params.id as string
   const [isCreateDisciplinaOpen, setIsCreateDisciplinaOpen] = useState(false)
+  const [isEditCursoOpen, setIsEditCursoOpen] = useState(false)
+  const [isDeleteCursoOpen, setIsDeleteCursoOpen] = useState(false)
 
   const { data: curso, isLoading, error } = useCursoByIdQuery(cursoId)
 
@@ -114,6 +118,7 @@ export default function CursoDetailPage() {
                 variant="outline"
                 size="sm"
                 className="border-yellow-200 text-yellow-600 hover:bg-yellow-50 hover:border-yellow-300 dark:border-yellow-800 dark:text-yellow-400 dark:hover:bg-yellow-950 dark:hover:border-yellow-700"
+                onClick={() => setIsEditCursoOpen(true)}
               >
                 <Edit className="h-4 w-4 mr-1" />
                 Editar
@@ -122,6 +127,7 @@ export default function CursoDetailPage() {
                 variant="outline"
                 size="sm"
                 className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950 dark:hover:border-red-700"
+                onClick={() => setIsDeleteCursoOpen(true)}
               >
                 <Trash2 className="h-4 w-4 mr-1" />
                 Excluir
@@ -252,8 +258,8 @@ export default function CursoDetailPage() {
                 className="bg-green-600 hover:bg-green-700 text-white"
                 onClick={() => setIsCreateDisciplinaOpen(true)}
               >
-                <Plus className="h-4 w-4 mr-2" />
-                Nova Disciplina
+                <Save className="h-4 w-4" />
+                Criar Disciplina
               </Button>
             }
           />
@@ -289,6 +295,25 @@ export default function CursoDetailPage() {
         onOpenChange={setIsCreateDisciplinaOpen}
         cursoId={cursoId}
       />
+
+      {/* Modal de Edição de Curso */}
+      {curso && (
+        <EditCursoForm 
+          open={isEditCursoOpen}
+          onOpenChange={setIsEditCursoOpen}
+          curso={curso}
+        />
+      )}
+
+      {/* Modal de Exclusão de Curso */}
+      {curso && (
+        <DeleteCursoDialog 
+          open={isDeleteCursoOpen}
+          onOpenChange={setIsDeleteCursoOpen}
+          curso={curso}
+          onSuccess={() => router.push('/dashboard/cursos')}
+        />
+      )}
     </div>
   );
 }
