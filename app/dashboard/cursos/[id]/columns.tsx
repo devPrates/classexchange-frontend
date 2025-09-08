@@ -1,14 +1,18 @@
-import { Edit } from 'lucide-react'
+import { Edit, Trash2 } from 'lucide-react'
+import { Row } from '@tanstack/react-table'
 import { createSortableColumn, createActionColumn } from '@/components/dashboard/data-table'
 import type { DisciplinaSimplificada } from '@/types/disciplina'
 import type { TurmaSimplificada } from '@/types/turma'
 
 // Colunas para Disciplinas
-export const disciplinasColumns = [
+export const createDisciplinasColumns = (
+  onEdit: (disciplina: DisciplinaSimplificada) => void,
+  onDelete: (disciplina: DisciplinaSimplificada) => void
+) => [
   {
     id: 'index',
     header: '#',
-    cell: ({ row }: { row: any }) => (
+    cell: ({ row }: { row: Row<DisciplinaSimplificada> }) => (
       <span className="text-muted-foreground font-mono text-sm">
         {row.index + 1}
       </span>
@@ -17,20 +21,24 @@ export const disciplinasColumns = [
   },
   createSortableColumn<DisciplinaSimplificada>('nome', 'Disciplina'),
   {
-    accessorKey: 'cargaHoraria',
+    accessorKey: 'cargahoraria',
     header: 'Carga Horária',
-    cell: ({ row }: { row: any }) => (
-      <span className="text-muted-foreground">{row.getValue('cargaHoraria')}h</span>
+    cell: ({ row }: { row: Row<DisciplinaSimplificada> }) => (
+      <span className="text-muted-foreground">{row.getValue('cargahoraria')}h</span>
     ),
   },
   createActionColumn<DisciplinaSimplificada>([
     {
       label: 'Editar',
       icon: Edit,
-      onClick: (disciplina) => {
-        console.log('Editar disciplina:', disciplina);
-      },
+      onClick: onEdit,
       variant: 'outline',
+    },
+    {
+      label: 'Excluir',
+      icon: Trash2,
+      onClick: onDelete,
+      variant: 'destructive',
     },
   ]),
 ]
@@ -40,7 +48,7 @@ export const turmasColumns = [
   {
     id: 'index',
     header: '#',
-    cell: ({ row }: { row: any }) => (
+    cell: ({ row }: { row: Row<TurmaSimplificada> }) => (
       <span className="text-muted-foreground font-mono text-sm">
         {row.index + 1}
       </span>

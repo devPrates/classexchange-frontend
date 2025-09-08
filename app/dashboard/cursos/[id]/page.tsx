@@ -10,10 +10,12 @@ import { DataTable } from '@/components/dashboard/data-table'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
 import { Badge } from '@/components/ui/badge'
 import { CreateDisciplinaForm } from '@/components/dashboard/disciplina/create-disciplina-form'
+import { EditDisciplinaForm } from '@/components/dashboard/disciplina/edit-disciplina-form'
+import { DeleteDisciplinaDialog } from '@/components/dashboard/disciplina/delete-disciplina-dialog'
 import { EditCursoForm } from '@/components/dashboard/curso/edit-curso-form'
 import { DeleteCursoDialog } from '@/components/dashboard/curso/delete-curso-dialog'
-import { disciplinasColumns, turmasColumns } from './columns'
-import type { DisciplinaSimplificada } from '@/types/disciplina'
+import { createDisciplinasColumns, turmasColumns } from './columns'
+import type { DisciplinaSimplificada, disciplina } from '@/types/disciplina'
 import type { TurmaSimplificada } from '@/types/turma'
 
 export default function CursoDetailPage() {
@@ -21,10 +23,47 @@ export default function CursoDetailPage() {
   const router = useRouter()
   const cursoId = params.id as string
   const [isCreateDisciplinaOpen, setIsCreateDisciplinaOpen] = useState(false)
+  const [isEditDisciplinaOpen, setIsEditDisciplinaOpen] = useState(false)
+  const [isDeleteDisciplinaOpen, setIsDeleteDisciplinaOpen] = useState(false)
+  const [selectedDisciplina, setSelectedDisciplina] = useState<disciplina | null>(null)
   const [isEditCursoOpen, setIsEditCursoOpen] = useState(false)
   const [isDeleteCursoOpen, setIsDeleteCursoOpen] = useState(false)
 
   const { data: curso, isLoading, error } = useCursoByIdQuery(cursoId)
+
+  const handleEditDisciplina = (disciplinaSimplificada: DisciplinaSimplificada) => {
+    // Convert DisciplinaSimplificada to disciplina for consistency
+    const disciplinaCompleta: disciplina = {
+      id: disciplinaSimplificada.id,
+      nome: disciplinaSimplificada.nome,
+      cargahoraria: disciplinaSimplificada.cargahoraria,
+      ementa: '', // Default empty values for missing properties
+      cursoId: cursoId,
+      cursoNome: curso?.nome || '',
+      createdAt: '',
+      updatedAt: ''
+    }
+    setSelectedDisciplina(disciplinaCompleta)
+    setIsEditDisciplinaOpen(true)
+  }
+
+  const handleDeleteDisciplina = (disciplinaSimplificada: DisciplinaSimplificada) => {
+    // Convert DisciplinaSimplificada to disciplina for the delete dialog
+    const disciplinaCompleta: disciplina = {
+      id: disciplinaSimplificada.id,
+      nome: disciplinaSimplificada.nome,
+      cargahoraria: disciplinaSimplificada.cargahoraria,
+      ementa: '', // Default empty values for missing properties
+      cursoId: cursoId,
+      cursoNome: curso?.nome || '',
+      createdAt: '',
+      updatedAt: ''
+    }
+    setSelectedDisciplina(disciplinaCompleta)
+    setIsDeleteDisciplinaOpen(true)
+  }
+
+  const disciplinasColumns = createDisciplinasColumns(handleEditDisciplina, handleDeleteDisciplina)
 
   if (isLoading) {
     return (
@@ -290,11 +329,31 @@ export default function CursoDetailPage() {
       </div>
 
       {/* Modal de Criação de Disciplina */}
-      <CreateDisciplinaForm 
-        open={isCreateDisciplinaOpen}
-        onOpenChange={setIsCreateDisciplinaOpen}
-        cursoId={cursoId}
-      />
+      {curso && (
+        <CreateDisciplinaForm 
+          open={isCreateDisciplinaOpen}
+          onOpenChange={setIsCreateDisciplinaOpen}
+          curso={curso}
+        />
+      )}
+
+      {/* Modal de Edição de Disciplina */}
+      {selectedDisciplina && (
+        <EditDisciplinaForm 
+          open={isEditDisciplinaOpen}
+          onOpenChange={setIsEditDisciplinaOpen}
+          disciplina={selectedDisciplina}
+        />
+      )}
+
+      {/* Modal de Exclusão de Disciplina */}
+      {selectedDisciplina && (
+        <DeleteDisciplinaDialog 
+          open={isDeleteDisciplinaOpen}
+          onOpenChange={setIsDeleteDisciplinaOpen}
+          disciplina={selectedDisciplina}
+        />
+      )}
 
       {/* Modal de Edição de Curso */}
       {curso && (

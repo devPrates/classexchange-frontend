@@ -5,7 +5,8 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
 import { X, Save, BookOpen } from "lucide-react"
-import { useCreateDisciplina } from "@/hooks/use-disciplina"
+import { useUpdateDisciplina } from "@/hooks/use-disciplina"
+import { useCursoQuery } from "@/hooks/use-curso"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -20,21 +21,20 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import type { curso } from "@/types/cursos"
-import { useCursoQuery } from "@/hooks/use-curso"
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import type { disciplina } from "@/types/disciplina"
 
 // Schema de validação usando Zod
 const disciplinaSchema = z.object({
@@ -63,36 +63,34 @@ interface DisciplinaFormData {
   cursoId: string
 }
 
-interface CreateDisciplinaFormProps {
+interface EditDisciplinaFormProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  curso?: curso | null // Opcional para permitir criação geral
+  disciplina: disciplina
 }
 
-export function CreateDisciplinaForm({ open, onOpenChange, curso }: CreateDisciplinaFormProps) {
-  const createDisciplina = useCreateDisciplina()
-  const { data: cursos, isLoading: isLoadingCursos } = useCursoQuery()
+export function EditDisciplinaForm({ open, onOpenChange, disciplina }: EditDisciplinaFormProps) {
+  const updateDisciplina = useUpdateDisciplina()
+  const { data: cursos = [] } = useCursoQuery()
 
+  // Configuração do formulário
   const form = useForm<DisciplinaFormData>({
     resolver: zodResolver(disciplinaSchema),
     defaultValues: {
-      nome: "",
-      cargahoraria: 0,
-      ementa: "",
-      cursoId: curso?.id || "",
+      nome: disciplina.nome,
+      cargahoraria: disciplina.cargahoraria,
+      ementa: disciplina.ementa,
+      cursoId: disciplina.cursoId,
     },
   })
 
   // Função para submeter o formulário
   async function onSubmit(values: DisciplinaFormData) {
     try {
-      console.log("[CREATE DISCIPLINA] JSON enviado para API:", JSON.stringify(values, null, 2))
-      console.log("[DEBUG] Iniciando criação de disciplina:", values);
-      console.log("[DEBUG] Estado do createDisciplina:", {
-        isPending: createDisciplina.isPending,
-        isError: createDisciplina.isError,
-        error: createDisciplina.error
-      });
+      console.log("[EDIT DISCIPLINA] JSON enviado para API:", JSON.stringify({
+        id: disciplina.id,
+        data: values
+      }, null, 2))
 
       // Converter cargahoraria de string para number antes de enviar para API
       const dataToSend = {
@@ -100,15 +98,16 @@ export function CreateDisciplinaForm({ open, onOpenChange, curso }: CreateDiscip
         cargahoraria: Number(values.cargahoraria)
       };
 
-      const result = await createDisciplina.mutateAsync(dataToSend);
+      await updateDisciplina.mutateAsync({
+        id: disciplina.id,
+        data: dataToSend
+      })
 
-      console.log("[DEBUG] Resultado da criação:", result);
-      toast.success("Disciplina criada com sucesso!")
-      form.reset()
+      toast.success("Disciplina atualizada com sucesso!")
       onOpenChange(false)
     } catch (error) {
-      console.error("[ERROR] Erro no formulário ao criar disciplina:", error);
-      toast.error("Erro ao criar disciplina. Tente novamente.")
+      toast.error("Erro ao atualizar disciplina. Tente novamente.")
+      console.error("Erro ao atualizar disciplina:", error)
     }
   }
 
@@ -118,53 +117,37 @@ export function CreateDisciplinaForm({ open, onOpenChange, curso }: CreateDiscip
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <BookOpen className="h-5 w-5" />
-            Nova Disciplina
+            Editar Disciplina
           </DialogTitle>
           <DialogDescription>
-            Preencha os dados para cadastrar uma nova disciplina no curso.
+            Atualize os dados da disciplina.
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            {/* Campo de Curso */}
             <FormField
               control={form.control}
               name="cursoId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Curso</FormLabel>
-                  <FormControl>
-                    {curso ? (
-                      <Input
-                        placeholder="Curso"
-                        value={`${curso.nome} - ${curso.campusNome}`}
-                        disabled
-                        className="bg-muted"
-                      />
-                    ) : (
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione um curso" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {isLoadingCursos ? (
-                            <SelectItem value="loading" disabled>
-                              Carregando cursos...
-                            </SelectItem>
-                          ) : (
-                            cursos?.map((cursoItem) => (
-                              <SelectItem key={cursoItem.id} value={cursoItem.id}>
-                                {cursoItem.nome} - {cursoItem.campusNome}
-                              </SelectItem>
-                            ))
-                          )}
-                        </SelectContent>
-                      </Select>
-                    )}
-                  </FormControl>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione um curso" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {cursos.map((curso) => (
+                        <SelectItem key={curso.id} value={curso.id}>
+                          {curso.nome} - {curso.campusNome}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormDescription>
-                    {curso ? "Curso onde a disciplina será oferecida" : "Selecione o curso para a disciplina"}
+                    Curso ao qual a disciplina pertence.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -238,10 +221,10 @@ export function CreateDisciplinaForm({ open, onOpenChange, curso }: CreateDiscip
               <Button
                 type="submit"
                 className="flex-1"
-                disabled={createDisciplina.isPending}
+                disabled={updateDisciplina.isPending}
               >
                 <Save className="mr-2 h-4 w-4" />
-                {createDisciplina.isPending ? "Criando..." : "Criar Disciplina"}
+                {updateDisciplina.isPending ? "Salvando..." : "Salvar Alterações"}
               </Button>
 
               <Button

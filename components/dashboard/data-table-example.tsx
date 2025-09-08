@@ -180,17 +180,17 @@ interface DisciplinaSimples {
   id: string
   nome: string
   codigo: string
-  cargaHoraria: number
+  cargahoraria: number
 }
 
 const disciplinasColumns: ColumnDef<DisciplinaSimples>[] = [
   createSortableColumn("codigo", "Código"),
   createSortableColumn("nome", "Nome da Disciplina"),
   {
-    accessorKey: "cargaHoraria",
+    accessorKey: "cargahoraria",
     header: "Carga Horária",
     cell: ({ row }) => {
-      const carga = row.getValue("cargaHoraria") as number
+      const carga = row.getValue("cargahoraria") as number
       return <span>{carga}h</span>
     },
   },
