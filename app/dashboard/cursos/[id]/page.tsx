@@ -1,69 +1,21 @@
 
 'use client'
 
-import { useState } from 'react'
 import { ArrowLeft, BookOpen, Edit, GraduationCap, Plus, Users, MapPin, Clock, Calendar, Timer, CheckCircle, Zap, UserCheck, Home, Trash2, Save } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import { useCursoByIdQuery } from '@/hooks/use-curso'
 import { Button } from '@/components/ui/button'
-import { DataTable } from '@/components/dashboard/data-table'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
 import { Badge } from '@/components/ui/badge'
-import { CreateDisciplinaForm } from '@/components/dashboard/disciplina/create-disciplina-form'
-import { EditDisciplinaForm } from '@/components/dashboard/disciplina/edit-disciplina-form'
-import { DeleteDisciplinaDialog } from '@/components/dashboard/disciplina/delete-disciplina-dialog'
-import { EditCursoForm } from '@/components/dashboard/curso/edit-curso-form'
-import { DeleteCursoDialog } from '@/components/dashboard/curso/delete-curso-dialog'
-import { createDisciplinasColumns, turmasColumns } from './columns'
 import type { DisciplinaSimplificada, disciplina } from '@/types/disciplina'
-import type { TurmaSimplificada } from '@/types/turma'
 
 export default function CursoDetailPage() {
   const params = useParams()
   const router = useRouter()
   const cursoId = params.id as string
-  const [isCreateDisciplinaOpen, setIsCreateDisciplinaOpen] = useState(false)
-  const [isEditDisciplinaOpen, setIsEditDisciplinaOpen] = useState(false)
-  const [isDeleteDisciplinaOpen, setIsDeleteDisciplinaOpen] = useState(false)
-  const [selectedDisciplina, setSelectedDisciplina] = useState<disciplina | null>(null)
-  const [isEditCursoOpen, setIsEditCursoOpen] = useState(false)
-  const [isDeleteCursoOpen, setIsDeleteCursoOpen] = useState(false)
+
 
   const { data: curso, isLoading, error } = useCursoByIdQuery(cursoId)
-
-  const handleEditDisciplina = (disciplinaSimplificada: DisciplinaSimplificada) => {
-    // Convert DisciplinaSimplificada to disciplina for consistency
-    const disciplinaCompleta: disciplina = {
-      id: disciplinaSimplificada.id,
-      nome: disciplinaSimplificada.nome,
-      cargahoraria: disciplinaSimplificada.cargahoraria,
-      ementa: '', // Default empty values for missing properties
-      cursoId: cursoId,
-      cursoNome: curso?.nome || '',
-      createdAt: '',
-      updatedAt: ''
-    }
-    setSelectedDisciplina(disciplinaCompleta)
-    setIsEditDisciplinaOpen(true)
-  }
-
-  const handleDeleteDisciplina = (disciplinaSimplificada: DisciplinaSimplificada) => {
-    // Convert DisciplinaSimplificada to disciplina for the delete dialog
-    const disciplinaCompleta: disciplina = {
-      id: disciplinaSimplificada.id,
-      nome: disciplinaSimplificada.nome,
-      cargahoraria: disciplinaSimplificada.cargahoraria,
-      ementa: '', // Default empty values for missing properties
-      cursoId: cursoId,
-      cursoNome: curso?.nome || '',
-      createdAt: '',
-      updatedAt: ''
-    }
-    setSelectedDisciplina(disciplinaCompleta)
-    setIsDeleteDisciplinaOpen(true)
-  }
-
-  const disciplinasColumns = createDisciplinasColumns(handleEditDisciplina, handleDeleteDisciplina)
 
   if (isLoading) {
     return (
@@ -157,7 +109,6 @@ export default function CursoDetailPage() {
                 variant="outline"
                 size="sm"
                 className="border-yellow-200 text-yellow-600 hover:bg-yellow-50 hover:border-yellow-300 dark:border-yellow-800 dark:text-yellow-400 dark:hover:bg-yellow-950 dark:hover:border-yellow-700"
-                onClick={() => setIsEditCursoOpen(true)}
               >
                 <Edit className="h-4 w-4 mr-1" />
                 Editar
@@ -166,7 +117,6 @@ export default function CursoDetailPage() {
                 variant="outline"
                 size="sm"
                 className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950 dark:hover:border-red-700"
-                onClick={() => setIsDeleteCursoOpen(true)}
               >
                 <Trash2 className="h-4 w-4 mr-1" />
                 Excluir
@@ -285,23 +235,7 @@ export default function CursoDetailPage() {
             <h2 className="text-lg font-semibold text-foreground">DISCIPLINAS</h2>
           </div>
 
-          <DataTable<DisciplinaSimplificada, any>
-            data={curso.disciplinas || []}
-            columns={disciplinasColumns}
-            searchPlaceholder="Buscar disciplinas..."
-            emptyMessage="Nenhuma disciplina cadastrada"
-            showColumnVisibility={true}
-            showPagination={false}
-            headerActions={
-              <Button 
-                className="bg-green-600 hover:bg-green-700 text-white"
-                onClick={() => setIsCreateDisciplinaOpen(true)}
-              >
-                <Save className="h-4 w-4" />
-                Criar Disciplina
-              </Button>
-            }
-          />
+          {/* DataTable de disciplina */} 
         </div>
 
         {/* Seção Turmas */}
@@ -317,62 +251,12 @@ export default function CursoDetailPage() {
             </Button>
           </div>
 
-          <DataTable<TurmaSimplificada, any>
-            data={curso.turmas || []}
-            columns={turmasColumns}
-            searchPlaceholder="Buscar turmas..."
-            emptyMessage="Nenhuma turma cadastrada"
-            showColumnVisibility={false}
-            showPagination={false}
-          />
+          {/* DataTable de turma */} 
         </div>
       </div>
 
-      {/* Modal de Criação de Disciplina */}
-      {curso && (
-        <CreateDisciplinaForm 
-          open={isCreateDisciplinaOpen}
-          onOpenChange={setIsCreateDisciplinaOpen}
-          curso={curso}
-        />
-      )}
+      
 
-      {/* Modal de Edição de Disciplina */}
-      {selectedDisciplina && (
-        <EditDisciplinaForm 
-          open={isEditDisciplinaOpen}
-          onOpenChange={setIsEditDisciplinaOpen}
-          disciplina={selectedDisciplina}
-        />
-      )}
-
-      {/* Modal de Exclusão de Disciplina */}
-      {selectedDisciplina && (
-        <DeleteDisciplinaDialog 
-          open={isDeleteDisciplinaOpen}
-          onOpenChange={setIsDeleteDisciplinaOpen}
-          disciplina={selectedDisciplina}
-        />
-      )}
-
-      {/* Modal de Edição de Curso */}
-      {curso && (
-        <EditCursoForm 
-          open={isEditCursoOpen}
-          onOpenChange={setIsEditCursoOpen}
-          curso={curso}
-        />
-      )}
-
-      {/* Modal de Exclusão de Curso */}
-      {curso && (
-        <DeleteCursoDialog 
-          open={isDeleteCursoOpen}
-          onOpenChange={setIsDeleteCursoOpen}
-          curso={curso}
-          onSuccess={() => router.push('/dashboard/cursos')}
-        />
-      )}
     </div>
   );
 }
