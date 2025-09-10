@@ -39,8 +39,7 @@ export function ThemeToggleButton({
 
     let styleElement = document.getElementById(styleId) as HTMLStyleElement
 
-    console.log("style ELement", styleElement)
-    console.log("name", name)
+
 
     if (!styleElement) {
       styleElement = document.createElement("style")
@@ -50,7 +49,7 @@ export function ThemeToggleButton({
 
     styleElement.textContent = css
 
-    console.log("content updated")
+
   }, [])
 
   const toggleTheme = React.useCallback(() => {

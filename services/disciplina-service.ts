@@ -43,20 +43,10 @@ export async function fetchDisciplinaByIdServer(id: string): Promise<disciplina>
 // Função para criar uma nova disciplina
 export async function createDisciplinaServer(disciplina: DisciplinaCreate): Promise<disciplina> {
   try {
-    console.log("[DEBUG] Criando disciplina:", disciplina);
-    console.log("[DEBUG] URL da API:", process.env.API_BASE_URL);
-    
     const { data } = await serverApi.post<disciplina>("/disciplinas", disciplina);
-    
-    console.log("[DEBUG] Disciplina criada com sucesso:", data);
     return data;
   } catch (error) {
-    console.error("[ERROR] Erro detalhado ao criar disciplina:", {
-      error,
-      message: error instanceof Error ? error.message : 'Erro desconhecido',
-      response: error instanceof Error && 'response' in error ? error.response : null,
-      disciplina
-    });
+    console.error("Erro ao criar disciplina:", error);
     throw new Error("Falha ao criar disciplina");
   }
 }

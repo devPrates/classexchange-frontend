@@ -30,7 +30,6 @@ export const useCreateDisciplina = () => {
   return useMutation({
     mutationFn: createDisciplinaServer,
     onSuccess: (newDisciplina) => {
-      console.log("[DEBUG] Disciplina criada com sucesso no hook:", newDisciplina);
       // Invalida todas as queries de disciplinas
       queryClient.invalidateQueries({ queryKey: ["disciplinas"] });
       // Invalida especificamente as disciplinas do curso

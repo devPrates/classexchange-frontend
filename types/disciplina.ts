@@ -2,7 +2,7 @@
 export type disciplina = {
     id: string
     nome: string
-    cargahoraria: number
+    cargaHoraria: number
     ementa: string
     cursoId: string
     cursoNome: string
@@ -12,14 +12,14 @@ export type disciplina = {
 
 export type DisciplinaCreate = {
     nome: string
-    cargahoraria: number
+    cargaHoraria: number
     ementa: string
     cursoId: string
 }
 
 export type DisciplinaUpdate = {
     nome: string
-    cargahoraria: number
+    cargaHoraria: number
     ementa: string
     cursoId: string
 }
@@ -27,6 +27,6 @@ export type DisciplinaUpdate = {
 export type DisciplinaSimplificada = {
     id: string;
     nome: string;
-    cargahoraria: number;
+    cargaHoraria: number;
 }
 

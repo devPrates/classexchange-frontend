@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
 import { Badge } from '@/components/ui/badge'
 import type { DisciplinaSimplificada, disciplina } from '@/types/disciplina'
+import { DisciplinasDataTable } from '@/components/dashboard/disciplina/disciplinas-data-table'
 
 export default function CursoDetailPage() {
   const params = useParams()
@@ -230,12 +231,11 @@ export default function CursoDetailPage() {
 
         {/* Seção de Disciplinas */}
         <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-muted-foreground" />
-            <h2 className="text-lg font-semibold text-foreground">DISCIPLINAS</h2>
-          </div>
-
-          {/* DataTable de disciplina */} 
+          <DisciplinasDataTable 
+            disciplinas={curso.disciplinas || []}
+            cursoNome={curso.nome}
+            isLoading={isLoading}
+          />
         </div>
 
         {/* Seção Turmas */}
