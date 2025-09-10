@@ -49,6 +49,8 @@ interface DataTableProps<TData, TValue> {
   showColumnVisibility?: boolean
   showPagination?: boolean
   pageSize?: number
+  // Sorting
+  defaultSorting?: SortingState
   // CRUD Actions
   onAdd?: () => void
   onEdit?: (item: TData) => void
@@ -74,6 +76,7 @@ export function DataTable<TData, TValue>({
   showColumnVisibility = true,
   showPagination = true,
   pageSize = 10,
+  defaultSorting = [],
   onAdd,
   onEdit,
   onDelete,
@@ -85,7 +88,7 @@ export function DataTable<TData, TValue>({
   isLoading = false,
   customActions,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [sorting, setSorting] = React.useState<SortingState>(defaultSorting)
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})

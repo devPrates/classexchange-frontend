@@ -45,8 +45,9 @@ export function DisciplinasDataTable({
           searchKey="nome"
           searchPlaceholder="Buscar disciplinas..."
           showColumnVisibility={true}
-          showPagination={disciplinas.length > 10}
+          showPagination={true}
           pageSize={10}
+          defaultSorting={[{ id: "nome", desc: false }]}
           isLoading={isLoading}
         />
       </CardContent>

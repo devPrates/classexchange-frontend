@@ -3,6 +3,8 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { DisciplinaSimplificada } from "@/types/disciplina"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { ArrowUpDown } from "lucide-react"
 
 export const disciplinasColumns: ColumnDef<DisciplinaSimplificada>[] = [
   {
@@ -16,7 +18,18 @@ export const disciplinasColumns: ColumnDef<DisciplinaSimplificada>[] = [
   },
   {
     accessorKey: "nome",
-    header: "Nome da Disciplina",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="h-auto p-0 font-medium hover:bg-transparent"
+        >
+          Nome da Disciplina
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
     cell: ({ row }) => {
       return (
         <div className="font-medium text-gray-900 dark:text-gray-100">
@@ -24,6 +37,7 @@ export const disciplinasColumns: ColumnDef<DisciplinaSimplificada>[] = [
         </div>
       )
     },
+    enableSorting: true,
   },
   {
     accessorKey: "cargaHoraria",
