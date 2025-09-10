@@ -92,3 +92,9 @@ Ele consumirá uma API backend utilizando **TanStack Query** para busca e cache 
   1. Verificar no `package.json` se a dependência já está instalada.
   2. Caso já exista, não instalar novamente.
   3. Se for atualizar, verificar compatibilidade e impactos no projeto antes.
+
+## 13. Regras de Organização de Arquivos
+- **Arquivos index.ts**: NÃO utilizar arquivos `index.ts` para exportar componentes.
+- **Importações diretas**: Sempre importar componentes diretamente do arquivo onde estão definidos.
+- **Exemplo**: Use `import { Component } from './component'` em vez de `import { Component } from './index'`.
+- **Justificativa**: Melhora a clareza do código e facilita a navegação entre arquivos no editor.
