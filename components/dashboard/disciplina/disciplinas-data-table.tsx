@@ -3,8 +3,8 @@
 import { DisciplinaSimplificada } from "@/types/disciplina"
 import { DataTable } from "@/components/dashboard/data/data-table"
 import { disciplinasColumns } from "./disciplinas-columns"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { BookOpen } from "lucide-react"
+import { BookOpen, Save } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 interface DisciplinasDataTableProps {
   disciplinas: DisciplinaSimplificada[]
@@ -23,34 +23,48 @@ export function DisciplinasDataTable({
   }, 0)
 
   return (
-    <Card>
-      <CardHeader>
+    <div className="space-y-4">
+      {/* Header da seção */}
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <BookOpen className="h-5 w-5 text-blue-600" />
-          <div>
-            <CardTitle className="text-lg">
-              Disciplinas {cursoNome && `do Curso ${cursoNome}`}
-            </CardTitle>
-            <CardDescription>
-              {disciplinas.length} disciplina{disciplinas.length !== 1 ? 's' : ''} • 
-              Carga horária total: {totalCargaHoraria}h
-            </CardDescription>
-          </div>
+          <BookOpen className="h-5 w-5 text-muted-foreground" />
+          <h2 className="text-lg font-semibold text-foreground">DISCIPLINAS</h2>
         </div>
-      </CardHeader>
-      <CardContent>
-        <DataTable
-          columns={disciplinasColumns}
-          data={disciplinas}
-          searchKey="nome"
-          searchPlaceholder="Buscar disciplinas..."
-          showColumnVisibility={true}
-          showPagination={true}
-          pageSize={10}
-          defaultSorting={[{ id: "nome", desc: false }]}
-          isLoading={isLoading}
-        />
-      </CardContent>
-    </Card>
+        <Button variant="default" size="sm" className="flex items-center gap-2">
+          <Save className="h-4 w-4" />
+          Criar Disciplina
+        </Button>
+      </div>
+
+      {/* Informações resumidas */}
+      <div className="grid grid-cols-2 gap-8">
+        <div className="flex items-center gap-3">
+          <BookOpen className="h-4 w-4 text-muted-foreground" />
+          <p className="text-sm font-medium text-foreground">Total de Disciplinas:</p>
+          <p className="text-sm text-muted-foreground">{disciplinas.length} disciplina{disciplinas.length !== 1 ? 's' : ''}</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <BookOpen className="h-4 w-4 text-muted-foreground" />
+          <p className="text-sm font-medium text-foreground">Carga Horária Total:</p>
+          <p className="text-sm text-muted-foreground">{totalCargaHoraria}h</p>
+        </div>
+      </div>
+
+      {/* Linha separadora */}
+      <div className="border-t border-border/30"></div>
+
+      {/* Tabela de disciplinas */}
+      <DataTable
+        columns={disciplinasColumns}
+        data={disciplinas}
+        searchKey="nome"
+        searchPlaceholder="Buscar disciplinas..."
+        showColumnVisibility={true}
+        showPagination={true}
+        pageSize={10}
+        defaultSorting={[{ id: "nome", desc: false }]}
+        isLoading={isLoading}
+      />
+    </div>
   )
 }

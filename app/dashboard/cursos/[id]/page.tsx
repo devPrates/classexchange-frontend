@@ -190,8 +190,12 @@ export default function CursoDetailPage() {
               <UserCheck className="h-5 w-5 text-muted-foreground" />
               <h2 className="text-lg font-semibold text-foreground">COORDENADOR DO CURSO</h2>
             </div>
-            <Button variant="outline" size="sm" className="text-xs">
-              <Edit className="h-3 w-3 mr-1" />
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="border-yellow-200 text-yellow-600 hover:bg-yellow-50 hover:border-yellow-300 dark:border-yellow-800 dark:text-yellow-400 dark:hover:bg-yellow-950 dark:hover:border-yellow-700"
+            >
+              <Edit className="h-4 w-4 mr-1" />
               Editar
             </Button>
           </div>
