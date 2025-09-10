@@ -21,6 +21,16 @@ export const useDisciplinasByCursoIdQuery = (cursoId: string) => {
   });
 };
 
+// Hook para buscar uma disciplina específica por ID
+export const useDisciplinaByIdQuery = (id: string) => {
+  return useQuery({
+    queryKey: ["disciplinas", id],
+    queryFn: () => fetchDisciplinaByIdServer(id),
+    enabled: !!id,
+    staleTime: 1000 * 60 * 5,
+  });
+};
+
 
 
 // Hook para criar disciplina
@@ -35,6 +45,8 @@ export const useCreateDisciplina = () => {
       // Invalida especificamente as disciplinas do curso
       if (newDisciplina.cursoId) {
         queryClient.invalidateQueries({ queryKey: ["disciplinas", "curso", newDisciplina.cursoId] });
+        // Invalida os dados do curso para atualizar a tabela
+        queryClient.invalidateQueries({ queryKey: ["cursos", newDisciplina.cursoId] });
       }
     },
     onError: (error) => {
@@ -54,6 +66,8 @@ export const useUpdateDisciplina = () => {
       queryClient.invalidateQueries({ queryKey: ["disciplinas"] });
       if (updatedDisciplina.cursoId) {
         queryClient.invalidateQueries({ queryKey: ["disciplinas", "curso", updatedDisciplina.cursoId] });
+        // Invalida os dados do curso para atualizar a tabela
+        queryClient.invalidateQueries({ queryKey: ["cursos", updatedDisciplina.cursoId] });
       }
     },
   });
@@ -67,6 +81,8 @@ export const useDeleteDisciplina = () => {
     mutationFn: deleteDisciplinaServer,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["disciplinas"] });
+      // Invalida todos os dados de cursos para atualizar as tabelas
+      queryClient.invalidateQueries({ queryKey: ["cursos"] });
     },
   });
 };

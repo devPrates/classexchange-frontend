@@ -1,22 +1,27 @@
 "use client"
 
+import { useState } from "react"
 import { DisciplinaSimplificada } from "@/types/disciplina"
 import { DataTable } from "@/components/dashboard/data/data-table"
 import { disciplinasColumns } from "./disciplinas-columns"
+import { CreateDisciplinaForm } from "./create-disciplina-form"
 import { BookOpen, Save } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface DisciplinasDataTableProps {
   disciplinas: DisciplinaSimplificada[]
+  cursoId: string
   cursoNome?: string
   isLoading?: boolean
 }
 
 export function DisciplinasDataTable({ 
   disciplinas, 
+  cursoId,
   cursoNome,
   isLoading = false 
 }: DisciplinasDataTableProps) {
+  const [isCreateDisciplinaOpen, setIsCreateDisciplinaOpen] = useState(false)
 
   const totalCargaHoraria = disciplinas.reduce((total, disciplina) => {
     return total + disciplina.cargaHoraria
@@ -30,7 +35,12 @@ export function DisciplinasDataTable({
           <BookOpen className="h-5 w-5 text-muted-foreground" />
           <h2 className="text-lg font-semibold text-foreground">DISCIPLINAS</h2>
         </div>
-        <Button variant="default" size="sm" className="flex items-center gap-2">
+        <Button 
+          variant="default" 
+          size="sm" 
+          className="flex items-center gap-2"
+          onClick={() => setIsCreateDisciplinaOpen(true)}
+        >
           <Save className="h-4 w-4" />
           Criar Disciplina
         </Button>
@@ -64,6 +74,13 @@ export function DisciplinasDataTable({
         pageSize={10}
         defaultSorting={[{ id: "nome", desc: false }]}
         isLoading={isLoading}
+      />
+
+      {/* Modal de Criação de Disciplina */}
+      <CreateDisciplinaForm 
+        open={isCreateDisciplinaOpen}
+        onOpenChange={setIsCreateDisciplinaOpen}
+        cursoId={cursoId}
       />
     </div>
   )

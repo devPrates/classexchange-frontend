@@ -4,35 +4,40 @@ import { ColumnDef } from "@tanstack/react-table"
 import { DisciplinaSimplificada } from "@/types/disciplina"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ArrowUpDown, Edit, Trash2 } from "lucide-react"
+import { ListOrdered, Edit, Trash2 } from "lucide-react"
+import { DeleteDisciplinaDialog } from "./delete-disciplina-dialog"
+import { EditDisciplinaDialog } from "./edit-disciplina-dialog"
 
 export const disciplinasColumns: ColumnDef<DisciplinaSimplificada>[] = [
   {
     id: "index",
-    header: "#",
+    header: () => <div className="text-center">#</div>,
     cell: ({ row }) => {
-      return <div className="font-medium">{row.index + 1}</div>
+      return <div className="font-medium text-center">{row.index + 1}</div>
     },
     enableSorting: false,
     enableHiding: false,
+    size: 60,
   },
   {
     accessorKey: "nome",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-auto p-0 font-medium hover:bg-transparent"
-        >
-          Nome da Disciplina
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        <div className="-ml-4">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-auto p-0 font-medium hover:bg-transparent"
+          >
+            Nome da Disciplina
+            <ListOrdered />
+          </Button>
+        </div>
       )
     },
     cell: ({ row }) => {
       return (
-        <div className="font-medium text-gray-900 dark:text-gray-100">
+        <div className="font-medium text-gray-900 dark:text-gray-100 text-left">
           {row.getValue("nome")}
         </div>
       )
@@ -45,42 +50,67 @@ export const disciplinasColumns: ColumnDef<DisciplinaSimplificada>[] = [
     cell: ({ row }) => {
       const cargaHoraria = row.getValue("cargaHoraria") as number
       return (
-        <div className="text-center">
+        <div className="text-left">
           {cargaHoraria}h
         </div>
       )
     },
   },
   {
+    accessorKey: "updatedAt",
+    header: ({ column }) => {
+      return (
+        <div className="-ml-4">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-auto p-0 font-medium hover:bg-transparent"
+          >
+            Última Alteração
+            <ListOrdered />
+          </Button>
+        </div>
+      )
+    },
+    cell: ({ row }) => {
+      const updatedAt = row.getValue("updatedAt") as string
+      const date = new Date(updatedAt)
+      const today = new Date()
+
+      // Verifica se é o mesmo dia
+      const isToday = date.toDateString() === today.toDateString()
+
+      if (isToday) {
+        // Mostra apenas o horário
+        return (
+          <div className="text-left text-sm text-gray-600 dark:text-gray-400">
+            {date.toLocaleTimeString('pt-BR', {
+              hour: '2-digit',
+              minute: '2-digit'
+            })}
+          </div>
+        )
+      } else {
+        // Mostra apenas a data
+        return (
+          <div className="text-left text-sm text-gray-600 dark:text-gray-400">
+            {date.toLocaleDateString('pt-BR')}
+          </div>
+        )
+      }
+    },
+    enableSorting: true,
+  },
+  {
     id: "actions",
     header: "Ações",
     cell: ({ row }) => {
       const disciplina = row.original
-      
+
       return (
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 w-8 p-0 border-yellow-200 text-yellow-600 hover:bg-yellow-50 hover:border-yellow-300 dark:border-yellow-800 dark:text-yellow-400 dark:hover:bg-yellow-950 dark:hover:border-yellow-700"
-            onClick={() => {
-              // TODO: Implementar navegação para edição
-              console.log('Editar disciplina:', disciplina.id)
-            }}
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 w-8 p-0 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950 dark:hover:border-red-700"
-            onClick={() => {
-              // TODO: Implementar confirmação de exclusão
-              console.log('Excluir disciplina:', disciplina.id)
-            }}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          <EditDisciplinaDialog disciplina={disciplina} />
+          <DeleteDisciplinaDialog disciplina={disciplina} />
         </div>
       )
     },

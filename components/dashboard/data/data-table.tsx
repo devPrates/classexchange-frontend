@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ChevronDown, Plus, Search, Edit, Trash2 } from "lucide-react"
+import { ChevronDown, Plus, Search, Edit, Trash2, FileText, Upload, FileUp, FileDown, CloudUpload } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -66,6 +66,18 @@ interface DataTableProps<TData, TValue> {
   isLoading?: boolean
   // Custom row actions
   customActions?: (item: TData) => React.ReactNode
+}
+
+// Função para mapear IDs de colunas para nomes amigáveis
+function getColumnDisplayName(columnId: string): string {
+  const columnNames: Record<string, string> = {
+    index: "#",
+    nome: "Nome da Disciplina",
+    cargaHoraria: "Carga Horária",
+    updatedAt: "Última Alteração",
+    actions: "Ações"
+  }
+  return columnNames[columnId] || columnId
 }
 
 export function DataTable<TData, TValue>({
@@ -206,10 +218,10 @@ export function DataTable<TData, TValue>({
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <div className="h-10 w-[250px] bg-muted animate-pulse rounded-md" />
-          <div className="h-10 w-[100px] bg-muted animate-pulse rounded-md" />
+          <div className="h-10 w-[250px] bg-muted animate-pulse rounded-sm" />
+          <div className="h-10 w-[100px] bg-muted animate-pulse rounded-sm" />
         </div>
-        <div className="rounded-md border">
+        <div className="rounded-sm border">
           <div className="h-[400px] bg-muted animate-pulse" />
         </div>
       </div>
@@ -236,6 +248,16 @@ export function DataTable<TData, TValue>({
           )}
         </div>
         <div className="flex items-center space-x-2">
+          {/* Botão Gerar Relatório */}
+          <Button size="icon" className="bg-blue-600 hover:bg-blue-700 text-white">
+            <FileDown className="h-4 w-4" />
+          </Button>
+          
+          {/* Botão Carregar Dados */}
+          <Button size="icon">
+            <CloudUpload className="h-4 w-4" />
+          </Button>
+          
           {showColumnVisibility && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -257,7 +279,7 @@ export function DataTable<TData, TValue>({
                           column.toggleVisibility(!!value)
                         }
                       >
-                        {column.id}
+                        {getColumnDisplayName(column.id)}
                       </DropdownMenuCheckboxItem>
                     )
                   })}
@@ -274,7 +296,7 @@ export function DataTable<TData, TValue>({
       </div>
 
       {/* Table */}
-      <div className="rounded-md border">
+      <div className="rounded-sm border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -329,8 +351,7 @@ export function DataTable<TData, TValue>({
       {showPagination && (
         <div className="flex items-center justify-end space-x-2 py-4">
           <div className="flex-1 text-sm text-muted-foreground">
-            {table.getFilteredSelectedRowModel().rows.length} de{" "}
-            {table.getFilteredRowModel().rows.length} linha(s) selecionada(s).
+            {table.getFilteredRowModel().rows.length} de {data.length} items
           </div>
           <div className="space-x-2">
             <Button

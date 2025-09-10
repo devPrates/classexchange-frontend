@@ -237,6 +237,7 @@ export default function CursoDetailPage() {
         <div className="space-y-4">
           <DisciplinasDataTable 
             disciplinas={curso.disciplinas || []}
+            cursoId={curso.id}
             cursoNome={curso.nome}
             isLoading={isLoading}
           />
