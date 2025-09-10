@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CampusEditSkeleton } from "@/components/loadings";
+import { CampusEditSkeleton } from "@/components/loadings/campus-edit-skeleton";
 import type { UpdateCampus } from "@/types/Campus";
 
 const campusSchema = z.object({

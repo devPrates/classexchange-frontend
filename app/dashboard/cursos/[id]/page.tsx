@@ -10,6 +10,8 @@ import { Badge } from '@/components/ui/badge'
 import type { DisciplinaSimplificada, disciplina } from '@/types/disciplina'
 import { DisciplinasDataTable } from '@/components/dashboard/disciplina/disciplinas-data-table'
 import { TurmasDataTable } from '@/components/dashboard/turma/turmas-data-table'
+import { CursoDetailSkeleton } from '@/components/loadings/curso-skeletons'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export default function CursoDetailPage() {
   const params = useParams()
@@ -19,20 +21,7 @@ export default function CursoDetailPage() {
 
   const { data: curso, isLoading, error } = useCursoByIdQuery(cursoId)
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 p-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="animate-pulse space-y-6">
-            <div className="h-8 bg-gray-300 rounded w-1/3"></div>
-            <div className="h-96 bg-gray-300 rounded"></div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (error || !curso) {
+  if (error) {
     return (
       <div className="min-h-screen bg-gray-50 p-8">
         <div className="max-w-4xl mx-auto">
@@ -45,6 +34,46 @@ export default function CursoDetailPage() {
             </Button>
           </div>
         </div>
+      </div>
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        {/* Header com Breadcrumb */}
+        <div className="bg-background px-6 py-4">
+          <div className="flex items-center justify-between gap-4">
+            <Button
+              onClick={() => router.back()}
+              variant="outline"
+              size="sm"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Voltar
+            </Button>
+
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/dashboard"><Home className="h-4 w-4" /></BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/dashboard/cursos">Cursos</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>
+                    <Skeleton className="h-4 w-32" />
+                  </BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+        </div>
+
+        <CursoDetailSkeleton />
       </div>
     )
   }
@@ -74,7 +103,9 @@ export default function CursoDetailPage() {
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage>{curso.nome}</BreadcrumbPage>
+                <BreadcrumbPage>
+                  {curso?.nome || 'Curso'}
+                </BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -93,16 +124,16 @@ export default function CursoDetailPage() {
               </div>
               <div className="space-y-1">
                 <h2 className="text-2xl font-bold tracking-tight text-foreground">
-                  {curso.nome.toUpperCase()}
+                  {curso?.nome?.toUpperCase() || 'CURSO'}
                 </h2>
                 <div className="flex items-center gap-2">
                   <div className="h-1 w-8 bg-primary rounded-full"></div>
                   <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
-                    IFMS - Campus {curso.campusNome}
+                    {`IFMS - Campus ${curso?.campusNome || 'Campus'}`}
                   </p>
                 </div>
                 <p className="text-md text-muted-foreground font-medium">
-                  Staus: <Badge className="">Ativo</Badge>
+                  Status: <Badge className="">Ativo</Badge>
                 </p>
               </div>
             </div>
@@ -237,9 +268,9 @@ export default function CursoDetailPage() {
         {/* Seção de Disciplinas */}
         <div className="space-y-4">
           <DisciplinasDataTable 
-            disciplinas={curso.disciplinas || []}
-            cursoId={curso.id}
-            cursoNome={curso.nome}
+            disciplinas={curso?.disciplinas || []}
+            cursoId={curso?.id || ''}
+            cursoNome={curso?.nome || ''}
             isLoading={isLoading}
           />
         </div>
@@ -250,8 +281,8 @@ export default function CursoDetailPage() {
         {/* Seção Turmas */}
         <div className="space-y-4">
           <TurmasDataTable 
-            cursoId={curso.id}
-            cursoNome={curso.nome}
+            cursoId={curso?.id || ''}
+            cursoNome={curso?.nome || ''}
           />
         </div>
       </div>
