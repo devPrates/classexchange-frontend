@@ -27,7 +27,11 @@ export function NavMain({
       <SidebarGroupLabel>Menu</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => {
-          const isActive = pathname === item.url
+          // Para rotas de cursos, verifica se o pathname começa com a URL do item
+          // Para outras rotas, usa comparação exata
+          const isActive = item.url === '/dashboard/cursos' 
+            ? pathname.startsWith('/dashboard/cursos')
+            : pathname === item.url
           return (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton 
