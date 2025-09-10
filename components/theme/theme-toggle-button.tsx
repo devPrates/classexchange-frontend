@@ -74,13 +74,12 @@ export function ThemeToggleButton({
   if (!mounted) {
     return (
       <Button
-        variant="ghost"
         size="icon"
-        className="w-9 p-0 h-9 relative group"
+        className="h-8 w-8 bg-sidebar-accent text-sidebar-accent-foreground hover:bg-sidebar-accent/80 relative group"
         disabled
       >
-        <SunIcon className="size-[1.2rem]" />
-        <span className="sr-only">Theme Toggle</span>
+        <SunIcon className="size-4" />
+        <span className="sr-only">Alternar Tema</span>
       </Button>
     )
   }
@@ -88,14 +87,13 @@ export function ThemeToggleButton({
   return (
     <Button
       onClick={toggleTheme}
-      variant="ghost"
       size="icon"
-      className="w-9 p-0 h-9 relative group"
+      className="h-8 w-8 bg-sidebar-accent text-sidebar-accent-foreground hover:bg-sidebar-accent/80 relative group"
       name="Theme Toggle Button"
     >
-      <SunIcon className="size-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-      <MoonIcon className="absolute size-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-      <span className="sr-only">Theme Toggle </span>
+      <SunIcon className="size-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+      <MoonIcon className="absolute size-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+      <span className="sr-only">Alternar Tema</span>
       {showLabel && (
         <>
           <span className="hidden group-hover:block border rounded-full px-2 absolute -top-10">
