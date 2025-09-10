@@ -77,6 +77,12 @@ function getColumnDisplayName(columnId: string): string {
     updatedAt: "Última Alteração",
     actions: "Ações"
   }
+  
+  // Mapeamento específico para turmas
+  if (columnId === "nome" && window.location.pathname.includes("turma")) {
+    return "Nome da Turma"
+  }
+  
   return columnNames[columnId] || columnId
 }
 

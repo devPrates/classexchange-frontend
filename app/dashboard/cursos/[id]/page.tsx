@@ -9,6 +9,7 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 import { Badge } from '@/components/ui/badge'
 import type { DisciplinaSimplificada, disciplina } from '@/types/disciplina'
 import { DisciplinasDataTable } from '@/components/dashboard/disciplina/disciplinas-data-table'
+import { TurmasDataTable } from '@/components/dashboard/turma/turmas-data-table'
 
 export default function CursoDetailPage() {
   const params = useParams()
@@ -243,20 +244,15 @@ export default function CursoDetailPage() {
           />
         </div>
 
+        {/* Separador */}
+        <div className="border-t border-border/30 my-8"></div>
+
         {/* Seção Turmas */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-muted-foreground" />
-              <h2 className="text-lg font-semibold text-foreground">TURMAS</h2>
-            </div>
-            <Button className="bg-green-600 hover:bg-green-700 text-white">
-              <Plus className="h-4 w-4 mr-2" />
-              Nova Turma
-            </Button>
-          </div>
-
-          {/* DataTable de turma */} 
+          <TurmasDataTable 
+            cursoId={curso.id}
+            cursoNome={curso.nome}
+          />
         </div>
       </div>
 
