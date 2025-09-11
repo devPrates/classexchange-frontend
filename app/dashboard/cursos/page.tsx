@@ -2,26 +2,21 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Save, Search } from "lucide-react";
 import { useCursoListStore } from "@/store/curso-store";
-import { useCursoQuery, useDeleteCurso } from "@/hooks/use-curso";
+import { useCursoQuery } from "@/hooks/use-curso";
 import { CursoCard } from "@/components/dashboard/curso/curso-card";
 import { CursoCardSkeleton } from "@/components/loadings/curso-card-skeleton";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CreateCursoForm } from "@/components/dashboard/curso/create-curso-form";
-import type { curso } from "@/types/cursos";
-import { toast } from "sonner";
 
 export default function CursosPage() {
-  const router = useRouter();
   const search = useCursoListStore((s) => s.search);
   const setSearch = useCursoListStore((s) => s.setSearch);
   const [isCreateCursoOpen, setIsCreateCursoOpen] = useState(false);
 
   const { data, isLoading, isError, refetch } = useCursoQuery();
-  const deleteCursoMutation = useDeleteCurso();
 
   const filteredCursos = (data ?? []).filter((curso) =>
     curso.nome.toLowerCase().includes(search.toLowerCase()) ||
@@ -29,19 +24,7 @@ export default function CursosPage() {
     curso.campusNome.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleEditCurso = (curso: curso) => {
-    router.push(`/dashboard/cursos/editar/${curso.id}`);
-  };
 
-  const handleDeleteCurso = async (curso: curso) => {
-    try {
-      await deleteCursoMutation.mutateAsync(curso.id);
-      toast.success(`Curso "${curso.nome}" excluído com sucesso!`);
-    } catch (error) {
-      console.error('Erro ao excluir curso:', error);
-      toast.error('Erro ao excluir curso. Tente novamente.');
-    }
-  };
 
   return (
     <section className="space-y-6">
@@ -70,9 +53,9 @@ export default function CursosPage() {
 
       {/* Lista de cards */}
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Mostra 6 skeletons durante o carregamento */}
-          {Array.from({ length: 6 }).map((_, index) => (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Mostra 4 skeletons durante o carregamento */}
+          {Array.from({ length: 4 }).map((_, index) => (
             <CursoCardSkeleton key={index} />
           ))}
         </div>
@@ -84,13 +67,11 @@ export default function CursosPage() {
           </Button>
         </div>
       ) : filteredCursos.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {filteredCursos.map((curso) => (
             <CursoCard
               key={curso.id}
               curso={curso}
-              onEdit={handleEditCurso}
-              onDelete={handleDeleteCurso}
             />
           ))}
         </div>

@@ -6,38 +6,25 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function CursoCardSkeleton() {
   return (
-    <Card className="group relative overflow-hidden bg-gradient-to-br from-white via-blue-50/30 to-blue-100/50 dark:from-gray-900 dark:via-blue-950/30 dark:to-blue-900/20 border-0 shadow-lg">
-      {/* Borda decorativa */}
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700"></div>
-      
-      {/* Header */}
-      <CardHeader className="pb-4 relative">
-        <div className="flex items-start justify-between gap-4">
-          {/* Informações principais */}
-          <div className="flex items-start gap-4 flex-1 min-w-0">
-            {/* Ícone */}
-            <div className="relative">
-              <Skeleton className="w-14 h-14 rounded-xl" />
-              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-gray-900"></div>
+    <Card className="animate-pulse border-t-4 border-t-gray-300 bg-white dark:bg-gray-800">
+      {/* Header Principal - Estilo Horizontal */}
+      <CardHeader className="pb-6 border-b border-border/50">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="p-4 rounded-xl border">
+              <Skeleton className="h-8 w-8" />
             </div>
-            
-            {/* Textos */}
-            <div className="flex-1 min-w-0 space-y-2">
-              <div>
-                <Skeleton className="h-5 w-48 mb-2" />
-                <div className="flex items-center gap-2 mt-1">
-                  <Skeleton className="h-5 w-16 rounded-full" />
-                  <span className="text-sm text-gray-500 dark:text-gray-400">•</span>
-                  <Skeleton className="h-4 w-24" />
-                </div>
+            <div className="space-y-2">
+              <Skeleton className="h-6 w-48" />
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-1 w-8 rounded-full" />
+                <Skeleton className="h-4 w-16" />
               </div>
+              <Skeleton className="h-4 w-32" />
             </div>
           </div>
-          
-          {/* Botões de ação - sempre no canto superior direito */}
-          <div className="flex gap-2 flex-shrink-0">
-            <Skeleton className="h-8 w-8 rounded" />
-            <Skeleton className="h-8 w-8 rounded" />
+          <div className="flex gap-2">
+            <Skeleton className="h-8 w-16 rounded" />
           </div>
         </div>
       </CardHeader>
