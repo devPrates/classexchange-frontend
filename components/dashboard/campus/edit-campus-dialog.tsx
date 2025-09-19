@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Building2, Save, X, Mail, Hash, FileText, Loader2 } from "lucide-react";
+import { Building2, Save, X, Mail, Hash, FileText, Loader2, Phone, MapPin } from "lucide-react";
 import { useCampusByIdQuery, useUpdateCampus } from "@/hooks/use-campus";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,8 @@ const campusSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório").min(2, "Nome deve ter pelo menos 2 caracteres"),
   sigla: z.string().min(1, "Sigla é obrigatória").min(2, "Sigla deve ter pelo menos 2 caracteres"),
   email: z.string().min(1, "Email é obrigatório").email("Email deve ter um formato válido"),
+  telefone: z.string().optional(),
+  endereco: z.string().optional(),
 });
 
 type CampusFormData = z.infer<typeof campusSchema>;
@@ -37,6 +39,8 @@ export function EditCampusDialog({ open, onOpenChange, campusId }: EditCampusDia
       nome: "",
       sigla: "",
       email: "",
+      telefone: "",
+      endereco: "",
     },
   });
 
@@ -47,6 +51,8 @@ export function EditCampusDialog({ open, onOpenChange, campusId }: EditCampusDia
         nome: campus.nome,
         sigla: campus.sigla,
         email: campus.email,
+        telefone: campus.telefone || "",
+        endereco: campus.endereco || "",
       });
     }
   }, [campus, form]);
@@ -58,6 +64,8 @@ export function EditCampusDialog({ open, onOpenChange, campusId }: EditCampusDia
         nome: "",
         sigla: "",
         email: "",
+        telefone: "",
+        endereco: "",
       });
     }
   }, [open, form]);
@@ -69,9 +77,17 @@ export function EditCampusDialog({ open, onOpenChange, campusId }: EditCampusDia
     }
 
     try {
+      const updateData: UpdateCampus = {
+        nome: data.nome,
+        sigla: data.sigla,
+        email: data.email,
+        ...(data.telefone && { telefone: data.telefone }),
+        ...(data.endereco && { endereco: data.endereco }),
+      };
+
       await updateCampusMutation.mutateAsync({
         id: campusId,
-        data: data as UpdateCampus,
+        data: updateData,
       });
       toast.success("Campus atualizado com sucesso!");
       onOpenChange(false);
@@ -166,6 +182,51 @@ export function EditCampusDialog({ open, onOpenChange, campusId }: EditCampusDia
                       <Input
                         type="email"
                         placeholder="Digite o email do campus"
+                        {...field}
+                        disabled={updateCampusMutation.isPending}
+                        className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="telefone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2 text-sm font-medium">
+                      <Phone className="h-4 w-4 text-muted-foreground" />
+                      Telefone (Opcional)
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="tel"
+                        placeholder="(67) 3234-5678"
+                        {...field}
+                        disabled={updateCampusMutation.isPending}
+                        className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="endereco"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2 text-sm font-medium">
+                      <MapPin className="h-4 w-4 text-muted-foreground" />
+                      Endereço (Opcional)
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Rua das Universidades, 100 - Centro"
                         {...field}
                         disabled={updateCampusMutation.isPending}
                         className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"

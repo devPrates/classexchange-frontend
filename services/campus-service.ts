@@ -30,7 +30,7 @@ export async function fetchCampusByIdServer(id: string): Promise<Campus> {
 }
 
 // Função para criar um novo campus
-export async function createCampusServer(campus: Omit<Campus, "id" | "createdAt" | "updatedAt">): Promise<Campus> {
+export async function createCampusServer(campus: Omit<Campus, "id" | "slug" | "createdAt" | "updatedAt">): Promise<Campus> {
   try {
     const { data } = await serverApi.post<Campus>("/campus", campus);
     return data;

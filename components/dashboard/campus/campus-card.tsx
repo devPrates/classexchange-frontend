@@ -80,7 +80,7 @@ export function CampusCard({ campus, onEdit, onDelete }: CampusCardProps) {
               <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" />
               <p className="text-sm font-medium text-foreground">Endereço:</p>
               <p className="text-sm text-muted-foreground">
-                Rua das Universidades, 100 - São Paulo/SP, São Paulo -
+                {campus.endereco || "Endereço não informado"}
               </p>
             </div>
             
@@ -92,7 +92,7 @@ export function CampusCard({ campus, onEdit, onDelete }: CampusCardProps) {
               <div className="flex items-center gap-3">
                 <Phone className="h-4 w-4 text-muted-foreground" />
                 <p className="text-sm font-medium text-foreground">Telefone:</p>
-                <p className="text-sm text-muted-foreground">(11) 99999-9999</p>
+                <p className="text-sm text-muted-foreground">{campus.telefone || "Não informado"}</p>
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="h-4 w-4 text-muted-foreground" />

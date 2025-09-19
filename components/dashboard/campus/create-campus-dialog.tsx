@@ -42,6 +42,8 @@ const campusSchema = z.object({
   email: z.string().email({
     message: "Digite um email válido.",
   }),
+  telefone: z.string().optional(),
+  endereco: z.string().optional(),
 })
 
 interface CreateCampusDialogProps {
@@ -59,6 +61,8 @@ export function CreateCampusDialog({ open, onOpenChange }: CreateCampusDialogPro
       nome: "",
       sigla: "",
       email: "",
+      telefone: "",
+      endereco: "",
     },
   })
 
@@ -69,6 +73,8 @@ export function CreateCampusDialog({ open, onOpenChange }: CreateCampusDialogPro
         nome: values.nome,
         sigla: values.sigla,
         email: values.email,
+        ...(values.telefone && { telefone: values.telefone }),
+        ...(values.endereco && { endereco: values.endereco }),
       }
 
       await createCampusMutation.mutateAsync(campusData)
@@ -154,6 +160,47 @@ export function CreateCampusDialog({ open, onOpenChange }: CreateCampusDialogPro
                   </FormControl>
                   <FormDescription>
                     Email oficial do campus para contato.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="telefone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Telefone (Opcional)</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="tel"
+                      placeholder="(67) 3234-5678" 
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Telefone de contato do campus.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="endereco"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Endereço (Opcional)</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="Rua das Universidades, 100 - Centro" 
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Endereço completo do campus.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
