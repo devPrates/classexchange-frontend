@@ -1,13 +1,19 @@
-
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { z } from "zod"
 
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import {
   Form,
   FormControl,
@@ -38,8 +44,12 @@ const campusSchema = z.object({
   }),
 })
 
-export default function NovaInstituicao() {
-  const router = useRouter()
+interface CreateCampusDialogProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}
+
+export function CreateCampusDialog({ open, onOpenChange }: CreateCampusDialogProps) {
   const createCampusMutation = useCreateCampus()
 
   // Configuração do formulário
@@ -64,25 +74,31 @@ export default function NovaInstituicao() {
       await createCampusMutation.mutateAsync(campusData)
       
       toast.success("Campus criado com sucesso!")
-      router.push("/dashboard/instituicao")
+      form.reset()
+      onOpenChange(false)
     } catch (error) {
       toast.error("Erro ao criar campus. Tente novamente.")
       console.error("Erro ao criar campus:", error)
     }
   }
 
-  return (
-    <div className="container mx-auto py-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">Nova Instituição</h1>
-        <p className="text-muted-foreground">
-          Preencha os dados para cadastrar um novo campus.
-        </p>
-      </div>
+  const handleCancel = () => {
+    form.reset()
+    onOpenChange(false)
+  }
 
-      <div className="max-w-2xl">
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[500px]">
+        <DialogHeader>
+          <DialogTitle>Nova Instituição</DialogTitle>
+          <DialogDescription>
+            Preencha os dados para cadastrar um novo campus.
+          </DialogDescription>
+        </DialogHeader>
+
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="nome"
@@ -91,7 +107,7 @@ export default function NovaInstituicao() {
                   <FormLabel>Nome do Campus</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="Ex: Instituto Federal de Mato Grosso do Sul - Campus Campo Grande" 
+                      placeholder="Ex: Campo Grande" 
                       {...field} 
                     />
                   </FormControl>
@@ -111,7 +127,7 @@ export default function NovaInstituicao() {
                   <FormLabel>Sigla</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="Ex: IFMS-CG" 
+                      placeholder="Ex: CPG" 
                       {...field} 
                     />
                   </FormControl>
@@ -144,25 +160,25 @@ export default function NovaInstituicao() {
               )}
             />
 
-            <div className="flex gap-4">
+            <DialogFooter>
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={handleCancel}
+                disabled={createCampusMutation.isPending}
+              >
+                Cancelar
+              </Button>
               <Button 
                 type="submit" 
                 disabled={createCampusMutation.isPending}
               >
                 {createCampusMutation.isPending ? "Criando..." : "Criar Campus"}
               </Button>
-              
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={() => router.push("/dashboard/instituicao")}
-              >
-                Cancelar
-              </Button>
-            </div>
+            </DialogFooter>
           </form>
         </Form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   )
 }

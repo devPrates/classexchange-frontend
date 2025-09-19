@@ -1,18 +1,23 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCampusListStore } from "@/store/campus-store";
 import { useCampusQuery, useDeleteCampus } from "@/hooks/use-campus";
 import { CampusCard } from "@/components/dashboard/campus/campus-card";
 import { CampusCardSkeleton } from "@/components/loadings/campus-card-skeleton";
+import { CreateCampusDialog } from "@/components/dashboard/campus/create-campus-dialog";
+import { EditCampusDialog } from "@/components/dashboard/campus/edit-campus-dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import type { Campus } from "@/types/Campus";
-import Link from "next/link";
 import { toast } from "sonner";
 
 export default function InstituicaoPage() {
   const router = useRouter();
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [selectedCampusId, setSelectedCampusId] = useState<string | null>(null);
   const search = useCampusListStore((s) => s.search);
   const setSearch = useCampusListStore((s) => s.setSearch);
 
@@ -24,7 +29,8 @@ export default function InstituicaoPage() {
   );
 
   const handleEditCampus = (campus: Campus) => {
-    router.push(`/dashboard/instituicao/editar/${campus.id}`);
+    setSelectedCampusId(campus.id);
+    setIsEditDialogOpen(true);
   };
 
   const handleDeleteCampus = async (campus: Campus) => {
@@ -52,10 +58,8 @@ export default function InstituicaoPage() {
             placeholder="Buscar campus por nome..."
             className="w-full sm:w-80"
           />
-          <Button asChild>
-            <Link href="/dashboard/instituicao/novo">
-              Novo Campus
-            </Link>
+          <Button onClick={() => setIsCreateDialogOpen(true)}>
+            Novo Campus
           </Button>
         </div>
       </div>
@@ -98,6 +102,19 @@ export default function InstituicaoPage() {
           )}
         </div>
       )}
+
+      {/* Dialog para criar novo campus */}
+      <CreateCampusDialog 
+        open={isCreateDialogOpen} 
+        onOpenChange={setIsCreateDialogOpen} 
+      />
+
+      {/* Dialog para editar campus */}
+      <EditCampusDialog 
+        open={isEditDialogOpen} 
+        onOpenChange={setIsEditDialogOpen}
+        campusId={selectedCampusId}
+      />
     </section>
   );
 }
