@@ -29,6 +29,17 @@ export async function fetchCursoByIdServer(id: string): Promise<curso> {
   }
 }
 
+// Função para buscar um curso específico por slug
+export async function fetchCursoBySlugServer(slug: string): Promise<curso> {
+  try {
+    const { data } = await serverApi.get<curso>(`/cursos/slug/${slug}`);
+    return data;
+  } catch (error) {
+    console.error("Erro ao buscar curso por slug:", error);
+    throw new Error("Falha ao carregar dados do curso");
+  }
+}
+
 // Função para criar um novo curso
 export async function createCursoServer(curso: CreateCurso): Promise<curso> {
   try {

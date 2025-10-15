@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchCursosServer, fetchCursoByIdServer, createCursoServer, updateCursoServer, deleteCursoServer } from "@/services/curso-service";
+import { fetchCursosServer, fetchCursoByIdServer, fetchCursoBySlugServer, createCursoServer, updateCursoServer, deleteCursoServer } from "@/services/curso-service";
 import type { curso, CreateCurso, UpdateCurso } from "@/types/cursos";
 
 export const useCursoQuery = () => {
@@ -16,6 +16,16 @@ export const useCursoByIdQuery = (id: string) => {
     queryKey: ["cursos", id],
     queryFn: () => fetchCursoByIdServer(id),
     enabled: !!id,
+    staleTime: 1000 * 60 * 5,
+  });
+};
+
+// Hook para buscar um curso específico por slug
+export const useCursoBySlugQuery = (slug: string) => {
+  return useQuery({
+    queryKey: ["cursos", "slug", slug],
+    queryFn: () => fetchCursoBySlugServer(slug),
+    enabled: !!slug,
     staleTime: 1000 * 60 * 5,
   });
 };

@@ -40,7 +40,7 @@ export function CursoCard({ curso }: CursoCardProps) {
           </div>
           <div className="flex gap-2">
             <Button asChild size="sm" variant="default" className="gap-1.5">
-              <Link href={`/dashboard/cursos/${curso.id}`}>
+              <Link href={`/dashboard/cursos/${curso.slug}`}>
                 <Eye className="h-4 w-4" />
                 Ver
               </Link>
