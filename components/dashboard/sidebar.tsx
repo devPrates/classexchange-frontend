@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Building2, BookOpen, Settings, Calendar, Bell, RefreshCw, Users, ChevronDown, ChevronsUpDown } from 'lucide-react'
+import { LayoutDashboard, Building2, BookOpen, Calendar, Bell, RefreshCw, Users, ChevronDown, ChevronsUpDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
@@ -22,16 +22,12 @@ interface SidebarProps {
 
 const menuItems = [
   {
-    group: 'Menu',
+    group: 'Administração',
     items: [
       { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
       { icon: Building2, label: 'Instituição', href: '/dashboard/instituicao' },
       { icon: BookOpen, label: 'Cursos', href: '/dashboard/cursos' },
     ],
-  },
-  {
-    group: 'Administração',
-    items: [{ icon: Settings, label: 'Configurações', href: '/dashboard/configuracoes' }],
   },
   {
     group: 'Professor',
@@ -48,6 +44,15 @@ const menuItems = [
 export function Sidebar({ collapsed }: SidebarProps) {
   const pathname = usePathname()
   const [selectedTeam, setSelectedTeam] = useState('Equipe Principal')
+  const allItems = menuItems.flatMap((s) => s.items)
+  const activeItem = allItems.reduce<typeof allItems[number] | null>((best, item) => {
+    const href = item.href
+    const exact = pathname === href
+    const child = pathname.startsWith(href + '/')
+    if (!(exact || child)) return best
+    if (!best) return item
+    return href.length > best.href.length ? item : best
+  }, null)
 
   return (
     <div className="flex flex-col h-full bg-card border-r border-border">
@@ -98,7 +103,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
             <div className="space-y-1 px-2">
               {section.items.map((item) => {
                 const Icon = item.icon
-                const isActive = pathname === item.href
+                const isActive = activeItem ? item.href === activeItem.href : pathname === item.href
                 return (
                   <Link key={item.href} href={item.href}>
                     <Button

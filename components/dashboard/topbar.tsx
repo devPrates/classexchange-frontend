@@ -21,7 +21,7 @@ interface TopbarProps {
 
 export function Topbar({ onToggleSidebar }: TopbarProps) {
   return (
-    <div className="h-16 border-b border-border bg-card flex items-center justify-between px-4 gap-4">
+    <div className="h-[68px] border-b border-border bg-card flex items-center justify-between px-4 gap-4">
       {/* Left Side */}
       <div className="flex items-center gap-4">
         <Button
@@ -60,7 +60,7 @@ export function Topbar({ onToggleSidebar }: TopbarProps) {
         {/* Notifications */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="relative border border-primary/30 hover:border-primary/50">
+            <Button id="notifications-trigger" variant="ghost" size="icon" className="relative border border-primary/30 hover:border-primary/50">
               <Bell className="h-5 w-5" />
               <Badge
                 variant="destructive"
@@ -106,7 +106,7 @@ export function Topbar({ onToggleSidebar }: TopbarProps) {
         {/* User Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-10 w-10 rounded-full border border-primary/30 hover:border-primary/50 p-0">
+            <Button id="user-menu-trigger" variant="ghost" className="relative h-10 w-10 rounded-full border border-primary/30 hover:border-primary/50 p-0">
               <Avatar className="h-10 w-10">
                 <AvatarImage src="/placeholder.svg?height=40&width=40" alt="User" />
                 <AvatarFallback>JD</AvatarFallback>
