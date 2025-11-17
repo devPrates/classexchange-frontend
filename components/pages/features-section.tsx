@@ -65,12 +65,12 @@ export function FeaturesSection() {
   ]
 
   return (
-    <section id="features" ref={sectionRef} className="py-20 md:py-32 relative">
-      <div className="absolute top-0 left-0 right-0 blueprint-divider" />
+    <section id="features" ref={sectionRef} className="min-h-screen py-20 md:py-32 relative flex items-center">
+      <div className="section-divider bottom-0" />
       
       <div className="container mx-auto px-4">
         <div className={`max-w-6xl mx-auto transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <div className="mb-16">
+          <div className="mb-16 text-center">
             <div className="flex items-center gap-4 mb-6">
               <div className="h-px flex-1 bg-linear-to-r from-transparent via-primary/40 to-primary/40" />
               <span className="tech-label">Seção 03 — Funcionalidades</span>
@@ -80,7 +80,7 @@ export function FeaturesSection() {
               Funcionalidades{' '}
               <span className="text-primary">Poderosas</span>
             </h2>
-            <p className="text-lg text-muted-foreground max-w-3xl leading-relaxed">
+            <p className="text-lg text-muted-foreground max-w-3xl leading-relaxed mx-auto text-center">
               Sistema completo para gerenciar trocas e substituições de forma eficiente e profissional.
             </p>
           </div>

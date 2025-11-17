@@ -8,6 +8,7 @@ import { ThemeToggle } from '../theme-toggle'
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [activeSection, setActiveSection] = useState<string>('home')
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,11 +20,40 @@ export function Navigation() {
   }, [])
 
   const navLinks = [
-    { label: 'Início', href: '#home' },
-    { label: 'Sobre', href: '#about' },
-    { label: 'Funcionalidades', href: '#features' },
-    { label: 'Contato', href: '#contact' },
+    { label: 'Início', id: 'home' },
+    { label: 'Sobre', id: 'about' },
+    { label: 'Funcionalidades', id: 'features' },
+    { label: 'Contato', id: 'contact' },
   ]
+
+  useEffect(() => {
+    const ids = navLinks.map(l => l.id)
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) setActiveSection(entry.target.id)
+        })
+      },
+      { rootMargin: '-50% 0px -50% 0px' }
+    )
+    ids.forEach(id => {
+      const el = document.getElementById(id)
+      if (el) observer.observe(el)
+    })
+    return () => observer.disconnect()
+  }, [])
+
+  const handleNavClick = (id: string) => (e: React.MouseEvent) => {
+    e.preventDefault()
+    const el = document.getElementById(id)
+    if (!el) return
+    const navEl = document.querySelector('nav') as HTMLElement | null
+    const offset = navEl ? navEl.offsetHeight : 0
+    const top = el.getBoundingClientRect().top + window.scrollY - offset
+    window.scrollTo({ top, behavior: 'smooth' })
+    setActiveSection(id)
+    setIsMobileMenuOpen(false)
+  }
 
   return (
     <nav
@@ -54,8 +84,12 @@ export function Navigation() {
             {navLinks.map((link, index) => (
               <a
                 key={index}
-                href={link.href}
-                className="text-foreground/80 hover:text-primary transition-colors font-mono text-sm tracking-wide uppercase"
+                href="#"
+                onClick={handleNavClick(link.id)}
+                aria-current={activeSection === link.id ? 'page' : undefined}
+                className={`font-mono text-sm tracking-wide uppercase transition-colors ${
+                  activeSection === link.id ? 'text-primary' : 'text-foreground/80 hover:text-primary'
+                }`}
               >
                 {link.label}
               </a>
@@ -87,9 +121,12 @@ export function Navigation() {
             {navLinks.map((link, index) => (
               <a
                 key={index}
-                href={link.href}
-                className="block py-2 text-foreground/80 hover:text-primary transition-colors font-mono text-sm tracking-wide uppercase border-l-2 border-transparent hover:border-primary pl-3"
-                onClick={() => setIsMobileMenuOpen(false)}
+                href="#"
+                onClick={handleNavClick(link.id)}
+                aria-current={activeSection === link.id ? 'page' : undefined}
+                className={`block py-2 font-mono text-sm tracking-wide uppercase transition-colors border-l-2 pl-3 ${
+                  activeSection === link.id ? 'text-primary border-primary' : 'text-foreground/80 hover:text-primary border-transparent hover:border-primary'
+                }`}
               >
                 {link.label}
               </a>

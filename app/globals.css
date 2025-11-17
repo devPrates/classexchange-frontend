@@ -124,6 +124,15 @@
 }
 
 @layer utilities {
+    .section-divider {
+        position: absolute;
+        left: 0;
+        right: 0;
+        border-top: 1px dashed oklch(0.52 0.15 155 / 0.3);
+        pointer-events: none;
+        z-index: 1;
+        height: 0;
+    }
     .bg-hero {
         background-image: linear-gradient(oklch(0.99 0.002 106 / 0.6), oklch(0.99 0.002 106 / 0.6)), var(--image-background);
         background-position: center;

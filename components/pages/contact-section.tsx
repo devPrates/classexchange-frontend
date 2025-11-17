@@ -53,21 +53,22 @@ export function ContactSection() {
   ]
 
   return (
-    <section id="contact" ref={sectionRef} className="py-20 md:py-32 relative">
-      <div className="absolute top-0 left-0 right-0 blueprint-divider" />
+    <section id="contact" ref={sectionRef} className="min-h-screen py-20 md:py-32 relative flex items-center">
+      
       
       <div className="container mx-auto px-4">
         <div className={`max-w-6xl mx-auto transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <div className="mb-16">
+          <div className="mb-16 text-center">
             <div className="flex items-center gap-4 mb-6">
+              <div className="h-px flex-1 bg-linear-to-r from-transparent via-primary/40 to-primary/40" />
               <span className="tech-label">Seção 04 — Contato</span>
-              <div className="h-px flex-1 bg-linear-to-r from-primary/40 to-transparent" />
+              <div className="h-px flex-1 bg-linear-to-l from-transparent via-primary/40 to-primary/40" />
             </div>
             <h2 className="text-4xl md:text-5xl font-bold font-mono mb-6">
               Entre em{' '}
               <span className="text-primary">Contato</span>
             </h2>
-            <p className="text-lg text-muted-foreground max-w-3xl leading-relaxed">
+            <p className="text-lg text-muted-foreground max-w-3xl leading-relaxed mx-auto text-center">
               Sistema de suporte técnico disponível para auxiliar você.
             </p>
           </div>
