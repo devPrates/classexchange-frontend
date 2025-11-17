@@ -51,6 +51,7 @@ export type Campus = {
   nome: string
   cidade: string
   endereco: string
+  slug: string
   cursos: number
   alunos: number
   professores: number
@@ -64,6 +65,7 @@ export const campus: Campus[] = [
     nome: 'Campus Norte',
     cidade: 'São Paulo',
     endereco: 'Rua das Flores, 123',
+    slug: 'campus-norte',
     cursos: 12,
     alunos: 580,
     professores: 45,
@@ -75,6 +77,7 @@ export const campus: Campus[] = [
     nome: 'Campus Sul',
     cidade: 'São Paulo',
     endereco: 'Av. Principal, 456',
+    slug: 'campus-sul',
     cursos: 8,
     alunos: 420,
     professores: 32,
@@ -86,6 +89,7 @@ export const campus: Campus[] = [
     nome: 'Campus Leste',
     cidade: 'Guarulhos',
     endereco: 'Rua Central, 789',
+    slug: 'campus-leste',
     cursos: 10,
     alunos: 495,
     professores: 38,

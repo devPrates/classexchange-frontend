@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { CornerAccent } from '@/components/elements/corner-accent'
 import { Building2, MapPin, Phone, User, Edit } from 'lucide-react'
 import type { Campus } from '@/services/mock-data'
+import Link from 'next/link'
 
 export function CampusCard({ campus }: { campus: Campus }) {
   return (
@@ -20,10 +21,12 @@ export function CampusCard({ campus }: { campus: Campus }) {
               {campus.cidade}
             </p>
           </div>
-          <Button size="sm" className="btn-edit gap-1.5" onClick={(e) => { e.preventDefault(); console.log('[v0] Edit campus:', campus.id) }}>
-            <Edit className="h-3.5 w-3.5" />
-            Editar
-          </Button>
+          <Link href={`/dashboard/instituicao/${campus.slug}`}>
+            <Button size="sm" className="btn-edit gap-1.5">
+              <Edit className="h-3.5 w-3.5" />
+              Editar
+            </Button>
+          </Link>
         </div>
 
         <div className="space-y-2 mb-4">
