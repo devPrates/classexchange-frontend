@@ -45,3 +45,51 @@ export const cursos: Curso[] = [
     semestres: 8,
   },
 ]
+
+export type Campus = {
+  id: string
+  nome: string
+  cidade: string
+  endereco: string
+  cursos: number
+  alunos: number
+  professores: number
+  telefone: string
+  coordenador: string
+}
+
+export const campus: Campus[] = [
+  {
+    id: '1',
+    nome: 'Campus Norte',
+    cidade: 'São Paulo',
+    endereco: 'Rua das Flores, 123',
+    cursos: 12,
+    alunos: 580,
+    professores: 45,
+    telefone: '(11) 4002-1234',
+    coordenador: 'Prof. Maria Santos',
+  },
+  {
+    id: '2',
+    nome: 'Campus Sul',
+    cidade: 'São Paulo',
+    endereco: 'Av. Principal, 456',
+    cursos: 8,
+    alunos: 420,
+    professores: 32,
+    telefone: '(11) 3555-6789',
+    coordenador: 'Prof. João Pereira',
+  },
+  {
+    id: '3',
+    nome: 'Campus Leste',
+    cidade: 'Guarulhos',
+    endereco: 'Rua Central, 789',
+    cursos: 10,
+    alunos: 495,
+    professores: 38,
+    telefone: '(11) 2789-1122',
+    coordenador: 'Prof. Ana Lima',
+  },
+]

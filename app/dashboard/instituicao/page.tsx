@@ -17,28 +17,15 @@ import {
 import { Search, Plus, Edit, Trash2, Building2, MapPin } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { CornerAccent } from '@/components/elements/corner-accent'
-
-type Campus = {
-  id: string
-  nome: string
-  cidade: string
-  endereco: string
-  cursos: number
-  alunos: number
-}
+import { CampusCard } from '@/components/elements/campus-card'
+import { campus } from '@/services/mock-data'
 
 export default function InstituicaoPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [isLoading] = useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
-  const campusList: Campus[] = [
-    { id: '1', nome: 'Campus Norte', cidade: 'São Paulo', endereco: 'Rua das Flores, 123', cursos: 12, alunos: 580 },
-    { id: '2', nome: 'Campus Sul', cidade: 'São Paulo', endereco: 'Av. Principal, 456', cursos: 8, alunos: 420 },
-    { id: '3', nome: 'Campus Leste', cidade: 'Guarulhos', endereco: 'Rua Central, 789', cursos: 10, alunos: 495 },
-  ]
-
-  const filteredCampus = campusList.filter((campus) =>
+  const filteredCampus = campus.filter((campus) =>
     campus.nome.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
@@ -108,7 +95,7 @@ export default function InstituicaoPage() {
 
       {/* Campus List */}
       {isLoading ? (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2">
           {[1, 2, 3].map((i) => (
             <Card key={i} className="relative border-primary/30">
               <CornerAccent />
@@ -133,77 +120,9 @@ export default function InstituicaoPage() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filteredCampus.map((campus) => (
-            <Card key={campus.id} className="relative border-primary/30 hover:border-primary/50 transition-colors">
-              <CornerAccent />
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4 mb-4">
-                  {/* Icon */}
-                  <div className="shrink-0 w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20">
-                    <Building2 className="h-7 w-7 text-primary" />
-                  </div>
-
-                  {/* Title and Info */}
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-lg mb-1 text-balance">{campus.nome}</h3>
-                    <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-2">
-                      <MapPin className="h-3.5 w-3.5" />
-                      {campus.cidade}
-                    </p>
-                  </div>
-                </div>
-
-                <p className="text-sm text-muted-foreground mb-4">{campus.endereco}</p>
-
-                {/* Divider */}
-                <div className="blueprint-divider my-6" />
-
-                {/* Stats */}
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">Cursos</p>
-                    <span className="inline-block px-2 py-0.5 rounded-md text-sm font-semibold bg-primary/10 text-primary border border-primary/20">
-                      {campus.cursos}
-                    </span>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">Alunos</p>
-                    <span className="inline-block px-2 py-0.5 rounded-md text-sm font-semibold bg-primary/10 text-primary border border-primary/20">
-                      {campus.alunos}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Divider */}
-                <div className="blueprint-divider my-6" />
-
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    className="btn-edit flex-1 gap-1.5"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      console.log('[v0] Edit campus:', campus.id)
-                    }}
-                  >
-                    <Edit className="h-3.5 w-3.5" />
-                    Editar
-                  </Button>
-                  <Button
-                    size="sm"
-                    className="btn-delete gap-1.5"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      console.log('[v0] Delete campus:', campus.id)
-                    }}
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                    Excluir
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+        <div className="grid gap-4 md:grid-cols-2">
+          {filteredCampus.map((c) => (
+            <CampusCard key={c.id} campus={c} />
           ))}
         </div>
       )}
