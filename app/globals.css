@@ -29,6 +29,7 @@
     --chart-4: oklch(0.72 0.08 155);
     --chart-5: oklch(0.38 0.2 155);
     --radius: 0.125rem;
+    --image-background: url('/background.png');
 }
 
 .dark {
@@ -123,6 +124,12 @@
 }
 
 @layer utilities {
+    .bg-hero {
+        background-image: linear-gradient(oklch(0.99 0.002 106 / 0.6), oklch(0.99 0.002 106 / 0.6)), var(--image-background);
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
     .blueprint-divider {
         position: relative;
         border-top: 1px dashed oklch(0.52 0.15 155 / 0.3);
