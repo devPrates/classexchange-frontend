@@ -97,3 +97,39 @@ export const campus: Campus[] = [
     coordenador: 'Prof. Ana Lima',
   },
 ]
+
+export type Servidor = {
+  id: string
+  nome: string
+  email: string
+  cargo: string
+  setor: string
+  status: 'ativo' | 'inativo'
+}
+
+export const servidores: Servidor[] = [
+  {
+    id: 'srv-1',
+    nome: 'João da Silva',
+    email: 'joao.silva@ifms.edu.br',
+    cargo: 'Professor',
+    setor: 'Computação',
+    status: 'ativo',
+  },
+  {
+    id: 'srv-2',
+    nome: 'Maria Santos',
+    email: 'maria.santos@ifms.edu.br',
+    cargo: 'Coordenador',
+    setor: 'Engenharia',
+    status: 'ativo',
+  },
+  {
+    id: 'srv-3',
+    nome: 'Carlos Pereira',
+    email: 'carlos.pereira@ifms.edu.br',
+    cargo: 'Servidor Técnico',
+    setor: 'Administração',
+    status: 'inativo',
+  },
+]

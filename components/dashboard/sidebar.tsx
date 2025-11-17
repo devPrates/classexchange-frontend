@@ -22,6 +22,12 @@ interface SidebarProps {
 
 const menuItems = [
   {
+    group: 'Usuários',
+    items: [
+      { icon: Users, label: 'Servidores', href: '/dashboard/servidores' },
+    ],
+  },
+  {
     group: 'Administração',
     items: [
       { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
