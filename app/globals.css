@@ -124,6 +124,13 @@
 }
 
 @layer utilities {
+    .input-placeholder-center {
+        text-align: center;
+    }
+
+    .input-placeholder-center:not(:placeholder-shown) {
+        text-align: left;
+    }
     .section-divider {
         position: absolute;
         left: 0;
