@@ -2,10 +2,15 @@ import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { CornerAccent } from '@/components/elements/corner-accent'
-import { GraduationCap, Users, Calendar, BookOpen, Layers, Edit } from 'lucide-react'
-import { Curso } from '@/services/mock-data'
+import { GraduationCap, Users, Calendar, BookOpen, Edit, Loader2 } from 'lucide-react'
+import type { Curso } from '@/types/cursos'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 export function CourseCard({ curso }: { curso: Curso }) {
+  const router = useRouter()
+  const [isNavigating, setIsNavigating] = useState(false)
+
   return (
     <Card className="relative border-primary/30 hover:border-primary/50 transition-colors">
       <CornerAccent />
@@ -19,17 +24,27 @@ export function CourseCard({ curso }: { curso: Curso }) {
             <span className="inline-block px-2 py-0.5 rounded text-xs font-mono font-semibold bg-primary text-primary-foreground">
               {curso.sigla}
             </span>
-            <p className="text-sm text-muted-foreground mt-2">Campus: {curso.campus}</p>
+            <p className="text-sm text-muted-foreground mt-2">Campus: {curso.campusNome}</p>
           </div>
-          <Button asChild size="sm" className="btn-edit gap-1.5">
-            <Link href={`/dashboard/cursos/${curso.id}`}>
+          <Button
+            size="sm"
+            className="btn-edit gap-1.5 relative"
+            disabled={isNavigating}
+            onClick={() => {
+              setIsNavigating(true)
+              router.push(`/dashboard/cursos/${curso.slug}`)
+            }}
+          >
+            {isNavigating ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
               <Edit className="h-3.5 w-3.5" />
-              Editar
-              <div className="absolute top-0 left-0 w-1 h-1 border-l border-t border-yellow-500/40" />
-              <div className="absolute top-0 right-0 w-1 h-1 border-r border-t border-yellow-500/40" />
-              <div className="absolute bottom-0 left-0 w-1 h-1 border-l border-b border-yellow-500/40" />
-              <div className="absolute bottom-0 right-0 w-1 h-1 border-r border-b border-yellow-500/40" />
-            </Link>
+            )}
+            {isNavigating ? 'Abrindo...' : 'Editar'}
+            <div className="absolute top-0 left-0 w-1 h-1 border-l border-t border-yellow-500/40" />
+            <div className="absolute top-0 right-0 w-1 h-1 border-r border-t border-yellow-500/40" />
+            <div className="absolute bottom-0 left-0 w-1 h-1 border-l border-b border-yellow-500/40" />
+            <div className="absolute bottom-0 right-0 w-1 h-1 border-r border-b border-yellow-500/40" />
           </Button>
         </div>
 
@@ -39,7 +54,7 @@ export function CourseCard({ curso }: { curso: Curso }) {
           <Users className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
           <div className="flex flex-1 gap-2">
             <span className="text-sm text-muted-foreground">Coordenador:</span>
-            <p className="text-sm font-medium">{curso.coordenador}</p>
+            <p className="text-sm font-medium">-</p>
           </div>
         </div>
       
@@ -51,34 +66,16 @@ export function CourseCard({ curso }: { curso: Curso }) {
             <div className="flex items-center gap-1.5">
               <span className="text-xs text-muted-foreground">Turmas:</span>
               <span className="inline-block px-2 py-0.5 rounded-md text-sm font-semibold bg-primary/10 text-primary border border-primary/20 w-fit">
-                {curso.turmas}
+                {curso.turmas.length}
               </span>
             </div>
           </div>
-          <div className="flex items-center justify-center gap-2 h-full w-full">
-            <Users className="h-4 w-4 text-muted-foreground" />
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs text-muted-foreground">Alunos:</span>
-              <span className="inline-block px-2 py-0.5 rounded-md text-sm font-semibold bg-primary/10 text-primary border border-primary/20 w-fit">
-                {curso.alunos}
-              </span>
-            </div>
-          </div> 
           <div className="flex items-center justify-center gap-2 h-full w-full">
             <BookOpen className="h-4 w-4 text-muted-foreground" />
             <div className="flex items-center gap-1.5">
               <span className="text-xs text-muted-foreground">Disciplinas:</span>
               <span className="inline-block px-2 py-0.5 rounded-md text-sm font-semibold bg-primary/10 text-primary border border-primary/20 w-fit">
-                {curso.disciplinas}
-              </span>
-            </div>
-          </div>
-          <div className="flex items-center justify-center gap-2 h-full w-full">
-            <Layers className="h-4 w-4 text-muted-foreground" />
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs text-muted-foreground">Semestres:</span>
-              <span className="inline-block px-2 py-0.5 rounded-md text-sm font-semibold bg-primary/10 text-primary border border-primary/20 w-fit">
-                {curso.semestres}
+                {curso.disciplinas.length}
               </span>
             </div>
           </div>

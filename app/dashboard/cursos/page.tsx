@@ -3,54 +3,22 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { CornerAccent } from '@/components/elements/corner-accent'
-import { cursos } from '@/services/mock-data'
 import { CourseCard } from '@/components/elements/course-card'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Search, Plus, BookOpen, Eye, Edit, Trash2, GraduationCap, Users, Calendar, Layers } from 'lucide-react'
-
-type Curso = {
-  id: string
-  nome: string
-  sigla: string
-  campus: string
-  coordenador: string
-  alunos: number
-  turmas: number
-  disciplinas: number
-  semestres: number
-}
+import { CursoForm } from '@/components/forms/curso-form'
+import { useCursos } from '@/hooks/use-cursos'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export default function CursosPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-
-  
-
-  const filteredCursos = cursos.filter(
-    (curso) =>
-      curso.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      curso.sigla.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      curso.campus.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const { data, isLoading, isError, refetch } = useCursos(searchQuery)
+  const filteredCursos = data ?? []
 
   return (
     <div className="space-y-6">
@@ -76,35 +44,7 @@ export default function CursosPage() {
               <DialogTitle>Novo Curso</DialogTitle>
               <DialogDescription>Adicione um novo curso à instituição</DialogDescription>
             </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="nome-curso">Nome do Curso</Label>
-                <Input id="nome-curso" placeholder="Ciência da Computação" className="border-primary/30" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="sigla">Sigla</Label>
-                <Input id="sigla" placeholder="CC" className="border-primary/30" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="campus-select">Campus</Label>
-                <Select>
-                  <SelectTrigger id="campus-select" className="border-primary/30">
-                    <SelectValue placeholder="Selecione o campus" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="norte">Campus Norte</SelectItem>
-                    <SelectItem value="sul">Campus Sul</SelectItem>
-                    <SelectItem value="leste">Campus Leste</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                Cancelar
-              </Button>
-              <Button onClick={() => setIsDialogOpen(false)}>Salvar</Button>
-            </DialogFooter>
+            <CursoForm onSuccess={() => setIsDialogOpen(false)} />
           </DialogContent>
         </Dialog>
       </div>
@@ -126,7 +66,31 @@ export default function CursosPage() {
       </div>
 
       {/* Courses Grid */}
-      {filteredCursos.length === 0 ? (
+      {isLoading ? (
+        <div className="grid gap-4 lg:grid-cols-2">
+          {[1, 2, 3, 4].map((i) => (
+            <Card key={i} className="relative border-primary/30">
+              <CornerAccent />
+              <CardContent className="p-6">
+                <Skeleton className="h-5 w-40" />
+                <Skeleton className="h-4 w-24 mt-2" />
+                <div className="grid grid-cols-2 gap-4 mt-6">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : isError ? (
+        <Card className="relative border-primary/30">
+          <CornerAccent />
+          <CardContent className="py-6 flex items-center justify-between">
+            <p className="text-muted-foreground">Não foi possível carregar os cursos</p>
+            <Button variant="outline" onClick={() => refetch()}>Tentar novamente</Button>
+          </CardContent>
+        </Card>
+      ) : filteredCursos.length === 0 ? (
         <Card className="relative border-primary/30">
           <CornerAccent />
           <CardContent className="flex flex-col items-center justify-center py-12">

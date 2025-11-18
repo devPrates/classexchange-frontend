@@ -1,11 +1,15 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { CornerAccent } from '@/components/elements/corner-accent'
-import { Building2, MapPin, Phone, User, Edit } from 'lucide-react'
+import { Building2, MapPin, Phone, User, Edit, Loader2 } from 'lucide-react'
 import type { Campus } from '@/types/campus'
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 export function CampusCard({ campus }: { campus: Campus }) {
+  const router = useRouter()
+  const [isNavigating, setIsNavigating] = useState(false)
+
   return (
     <Card className="relative border-primary/30 hover:border-primary/50 transition-colors">
       <CornerAccent />
@@ -21,11 +25,21 @@ export function CampusCard({ campus }: { campus: Campus }) {
               {'Mato Grosso do Sul'}
             </p>
           </div>
-          <Button asChild size="sm" className="btn-edit gap-1.5">
-            <Link href={`/dashboard/instituicao/${campus.slug}`}>
+          <Button
+            size="sm"
+            className="btn-edit gap-1.5"
+            disabled={isNavigating}
+            onClick={() => {
+              setIsNavigating(true)
+              router.push(`/dashboard/instituicao/${campus.slug}`)
+            }}
+          >
+            {isNavigating ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
               <Edit className="h-3.5 w-3.5" />
-              Editar
-            </Link>
+            )}
+            {isNavigating ? 'Abrindo...' : 'Editar'}
           </Button>
         </div>
 
