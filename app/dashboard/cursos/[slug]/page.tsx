@@ -12,9 +12,12 @@ import { turmasColumns } from './turmas-columns'
 import { ArrowLeft, BookOpen, Edit, Trash2, Plus, Users } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from '@/components/ui/dialog'
 import { CursoForm } from '@/components/forms/curso-form'
+import { DisciplinaForm } from '@/components/forms/disciplina-form'
 import { useCursoBySlugOrId } from '@/hooks/use-cursos'
+import { useQuery } from '@tanstack/react-query'
 import { SoftToast } from '@/components/elements/soft-toast'
 import { deleteCursoById } from '@/services/curso-actions'
+import { deleteDisciplinaById, getDisciplinaById } from '@/services/disciplina-actions'
 
 export default function CursoDetailsPage() {
   const params = useParams<{ slug: string }>()
@@ -24,6 +27,18 @@ export default function CursoDetailsPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [isCreateDiscOpen, setIsCreateDiscOpen] = useState(false)
+  const [isEditDiscOpen, setIsEditDiscOpen] = useState(false)
+  const [isDeleteDiscOpen, setIsDeleteDiscOpen] = useState(false)
+  const [selectedDisciplinaId, setSelectedDisciplinaId] = useState<string | null>(null)
+  const { data: disciplinaDetalhe } = useQuery({
+    queryKey: ['disciplina', selectedDisciplinaId],
+    queryFn: async () => {
+      if (!selectedDisciplinaId) throw new Error('no-id')
+      return await getDisciplinaById(selectedDisciplinaId)
+    },
+    enabled: !!selectedDisciplinaId && isEditDiscOpen,
+  })
 
   if (isLoading) {
     return (
@@ -160,20 +175,104 @@ export default function CursoDetailsPage() {
               <CardTitle>Disciplinas</CardTitle>
               <CardDescription>Lista de disciplinas do curso</CardDescription>
             </div>
-            <Button className="relative border border-primary/30 hover:border-primary/50">
-              <Plus className="h-4 w-4" />
-              Nova Disciplina
-              <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/40" />
-              <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-primary/40" />
-              <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-l border-b border-primary/40" />
-              <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-primary/40" />
-            </Button>
+            <Dialog open={isCreateDiscOpen} onOpenChange={setIsCreateDiscOpen}>
+              <DialogTrigger asChild>
+                <Button className="relative border border-primary/30 hover:border-primary/50">
+                  <Plus className="h-4 w-4" />
+                  Nova Disciplina
+                  <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/40" />
+                  <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-primary/40" />
+                  <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-l border-b border-primary/40" />
+                  <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-primary/40" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="border-primary/30">
+                <DialogHeader>
+                  <DialogTitle>Nova Disciplina</DialogTitle>
+                  <DialogDescription>Cadastre uma nova disciplina para o curso</DialogDescription>
+                </DialogHeader>
+                <DisciplinaForm
+                  cursoId={item.id}
+                  mode="create"
+                  onSuccess={() => {
+                    setIsCreateDiscOpen(false)
+                    refetch()
+                  }}
+                />
+              </DialogContent>
+            </Dialog>
           </div>
         </CardHeader>
         <CardContent>
-          <DataTable columns={disciplinasColumns} data={item.disciplinas} />
+          <DataTable
+            columns={disciplinasColumns}
+            data={item.disciplinas}
+            onEdit={(disc: any) => {
+              setSelectedDisciplinaId(disc.id)
+              setIsEditDiscOpen(true)
+            }}
+            onDelete={(disc: any) => {
+              setSelectedDisciplinaId(disc.id)
+              setIsDeleteDiscOpen(true)
+            }}
+          />
         </CardContent>
       </Card>
+
+      <Dialog open={isEditDiscOpen} onOpenChange={setIsEditDiscOpen}>
+        <DialogContent className="border-primary/30">
+          <DialogHeader>
+            <DialogTitle>Editar Disciplina</DialogTitle>
+            <DialogDescription>Atualize os detalhes da disciplina</DialogDescription>
+          </DialogHeader>
+          {selectedDisciplinaId && (
+            <DisciplinaForm
+              cursoId={item.id}
+              mode="edit"
+              id={selectedDisciplinaId}
+              defaultValues={{
+                nome: disciplinaDetalhe?.nome ?? '',
+                cargaHoraria: disciplinaDetalhe?.cargaHoraria ?? 60,
+                ementa: disciplinaDetalhe?.ementa ?? '',
+              }}
+              onSuccess={() => {
+                setIsEditDiscOpen(false)
+                setSelectedDisciplinaId(null)
+                refetch()
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isDeleteDiscOpen} onOpenChange={setIsDeleteDiscOpen}>
+        <DialogContent className="border-red-300">
+          <DialogHeader>
+            <DialogTitle className="text-red-700">Confirmar exclusão</DialogTitle>
+            <DialogDescription className="text-red-600">Tem certeza que deseja excluir esta disciplina?</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDeleteDiscOpen(false)} className="border-primary/30">Cancelar</Button>
+            <Button
+              className="bg-red-600 hover:bg-red-700 text-white"
+              onClick={async () => {
+                if (!selectedDisciplinaId) return
+                try {
+                  await deleteDisciplinaById(selectedDisciplinaId)
+                  SoftToast.success('Disciplina excluída com sucesso')
+                  setIsDeleteDiscOpen(false)
+                  setSelectedDisciplinaId(null)
+                  refetch()
+                } catch (err: any) {
+                  SoftToast.error('Falha ao excluir a disciplina', { description: err.message ?? 'Tente novamente mais tarde' })
+                }
+              }}
+            >
+              Confirmar exclusão
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Turmas */}
       <Card className="relative border-primary/30">
