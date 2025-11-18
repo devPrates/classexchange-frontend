@@ -167,11 +167,54 @@ export type Solicitacao = {
   disciplina: string
   data: string
   status: 'pendente' | 'aprovado' | 'recusado'
+  turma?: string
+  horario?: string
+  professorEnvolvido?: string
+  dataSolicitacao?: string
 }
 
 export const solicitacoesPendentes: Solicitacao[] = [
   { id: '1', tipo: 'Troca', professor: 'Prof. João Silva', disciplina: 'Algoritmos', data: '25/11/2025', status: 'pendente' },
   { id: '2', tipo: 'Substituição', professor: 'Profa. Maria Santos', disciplina: 'Cálculo I', data: '28/11/2025', status: 'pendente' },
+]
+
+export const solicitacoes: Solicitacao[] = [
+  {
+    id: '1',
+    tipo: 'Substituição',
+    disciplina: 'Cálculo I',
+    turma: 'ES - 2º Semestre',
+    data: '28/11/2025',
+    horario: '08:00 - 10:00',
+    professorEnvolvido: 'Prof. Ricardo Lima',
+    status: 'aprovado',
+    dataSolicitacao: '18/11/2025',
+    professor: 'Prof. Ricardo Lima',
+  },
+  {
+    id: '2',
+    tipo: 'Troca',
+    disciplina: 'Programação Web',
+    turma: 'CC - 3º Semestre',
+    data: '25/11/2025',
+    horario: '08:00 - 10:00',
+    professorEnvolvido: 'Prof. João Silva',
+    status: 'pendente',
+    dataSolicitacao: '18/11/2025',
+    professor: 'Prof. João Silva',
+  },
+  {
+    id: '3',
+    tipo: 'Substituição',
+    disciplina: 'Redes de Computadores',
+    turma: 'CC - 5º Semestre',
+    data: '22/11/2025',
+    horario: '10:00 - 12:00',
+    professorEnvolvido: 'Prof. Fernando Costa',
+    status: 'recusado',
+    dataSolicitacao: '15/11/2025',
+    professor: 'Prof. Fernando Costa',
+  },
 ]
 
 export type Notificacao = {

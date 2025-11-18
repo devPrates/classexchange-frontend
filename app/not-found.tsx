@@ -77,14 +77,14 @@ export default function NotFound() {
                 className="relative group hover:border-primary/50 transition-all"
               >
                 <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <ArrowLeft className="w-4 h-4 mr-2" />
+                <ArrowLeft className="w-4 h-4" />
                 Voltar
               </Button>
               
               <Link href="/">
                 <Button className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground relative overflow-hidden group">
                   <span className="relative z-10 flex items-center">
-                    <Home className="w-4 h-4 mr-2" />
+                    <Home className="w-4 h-4" />
                     Página Inicial
                   </span>
                   <div className="absolute inset-0 bg-accent opacity-0 group-hover:opacity-20 transition-opacity" />
@@ -97,7 +97,7 @@ export default function NotFound() {
                   className="w-full sm:w-auto relative group hover:border-primary/50 transition-all"
                 >
                   <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <BookOpen className="w-4 h-4 mr-2" />
+                  <BookOpen className="w-4 h-4" />
                   Dashboard
                 </Button>
               </Link>

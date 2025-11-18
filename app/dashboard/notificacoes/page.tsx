@@ -20,7 +20,7 @@ export default function NotificacoesPage() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" className="border-primary/30 hover:border-primary/50">
-            <CheckCheck className="mr-2 h-4 w-4" />
+            <CheckCheck className="h-4 w-4" />
             Marcar todas como lidas
           </Button>
         </div>

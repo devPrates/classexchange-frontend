@@ -82,7 +82,7 @@ export default function SubstituicaoPage() {
       <div className="space-y-4">
         <Link href="/dashboard/professor">
           <Button variant="ghost" className="pl-0 hover:bg-transparent">
-            <ArrowLeft className="mr-2 h-4 w-4" />
+            <ArrowLeft className="h-4 w-4" />
             Voltar
           </Button>
         </Link>

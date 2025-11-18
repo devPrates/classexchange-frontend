@@ -75,7 +75,7 @@ export default function InstituicaoDetailPage() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" className="border-primary/30 hover:border-primary/50">
-            <Edit className="mr-2 h-4 w-4" />
+            <Edit className="h-4 w-4" />
             Editar
           </Button>
         </div>

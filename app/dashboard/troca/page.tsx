@@ -13,8 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { ArrowLeft, RefreshCw, Calendar, ChevronRight } from 'lucide-react'
-import Link from 'next/link'
+import { Calendar, ChevronRight } from 'lucide-react'
+import { RiExchangeBoxLine } from 'react-icons/ri'
 import { SkeletonCard, SkeletonTable } from '@/components/elements/skeleton-loader'
 
 type Professor = {
@@ -96,13 +96,6 @@ export default function TrocaPage() {
     <div className="space-y-6">
       {/* Header with Breadcrumb */}
       <div className="space-y-4">
-        <Link href="/dashboard/professor">
-          <Button variant="ghost" className="pl-0 hover:bg-transparent">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar
-          </Button>
-        </Link>
-        
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <span className="tech-label">Professor</span>
           <ChevronRight className="h-4 w-4" />
@@ -208,7 +201,7 @@ export default function TrocaPage() {
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex items-start gap-4 flex-1">
                         <div className="shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20">
-                          <RefreshCw className="h-5 w-5 text-primary" />
+                          <RiExchangeBoxLine className="h-5 w-5 text-primary" />
                         </div>
 
                         <div className="flex-1">

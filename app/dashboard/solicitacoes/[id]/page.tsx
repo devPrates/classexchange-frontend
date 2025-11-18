@@ -1,12 +1,14 @@
 'use client'
 
 import { useRouter, useParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { CornerAccent } from '@/components/elements/corner-accent'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ArrowLeft, Users, Info, ChevronRight } from 'lucide-react'
+import { RiExchange2Line } from 'react-icons/ri'
 import Link from 'next/link'
 
 export default function ParecerSolicitacaoPage() {
@@ -27,9 +29,13 @@ export default function ParecerSolicitacaoPage() {
       email: 'ricardo.lima@exemplo.com',
       area: 'Matemática Aplicada',
     },
-    dataEmissao: new Date().toLocaleDateString('pt-BR'),
     dataManifestacao: '19/11/2025',
   }
+
+  const [dataEmissao, setDataEmissao] = useState('')
+  useEffect(() => {
+    setDataEmissao(new Date().toLocaleDateString('pt-BR'))
+  }, [])
 
   const handleEncaminhar = () => {
     // Simula encaminhamento
@@ -40,29 +46,34 @@ export default function ParecerSolicitacaoPage() {
   return (
     <div className="space-y-6">
       {/* Header with Breadcrumb */}
-      <div className="space-y-4">
-        <Link href="/dashboard/solicitacoes">
-          <Button variant="ghost" className="pl-0 hover:bg-transparent">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar para Solicitações
-          </Button>
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <span className="tech-label">Professor</span>
+        <ChevronRight className="h-4 w-4" />
+        <Link href="/dashboard/solicitacoes" className="hover:text-foreground">
+          Solicitações
         </Link>
-        
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span className="tech-label">Professor</span>
-          <ChevronRight className="h-4 w-4" />
-          <Link href="/dashboard/solicitacoes" className="hover:text-foreground">
-            Solicitações
-          </Link>
-          <ChevronRight className="h-4 w-4" />
-          <span className="text-foreground font-medium">Parecer</span>
-        </div>
+        <ChevronRight className="h-4 w-4" />
+        <span className="text-foreground font-medium">Parecer</span>
+      </div>
 
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Parecer da Solicitação</h1>
-          <p className="text-muted-foreground mt-1">
-            Preencha os dados e encaminhe para aprovação
-          </p>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => router.back()}
+            className="border-primary/30 hover:border-primary/50 relative"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/40" />
+            <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-primary/40" />
+            <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-l border-b border-primary/40" />
+            <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-primary/40" />
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Parecer da Solicitação</h1>
+            <p className="text-muted-foreground mt-1">Preencha os dados e encaminhe para aprovação</p>
+          </div>
         </div>
       </div>
 
@@ -71,7 +82,7 @@ export default function ParecerSolicitacaoPage() {
         <CornerAccent />
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-primary" />
+            <RiExchange2Line className="h-5 w-5 text-primary" />
             Resumo da Solicitação
           </CardTitle>
         </CardHeader>
@@ -144,7 +155,7 @@ export default function ParecerSolicitacaoPage() {
               <Label htmlFor="emissao">Data de Emissão</Label>
               <Input
                 id="emissao"
-                value={solicitacao.dataEmissao}
+                value={dataEmissao}
                 disabled
                 className="border-primary/30 bg-muted"
               />

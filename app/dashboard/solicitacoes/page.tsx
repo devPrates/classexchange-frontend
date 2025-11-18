@@ -6,68 +6,27 @@ import { CornerAccent } from '@/components/elements/corner-accent'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Users, RefreshCw, Calendar, ChevronRight } from 'lucide-react'
-
-type Solicitacao = {
-  id: string
-  tipo: 'Substituição' | 'Troca'
-  disciplina: string
-  turma: string
-  data: string
-  horario: string
-  professorEnvolvido: string
-  status: 'Pendente' | 'Aceita' | 'Recusada'
-  dataSolicitacao: string
-}
+import { Users, Calendar, ChevronRight } from 'lucide-react'
+import { RiExchange2Line, RiExchangeBoxLine } from 'react-icons/ri'
+import { solicitacoes as solicitacoesMock, type Solicitacao } from '@/services/mock-data'
 
 export default function SolicitacoesPage() {
-  const solicitacoes: Solicitacao[] = [
-    {
-      id: '1',
-      tipo: 'Substituição',
-      disciplina: 'Cálculo I',
-      turma: 'ES - 2º Semestre',
-      data: '28/11/2025',
-      horario: '08:00 - 10:00',
-      professorEnvolvido: 'Prof. Ricardo Lima',
-      status: 'Aceita',
-      dataSolicitacao: '18/11/2025',
-    },
-    {
-      id: '2',
-      tipo: 'Troca',
-      disciplina: 'Programação Web',
-      turma: 'CC - 3º Semestre',
-      data: '25/11/2025',
-      horario: '08:00 - 10:00',
-      professorEnvolvido: 'Prof. João Silva',
-      status: 'Pendente',
-      dataSolicitacao: '18/11/2025',
-    },
-    {
-      id: '3',
-      tipo: 'Substituição',
-      disciplina: 'Redes de Computadores',
-      turma: 'CC - 5º Semestre',
-      data: '22/11/2025',
-      horario: '10:00 - 12:00',
-      professorEnvolvido: 'Prof. Fernando Costa',
-      status: 'Recusada',
-      dataSolicitacao: '15/11/2025',
-    },
-  ]
+  const solicitacoes: Solicitacao[] = solicitacoesMock
 
-  const pendentes = solicitacoes.filter((s) => s.status === 'Pendente')
-  const aceitas = solicitacoes.filter((s) => s.status === 'Aceita')
-  const recusadas = solicitacoes.filter((s) => s.status === 'Recusada')
+  const pendentes = solicitacoes.filter((s) => s.status === 'pendente')
+  const aceitas = solicitacoes.filter((s) => s.status === 'aprovado')
+  const recusadas = solicitacoes.filter((s) => s.status === 'recusado')
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Pendente':
-        return 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20'
+      case 'pendente':
+        return 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20'
       case 'Aceita':
+      case 'aprovado':
         return 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20'
       case 'Recusada':
+      case 'recusado':
         return 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20'
       default:
         return 'bg-muted text-muted-foreground'
@@ -75,12 +34,18 @@ export default function SolicitacoesPage() {
   }
 
   const getIcon = (tipo: string) => {
-    return tipo === 'Substituição' ? Users : RefreshCw
+    return tipo === 'Substituição' ? RiExchange2Line : RiExchangeBoxLine
   }
 
   const renderSolicitacao = (solicitacao: Solicitacao) => {
     const Icon = getIcon(solicitacao.tipo)
-    const isAceita = solicitacao.status === 'Aceita'
+    const isAceita = solicitacao.status === 'aprovado'
+    const displayStatus =
+      solicitacao.status === 'aprovado'
+        ? 'Aceita'
+        : solicitacao.status === 'recusado'
+        ? 'Recusada'
+        : 'Pendente'
 
     return (
       <Card
@@ -110,7 +75,7 @@ export default function SolicitacoesPage() {
                     solicitacao.status
                   )}`}
                 >
-                  {solicitacao.status}
+                  {displayStatus}
                 </span>
               </div>
 
@@ -156,13 +121,13 @@ export default function SolicitacoesPage() {
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="pendentes" className="space-y-4">
+      <Tabs defaultValue="aceitas" className="space-y-4">
         <TabsList className="border-primary/30">
-          <TabsTrigger value="pendentes" className="data-[state=active]:border-primary/50">
-            Pendentes ({pendentes.length})
-          </TabsTrigger>
           <TabsTrigger value="aceitas" className="data-[state=active]:border-primary/50">
             Aceitas ({aceitas.length})
+          </TabsTrigger>
+          <TabsTrigger value="pendentes" className="data-[state=active]:border-primary/50">
+            Pendentes ({pendentes.length})
           </TabsTrigger>
           <TabsTrigger value="recusadas" className="data-[state=active]:border-primary/50">
             Recusadas ({recusadas.length})

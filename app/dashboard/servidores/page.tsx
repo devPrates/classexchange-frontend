@@ -29,7 +29,7 @@ export default function ServidoresPage() {
           <p className="text-muted-foreground mt-1">Cadastro e gerenciamento de usuários</p>
         </div>
         <Button className="relative border border-primary/30 hover:border-primary/50" onClick={() => setIsDialogOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="h-4 w-4" />
           Novo Servidor
           <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/40" />
           <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-primary/40" />

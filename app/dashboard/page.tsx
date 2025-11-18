@@ -1,7 +1,8 @@
 
 import { CornerAccent } from '@/components/elements/corner-accent'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Calendar, Users, RefreshCw, BookOpen } from 'lucide-react'
+import { Calendar } from 'lucide-react'
+import { RiExchangeBoxLine, RiExchange2Line, RiBookMarkedLine } from 'react-icons/ri'
 
 export default function DashboardPage() {
   const stats = [
@@ -9,19 +10,19 @@ export default function DashboardPage() {
       title: 'Total de Cursos',
       value: '24',
       description: 'Cursos ativos',
-      icon: BookOpen,
+      icon: RiBookMarkedLine,
     },
     {
       title: 'Trocas Pendentes',
       value: '8',
       description: 'Aguardando aprovação',
-      icon: RefreshCw,
+      icon: RiExchangeBoxLine,
     },
     {
       title: 'Substituições',
       value: '15',
       description: 'Neste mês',
-      icon: Users,
+      icon: RiExchange2Line,
     },
     {
       title: 'Aulas Hoje',

@@ -1,6 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { CornerAccent } from '@/components/elements/corner-accent'
-import { Bell, CheckCheck, Trash2, Calendar, RefreshCw, AlertCircle, Info } from 'lucide-react'
+import { Bell, CheckCheck, Trash2, AlertCircle, Info } from 'lucide-react'
+import { RiExchangeBoxLine, RiExchange2Line } from 'react-icons/ri'
 import { Button } from '@/components/ui/button'
 import { formatDate } from '@/lib/utils'
 
@@ -20,9 +21,9 @@ type NotificationCardProps = {
 const getIconByType = (tipo: string) => {
   switch (tipo) {
     case 'troca':
-      return RefreshCw
+      return RiExchangeBoxLine
     case 'substituicao':
-      return Calendar
+      return RiExchange2Line
     case 'aviso':
       return AlertCircle
     case 'lembrete':

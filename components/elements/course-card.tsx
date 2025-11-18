@@ -21,16 +21,16 @@ export function CourseCard({ curso }: { curso: Curso }) {
             </span>
             <p className="text-sm text-muted-foreground mt-2">Campus: {curso.campus}</p>
           </div>
-          <Link href={`/dashboard/cursos/${curso.id}`}>
-            <Button size="sm" className="btn-edit gap-1.5">
+          <Button asChild size="sm" className="btn-edit gap-1.5">
+            <Link href={`/dashboard/cursos/${curso.id}`}>
               <Edit className="h-3.5 w-3.5" />
               Editar
               <div className="absolute top-0 left-0 w-1 h-1 border-l border-t border-yellow-500/40" />
               <div className="absolute top-0 right-0 w-1 h-1 border-r border-t border-yellow-500/40" />
               <div className="absolute bottom-0 left-0 w-1 h-1 border-l border-b border-yellow-500/40" />
               <div className="absolute bottom-0 right-0 w-1 h-1 border-r border-b border-yellow-500/40" />
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
 
         <div className="blueprint-divider my-4" />

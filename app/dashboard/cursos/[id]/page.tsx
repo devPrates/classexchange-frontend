@@ -83,11 +83,11 @@ export default function CursoDetailsPage() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" className="border-primary/30 hover:border-primary/50">
-            <Edit className="mr-2 h-4 w-4" />
+            <Edit className="h-4 w-4" />
             Editar
           </Button>
           <Button variant="outline" className="text-destructive hover:text-destructive border-destructive/30">
-            <Trash2 className="mr-2 h-4 w-4" />
+            <Trash2 className="h-4 w-4" />
             Excluir
           </Button>
         </div>
@@ -137,7 +137,7 @@ export default function CursoDetailsPage() {
               <CardDescription>Lista de disciplinas do curso</CardDescription>
             </div>
             <Button className="relative border border-primary/30 hover:border-primary/50">
-              <Plus className="mr-2 h-4 w-4" />
+              <Plus className="h-4 w-4" />
               Nova Disciplina
               <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/40" />
               <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-primary/40" />
@@ -195,7 +195,7 @@ export default function CursoDetailsPage() {
               <CardDescription>Lista de turmas do curso</CardDescription>
             </div>
             <Button className="relative border border-primary/30 hover:border-primary/50">
-              <Plus className="mr-2 h-4 w-4" />
+              <Plus className="h-4 w-4" />
               Nova Turma
               <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/40" />
               <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-primary/40" />

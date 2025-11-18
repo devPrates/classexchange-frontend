@@ -21,12 +21,12 @@ export function CampusCard({ campus }: { campus: Campus }) {
               {campus.cidade}
             </p>
           </div>
-          <Link href={`/dashboard/instituicao/${campus.slug}`}>
-            <Button size="sm" className="btn-edit gap-1.5">
+          <Button asChild size="sm" className="btn-edit gap-1.5">
+            <Link href={`/dashboard/instituicao/${campus.slug}`}>
               <Edit className="h-3.5 w-3.5" />
               Editar
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
 
         <div className="space-y-2 mb-4">

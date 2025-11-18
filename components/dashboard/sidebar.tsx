@@ -3,7 +3,10 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Building2, BookOpen, Calendar, Bell, RefreshCw, Users, ChevronDown, ChevronsUpDown, ClipboardList } from 'lucide-react'
+import { LayoutDashboard, Building2, Calendar, Bell, Users, ChevronDown, ChevronsUpDown, ClipboardList } from 'lucide-react'
+import { RiBookMarkedLine } from 'react-icons/ri'
+import { FaRegAddressBook } from 'react-icons/fa'
+import { RiExchangeBoxLine, RiExchange2Line } from 'react-icons/ri'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
@@ -24,7 +27,7 @@ const menuItems = [
   {
     group: 'Usuários',
     items: [
-      { icon: Users, label: 'Servidores', href: '/dashboard/servidores' },
+      { icon: FaRegAddressBook, label: 'Servidores', href: '/dashboard/servidores' },
     ],
   },
   {
@@ -32,7 +35,7 @@ const menuItems = [
     items: [
       { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
       { icon: Building2, label: 'Instituição', href: '/dashboard/instituicao' },
-      { icon: BookOpen, label: 'Cursos', href: '/dashboard/cursos' },
+      { icon: RiBookMarkedLine, label: 'Cursos', href: '/dashboard/cursos' },
     ],
   },
   {
@@ -42,8 +45,8 @@ const menuItems = [
       { icon: Calendar, label: 'Calendário', href: '/dashboard/calendario' },
       { icon: Bell, label: 'Notificações', href: '/dashboard/notificacoes' },
       { icon: ClipboardList, label: 'Solicitações', href: '/dashboard/solicitacoes' },
-      { icon: RefreshCw, label: 'Troca', href: '/dashboard/troca' },
-      { icon: Users, label: 'Substituição', href: '/dashboard/substituicao' },
+      { icon: RiExchangeBoxLine, label: 'Troca', href: '/dashboard/troca' },
+      { icon: RiExchange2Line, label: 'Substituição', href: '/dashboard/substituicao' },
     ],
   },
 ]
@@ -112,15 +115,17 @@ export function Sidebar({ collapsed }: SidebarProps) {
                 const Icon = item.icon
                 const isActive = activeItem ? item.href === activeItem.href : pathname === item.href
                 return (
-                  <Link key={item.href} href={item.href}>
-                    <Button
-                      variant={isActive ? 'secondary' : 'ghost'}
-                      className={cn(
-                        'w-full justify-start relative border border-transparent hover:border-primary/30 transition-colors',
-                        isActive && 'border-primary/50 bg-secondary/50',
-                        collapsed && 'justify-center px-2'
-                      )}
-                    >
+                  <Button
+                    key={item.href}
+                    asChild
+                    variant={isActive ? 'secondary' : 'ghost'}
+                    className={cn(
+                      'w-full justify-start relative border border-transparent hover:border-primary/30 transition-colors',
+                      isActive && 'border-primary/50 bg-secondary/50',
+                      collapsed && 'justify-center px-2'
+                    )}
+                  >
+                    <Link href={item.href}>
                       <Icon className={cn('h-5 w-5', !collapsed && 'mr-2')} />
                       {!collapsed && <span>{item.label}</span>}
                       {isActive && (
@@ -131,8 +136,8 @@ export function Sidebar({ collapsed }: SidebarProps) {
                           <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-primary/60" />
                         </>
                       )}
-                    </Button>
-                  </Link>
+                    </Link>
+                  </Button>
                 )
               })}
             </div>
