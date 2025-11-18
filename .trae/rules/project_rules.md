@@ -54,8 +54,6 @@ Ele consumirá uma API backend utilizando **TanStack Query** para busca e cache 
 - **CRUD Pages:** cada entidade com listagem paginada + filtros + busca + formulários de criação/edição.
 
 ## 8. Regras de CRUD
-- **Rota de criação:** `/entidade/novo`
-- **Rota de edição:** `/entidade/editar/:id`
 - **Formulários:** sempre validados com zod e `react-hook-form`.
 - **Paginação/Filtros:** controlados pelo TanStack Query.
 - **Feedback:** toast para sucesso e erro.
