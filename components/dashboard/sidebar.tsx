@@ -152,7 +152,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="w-full justify-start p-2 h-auto hover:bg-secondary/50">
                 <Avatar className="h-8 w-8 border border-primary/30">
-                  <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
+                  <AvatarImage src="/placeholder.svg" alt="User" />
                   <AvatarFallback>JD</AvatarFallback>
                 </Avatar>
                 <div className="ml-2 flex-1 text-left overflow-hidden">
@@ -174,7 +174,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
         ) : (
           <div className="flex items-center justify-center">
             <Avatar className="h-8 w-8 border border-primary/30">
-              <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
+              <AvatarImage src="/placeholder.svg" alt="User" />
               <AvatarFallback>JD</AvatarFallback>
             </Avatar>
           </div>

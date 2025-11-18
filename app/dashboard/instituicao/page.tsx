@@ -18,16 +18,15 @@ import { Search, Plus, Edit, Trash2, Building2, MapPin } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { CornerAccent } from '@/components/elements/corner-accent'
 import { CampusCard } from '@/components/elements/campus-card'
-import { campus } from '@/services/mock-data'
+import { useCampi } from '@/hooks/use-campi'
+import { CampusForm } from '@/components/forms/campus-form'
 
 export default function InstituicaoPage() {
   const [searchQuery, setSearchQuery] = useState('')
-  const [isLoading] = useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const { data, isLoading, isError, refetch } = useCampi(searchQuery)
 
-  const filteredCampus = campus.filter((campus) =>
-    campus.nome.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const filteredCampus = data ?? []
 
   return (
     <div className="space-y-6">
@@ -53,26 +52,7 @@ export default function InstituicaoPage() {
               <DialogTitle>Novo Campus</DialogTitle>
               <DialogDescription>Adicione um novo campus à instituição</DialogDescription>
             </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="nome">Nome do Campus</Label>
-                <Input id="nome" placeholder="Campus Norte" className="border-primary/30" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="cidade">Cidade</Label>
-                <Input id="cidade" placeholder="São Paulo" className="border-primary/30" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="endereco">Endereço</Label>
-                <Input id="endereco" placeholder="Rua das Flores, 123" className="border-primary/30" />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                Cancelar
-              </Button>
-              <Button onClick={() => setIsDialogOpen(false)}>Salvar</Button>
-            </DialogFooter>
+            <CampusForm onSuccess={() => setIsDialogOpen(false)} />
           </DialogContent>
         </Dialog>
       </div>
@@ -106,6 +86,14 @@ export default function InstituicaoPage() {
             </Card>
           ))}
         </div>
+      ) : isError ? (
+        <Card className="relative border-primary/30">
+          <CornerAccent />
+          <CardContent className="py-6 flex items-center justify-between">
+            <p className="text-muted-foreground">Não foi possível carregar os campus</p>
+            <Button variant="outline" onClick={() => refetch()}>Tentar novamente</Button>
+          </CardContent>
+        </Card>
       ) : filteredCampus.length === 0 ? (
         <Card className="relative border-primary/30">
           <CornerAccent />

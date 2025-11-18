@@ -108,7 +108,7 @@ export function Topbar({ onToggleSidebar }: TopbarProps) {
           <DropdownMenuTrigger asChild>
             <Button id="user-menu-trigger" variant="ghost" className="relative h-10 w-10 rounded-full border border-primary/30 hover:border-primary/50 p-0">
               <Avatar className="h-10 w-10">
-                <AvatarImage src="/placeholder.svg?height=40&width=40" alt="User" />
+                <AvatarImage src="./placeholder.svg" alt="User" />
                 <AvatarFallback>JD</AvatarFallback>
               </Avatar>
               <div className="absolute top-0 left-0 w-2 h-2 border-l border-t border-primary/40" />

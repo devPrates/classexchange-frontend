@@ -1,28 +1,50 @@
 'use client'
 
 import { useParams, useRouter } from 'next/navigation'
+import { useState } from 'react'
 import Link from 'next/link'
-import { campus, cursos } from '@/services/mock-data'
+import { useCampusBySlug } from '@/hooks/use-campi'
+import type { Campus } from '@/types/campus'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CornerAccent } from '@/components/elements/corner-accent'
-import { Building2, MapPin, Phone, User, ArrowLeft, Users, BookOpen, Edit } from 'lucide-react'
+import { MapPin, ArrowLeft, Users, BookOpen, Edit, Trash2 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from '@/components/ui/dialog'
+import { CampusForm } from '@/components/forms/campus-form'
+import { SoftToast } from '@/components/elements/soft-toast'
+import { deleteCampusById } from '@/services/campus-actions'
 
 export default function InstituicaoDetailPage() {
   const params = useParams<{ slug: string }>()
   const router = useRouter()
-  const item = campus.find((c) => c.slug === params.slug)
+  const slug = params.slug
+  const { data: item, isLoading, isError, refetch } = useCampusBySlug(slug)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
 
-  if (!item) {
+  if (isLoading) {
     return (
       <Card className="relative border-primary/30">
         <CornerAccent />
         <CardContent className="p-8">
+          <p className="text-muted-foreground">Carregando campus...</p>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (isError || !item) {
+    return (
+      <Card className="relative border-primary/30">
+        <CornerAccent />
+        <CardContent className="p-8 flex items-center justify-between">
           <p className="text-muted-foreground">Campus não encontrado</p>
+          <Button variant="outline" onClick={() => refetch()}>Tentar novamente</Button>
         </CardContent>
       </Card>
     )
@@ -31,13 +53,13 @@ export default function InstituicaoDetailPage() {
   // Local form state (pronto para editar futuramente)
   const form = {
     nome: item.nome,
-    cidade: item.cidade,
-    endereco: item.endereco,
-    telefone: item.telefone,
-    coordenador: item.coordenador,
+    cidade: 'Mato Grosso do Sul',
+    endereco: item.endereco ?? '',
+    telefone: item.telefone ?? '',
+    coordenador: 'Alex Monteiro',
   }
 
-  const campusCursos = cursos.filter((c) => c.campus === item.nome)
+  const campusCursos: Campus['cursos'] = Array.isArray(item.cursos) ? item.cursos : []
 
   return (
     <div className="space-y-6">
@@ -69,15 +91,45 @@ export default function InstituicaoDetailPage() {
             <h1 className="text-3xl font-bold tracking-tight">{item.nome}</h1>
             <p className="text-muted-foreground mt-1 flex items-center gap-1.5">
               <MapPin className="h-3.5 w-3.5" />
-              {item.cidade}
+              {'Mato Grosso do Sul'}
             </p>
           </div>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="border-primary/30 hover:border-primary/50">
-            <Edit className="h-4 w-4" />
-            Editar
-          </Button>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="border-primary/30 hover:border-primary/50">
+                <Edit className="h-4 w-4" />
+                Editar
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="border-primary/30">
+              <DialogHeader>
+                <DialogTitle>Editar Campus</DialogTitle>
+                <DialogDescription>Atualize os detalhes do campus</DialogDescription>
+              </DialogHeader>
+              <CampusForm
+                mode="edit"
+                slug={slug}
+                id={item.id}
+                defaultValues={{
+                  nome: item.nome,
+                  sigla: item.sigla,
+                  email: item.email,
+                  telefone: item.telefone,
+                  endereco: item.endereco,
+                }}
+                onSuccess={(updated) => {
+                  setIsDialogOpen(false)
+                  if (updated.slug && updated.slug !== slug) {
+                    router.replace(`/dashboard/instituicao/${updated.slug}`)
+                  } else {
+                    refetch()
+                  }
+                }}
+              />
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
@@ -90,7 +142,7 @@ export default function InstituicaoDetailPage() {
             <BookOpen className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{item.cursos}</div>
+            <div className="text-2xl font-bold">{campusCursos.length}</div>
           </CardContent>
         </Card>
         <Card className="relative border-primary/30">
@@ -100,7 +152,7 @@ export default function InstituicaoDetailPage() {
             <Users className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{item.alunos}</div>
+            <div className="text-2xl font-bold">{'-'}</div>
           </CardContent>
         </Card>
         <Card className="relative border-primary/30">
@@ -110,7 +162,7 @@ export default function InstituicaoDetailPage() {
             <Users className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{item.professores}</div>
+            <div className="text-2xl font-bold">{'-'}</div>
           </CardContent>
         </Card>
       </div>
@@ -130,35 +182,26 @@ export default function InstituicaoDetailPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="nome">Nome</Label>
-              <Input id="nome" defaultValue={form.nome} className="border-primary/30" />
+              <Input id="nome" value={form.nome} className="border-primary/30" disabled />
             </div>
             <div className="space-y-2">
               <Label htmlFor="cidade">Cidade</Label>
-              <Input id="cidade" defaultValue={form.cidade} className="border-primary/30" />
+              <Input id="cidade" value={form.cidade} className="border-primary/30" disabled />
             </div>
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="endereco">Endereço</Label>
-              <Input id="endereco" defaultValue={form.endereco} className="border-primary/30" />
+              <Input id="endereco" value={form.endereco} className="border-primary/30" disabled />
             </div>
             <div className="space-y-2">
               <Label htmlFor="telefone">Telefone</Label>
-              <Input id="telefone" defaultValue={form.telefone} className="border-primary/30" />
+              <Input id="telefone" value={form.telefone} className="border-primary/30" disabled />
             </div>
             <div className="space-y-2">
               <Label htmlFor="coordenador">Coordenador</Label>
-              <Input id="coordenador" defaultValue={form.coordenador} className="border-primary/30" />
+              <Input id="coordenador" value={form.coordenador} className="border-primary/30" disabled />
             </div>
           </div>
-          <div className="mt-4 flex gap-2">
-            <Button className="relative border border-primary/30 hover:border-primary/50" onClick={() => console.log('Salvar alterações do campus')}>
-              Salvar alterações
-              <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/40" />
-              <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-primary/40" />
-              <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-l border-b border-primary/40" />
-              <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-primary/40" />
-            </Button>
-            <Button variant="outline" onClick={() => router.back()}>Cancelar</Button>
-          </div>
+          
         </CardContent>
       </Card>
 
@@ -192,9 +235,9 @@ export default function InstituicaoDetailPage() {
                   <TableCell>
                     <Badge variant="outline" className="tech-label">{c.sigla}</Badge>
                   </TableCell>
-                  <TableCell>{c.coordenador}</TableCell>
-                  <TableCell>{c.disciplinas}</TableCell>
-                  <TableCell>{c.turmas}</TableCell>
+                  <TableCell>{'-'}</TableCell>
+                  <TableCell>{'-'}</TableCell>
+                  <TableCell>{'-'}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Link href={`/dashboard/cursos/${c.id}`}>
@@ -208,6 +251,74 @@ export default function InstituicaoDetailPage() {
               ))}
             </TableBody>
           </Table>
+        </CardContent>
+      </Card>
+
+      {/* Zona de Perigo */}
+      <Card className="relative border-red-300 bg-white">
+        <CornerAccent />
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <div>
+              <CardTitle className="text-red-700">Zona de Perigo</CardTitle>
+              <CardDescription className="text-red-600">Excluir este campus permanentemente</CardDescription>
+            </div>
+            <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="border-red-300 text-red-700 hover:bg-red-50 hover:text-red-800 hover:border-red-400"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Excluir Campus
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="border-red-300">
+                <DialogHeader>
+                  <DialogTitle className="text-red-700">Confirmar exclusão</DialogTitle>
+                  <DialogDescription className="text-red-600">
+                    Esta ação é irreversível. Tem certeza que deseja excluir o campus "{item.nome}"?
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsDeleteOpen(false)}
+                    className="border-primary/30"
+                    disabled={isDeleting}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    onClick={async () => {
+                      try {
+                        setIsDeleting(true)
+                        await deleteCampusById(item.id)
+                        SoftToast.success('Campus excluído com sucesso')
+                        router.replace('/dashboard/instituicao')
+                        setIsDeleteOpen(false)
+                      } catch (err) {
+                        SoftToast.error('Falha ao excluir o campus', {
+                          description: 'Tente novamente em instantes',
+                        })
+                      } finally {
+                        setIsDeleting(false)
+                      }
+                    }}
+                    className="bg-red-600 hover:bg-red-700 text-white"
+                    disabled={isDeleting}
+                  >
+                    {isDeleting ? 'Excluindo...' : 'Confirmar exclusão'}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-red-700">
+            Ao excluir, todos os dados relacionados a este campus poderão ser removidos ou tornar-se inacessíveis.
+          </p>
         </CardContent>
       </Card>
     </div>

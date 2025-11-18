@@ -2,7 +2,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { CornerAccent } from '@/components/elements/corner-accent'
 import { Building2, MapPin, Phone, User, Edit } from 'lucide-react'
-import type { Campus } from '@/services/mock-data'
+import type { Campus } from '@/types/campus'
 import Link from 'next/link'
 
 export function CampusCard({ campus }: { campus: Campus }) {
@@ -18,7 +18,7 @@ export function CampusCard({ campus }: { campus: Campus }) {
             <h3 className="font-bold text-lg mb-1 text-balance">{campus.nome}</h3>
             <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-2">
               <MapPin className="h-3.5 w-3.5" />
-              {campus.cidade}
+              {'Mato Grosso do Sul'}
             </p>
           </div>
           <Button asChild size="sm" className="btn-edit gap-1.5">
@@ -33,17 +33,23 @@ export function CampusCard({ campus }: { campus: Campus }) {
           <div className="flex items-center gap-2">
             <MapPin className="h-4 w-4 text-foreground" />
             <span className="text-sm font-semibold">Endereço:</span>
-            <span className="text-sm text-muted-foreground">{campus.endereco}</span>
+            <span className="text-sm text-muted-foreground">
+              {campus.endereco
+                ? (campus.endereco.length > 25
+                  ? campus.endereco.slice(0, 25) + '...'
+                  : campus.endereco)
+                : '-'}
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <Phone className="h-4 w-4 text-foreground" />
             <span className="text-sm font-semibold">Telefone:</span>
-            <span className="text-sm text-muted-foreground">{campus.telefone}</span>
+            <span className="text-sm text-muted-foreground">{campus.telefone ?? '-'}</span>
           </div>
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 text-foreground" />
             <span className="text-sm font-semibold">Coordenador:</span>
-            <span className="text-sm text-muted-foreground">{campus.coordenador}</span>
+            <span className="text-sm text-muted-foreground">{'Alex Monteiro'}</span>
           </div>
         </div>
 
@@ -53,19 +59,19 @@ export function CampusCard({ campus }: { campus: Campus }) {
           <div className="flex flex-col items-center justify-center gap-1 h-full">
             <p className="text-sm text-muted-foreground">Cursos</p>
             <span className="inline-block px-2 py-0.5 rounded-md text-sm font-semibold bg-primary/10 text-primary border border-primary/20">
-              {campus.cursos}
+              {Array.isArray(campus.cursos) ? campus.cursos.length : 0}
             </span>
           </div>
           <div className="flex flex-col items-center justify-center gap-1 h-full">
             <p className="text-sm text-muted-foreground">Alunos</p>
             <span className="inline-block px-2 py-0.5 rounded-md text-sm font-semibold bg-primary/10 text-primary border border-primary/20">
-              {campus.alunos}
+              {'-'}
             </span>
           </div>
           <div className="flex flex-col items-center justify-center gap-1 h-full">
             <p className="text-sm text-muted-foreground">Professores</p>
             <span className="inline-block px-2 py-0.5 rounded-md text-sm font-semibold bg-primary/10 text-primary border border-primary/20">
-              {campus.professores}
+              {'-'}
             </span>
           </div>
         </div>
