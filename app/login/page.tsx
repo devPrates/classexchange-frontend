@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from '@/components/ui/input-otp'
@@ -14,6 +15,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [otp, setOtp] = useState('')
   const [step, setStep] = useState<'email' | 'otp'>('email')
+  const router = useRouter()
 
   const handleSendOTP = (e: React.FormEvent) => {
     e.preventDefault()
@@ -24,7 +26,7 @@ export default function LoginPage() {
 
   const handleVerifyOTP = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Verificando OTP:', otp)
+    router.push('/dashboard')
   }
 
   const handleSocialLogin = (provider: string) => {

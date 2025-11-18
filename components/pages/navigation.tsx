@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Menu, X } from 'lucide-react'
 import { ThemeToggle } from '../theme-toggle'
@@ -97,7 +98,15 @@ export function Navigation() {
           </div>
 
           <div className="hidden md:flex items-center gap-4">
-            <Button variant="ghost" className="font-mono text-sm">Entrar</Button>
+            <Link href="/login">
+              <Button variant="outline" className="font-mono text-sm px-8 relative">
+                <span className="relative z-10">Entrar</span>
+                <div className="absolute top-0 left-0 w-2 h-2 border-l border-t border-primary/40" />
+                <div className="absolute top-0 right-0 w-2 h-2 border-r border-t border-primary/40" />
+                <div className="absolute bottom-0 left-0 w-2 h-2 border-l border-b border-primary/40" />
+                <div className="absolute bottom-0 right-0 w-2 h-2 border-r border-b border-primary/40" />
+              </Button>
+            </Link>
             <ThemeToggle />
           </div>
 
@@ -132,9 +141,15 @@ export function Navigation() {
               </a>
             ))}
             <div className="pt-4 space-y-3 border-t border-dashed border-primary/20">
-              <Button variant="ghost" className="w-full font-mono text-sm">
-                Entrar
-              </Button>
+              <Link href="/login">
+                <Button variant="outline" className="w-full font-mono text-sm relative">
+                  <span className="relative z-10">Entrar</span>
+                  <div className="absolute top-0 left-0 w-2 h-2 border-l border-t border-primary/40" />
+                  <div className="absolute top-0 right-0 w-2 h-2 border-r border-t border-primary/40" />
+                  <div className="absolute bottom-0 left-0 w-2 h-2 border-l border-b border-primary/40" />
+                  <div className="absolute bottom-0 right-0 w-2 h-2 border-r border-b border-primary/40" />
+                </Button>
+              </Link>
               <ThemeToggle />
             </div>
           </div>
