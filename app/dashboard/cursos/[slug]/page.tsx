@@ -6,7 +6,9 @@ import { useParams, useRouter } from 'next/navigation'
 import { CornerAccent } from '@/components/elements/corner-accent'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { DataTable } from '@/components/elements/data-table'
+import { disciplinasColumns } from './disciplinas-columns'
+import { turmasColumns } from './turmas-columns'
 import { ArrowLeft, BookOpen, Edit, Trash2, Plus, Users } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from '@/components/ui/dialog'
 import { CursoForm } from '@/components/forms/curso-form'
@@ -169,33 +171,7 @@ export default function CursoDetailsPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nome</TableHead>
-                <TableHead>Carga Horária</TableHead>
-                <TableHead className="text-right">Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {item.disciplinas.map((disciplina) => (
-                <TableRow key={disciplina.id}>
-                  <TableCell className="font-medium">{disciplina.nome}</TableCell>
-                  <TableCell>{disciplina.cargaHoraria}h</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button variant="ghost" size="sm">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <DataTable columns={disciplinasColumns} data={item.disciplinas} />
         </CardContent>
       </Card>
 
@@ -219,31 +195,7 @@ export default function CursoDetailsPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nome</TableHead>
-                <TableHead className="text-right">Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {item.turmas.map((turma) => (
-                <TableRow key={turma.id}>
-                  <TableCell className="font-medium">{turma.nome}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button variant="ghost" size="sm">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <DataTable columns={turmasColumns} data={item.turmas} />
         </CardContent>
       </Card>
 
