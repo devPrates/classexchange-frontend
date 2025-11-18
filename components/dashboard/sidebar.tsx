@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Building2, BookOpen, Calendar, Bell, RefreshCw, Users, ChevronDown, ChevronsUpDown } from 'lucide-react'
+import { LayoutDashboard, Building2, BookOpen, Calendar, Bell, RefreshCw, Users, ChevronDown, ChevronsUpDown, ClipboardList } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
@@ -41,6 +41,7 @@ const menuItems = [
       { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard/professor' },
       { icon: Calendar, label: 'Calendário', href: '/dashboard/calendario' },
       { icon: Bell, label: 'Notificações', href: '/dashboard/notificacoes' },
+      { icon: ClipboardList, label: 'Solicitações', href: '/dashboard/solicitacoes' },
       { icon: RefreshCw, label: 'Troca', href: '/dashboard/troca' },
       { icon: Users, label: 'Substituição', href: '/dashboard/substituicao' },
     ],
