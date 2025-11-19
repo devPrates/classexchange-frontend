@@ -31,3 +31,8 @@ export async function updateCursoById(id: string, payload: UpdateCurso): Promise
 export async function deleteCursoById(id: string): Promise<void> {
   await api.delete(`/cursos/${id}`)
 }
+
+export async function setCoordenadorCurso(cursoId: string, payload: { usuarioId: string; inicio?: string; fim?: string }): Promise<Curso> {
+  const { data } = await api.put(`/cursos/${cursoId}/coordenador`, payload)
+  return data as Curso
+}

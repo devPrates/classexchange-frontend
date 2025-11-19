@@ -20,10 +20,7 @@ export function CampusCard({ campus }: { campus: Campus }) {
           </div>
           <div className="flex-1 min-w-0">
             <h3 className="font-bold text-lg mb-1 text-balance">{campus.nome}</h3>
-            <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-2">
-              <MapPin className="h-3.5 w-3.5" />
-              {'Mato Grosso do Sul'}
-            </p>
+            <p className="text-sm text-muted-foreground mt-1">{campus.sigla} • {campus.email}</p>
           </div>
           <Button
             size="sm"
@@ -62,8 +59,10 @@ export function CampusCard({ campus }: { campus: Campus }) {
           </div>
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 text-foreground" />
-            <span className="text-sm font-semibold">Coordenador:</span>
-            <span className="text-sm text-muted-foreground">{'Alex Monteiro'}</span>
+            <span className="text-sm font-semibold">Diretor de Ensino:</span>
+            <span className="text-sm text-muted-foreground">
+              {campus.diretorEnsino ? `${campus.diretorEnsino.usuarioNome} • ${campus.diretorEnsino.usuarioEmail}` : '-'}
+            </span>
           </div>
         </div>
 

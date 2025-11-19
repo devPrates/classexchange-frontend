@@ -9,6 +9,15 @@ export type TurmaResumo = {
     nome: string;
 };
 
+export type CoordenadorCursoResumo = {
+    id: string;
+    usuarioId: string;
+    usuarioNome: string;
+    usuarioEmail?: string;
+    inicio: string;
+    fim: string;
+};
+
 export type Curso = {
     id: string;
     nome: string;
@@ -16,8 +25,8 @@ export type Curso = {
     slug: string;
     campusId: string;
     campusNome: string;
-    disciplinas: DisciplinaResumo[];
     turmas: TurmaResumo[];
+    coordenadorCurso: CoordenadorCursoResumo;
     createdAt: string;
     updatedAt: string;
 };

@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { CornerAccent } from '@/components/elements/corner-accent'
-import { GraduationCap, Users, Calendar, BookOpen, Edit, Loader2 } from 'lucide-react'
+import { GraduationCap, Users, Calendar, Edit, Loader2 } from 'lucide-react'
 import type { Curso } from '@/types/cursos'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -54,28 +54,21 @@ export function CourseCard({ curso }: { curso: Curso }) {
           <Users className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
           <div className="flex flex-1 gap-2">
             <span className="text-sm text-muted-foreground">Coordenador:</span>
-            <p className="text-sm font-medium">-</p>
+            <p className="text-sm font-medium">
+              {curso.coordenadorCurso ? `${curso.coordenadorCurso.usuarioNome}${curso.coordenadorCurso.usuarioEmail ? ' • ' + curso.coordenadorCurso.usuarioEmail : ''}` : '-'}
+            </p>
           </div>
         </div>
       
         <div className="blueprint-divider my-4" />
 
-        <div className="grid grid-cols-2 gap-4 items-stretch auto-rows-fr">
+        <div className="grid grid-cols-1 gap-4 items-stretch auto-rows-fr">
           <div className="flex items-center justify-center gap-2 h-full w-full">
             <Calendar className="h-4 w-4 text-muted-foreground" />
             <div className="flex items-center gap-1.5">
               <span className="text-xs text-muted-foreground">Turmas:</span>
               <span className="inline-block px-2 py-0.5 rounded-md text-sm font-semibold bg-primary/10 text-primary border border-primary/20 w-fit">
                 {curso.turmas.length}
-              </span>
-            </div>
-          </div>
-          <div className="flex items-center justify-center gap-2 h-full w-full">
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs text-muted-foreground">Disciplinas:</span>
-              <span className="inline-block px-2 py-0.5 rounded-md text-sm font-semibold bg-primary/10 text-primary border border-primary/20 w-fit">
-                {curso.disciplinas.length}
               </span>
             </div>
           </div>

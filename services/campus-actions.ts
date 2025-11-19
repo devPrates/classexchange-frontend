@@ -31,3 +31,8 @@ export async function updateCampusById(id: string, payload: UpdateCampus): Promi
 export async function deleteCampusById(id: string): Promise<void> {
   await api.delete(`/campus/${id}`)
 }
+
+export async function setDiretorEnsino(campusId: string, payload: { usuarioId: string }): Promise<Campus> {
+  const { data } = await api.put(`/campus/${campusId}/diretor-ensino`, payload)
+  return data as Campus
+}

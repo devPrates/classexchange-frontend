@@ -9,14 +9,16 @@ import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/elements/data-table'
 import { disciplinasColumns } from './disciplinas-columns'
 import { turmasColumns } from './turmas-columns'
-import { ArrowLeft, BookOpen, Edit, Trash2, Plus, Users } from 'lucide-react'
+import { ArrowLeft, Edit, Trash2, Plus, Users } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from '@/components/ui/dialog'
 import { CursoForm } from '@/components/forms/curso-form'
 import { DisciplinaForm } from '@/components/forms/disciplina-form'
 import { useCursoBySlugOrId } from '@/hooks/use-cursos'
 import { useQuery } from '@tanstack/react-query'
 import { SoftToast } from '@/components/elements/soft-toast'
-import { deleteCursoById } from '@/services/curso-actions'
+import { deleteCursoById, setCoordenadorCurso } from '@/services/curso-actions'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
 import { deleteDisciplinaById, getDisciplinaById } from '@/services/disciplina-actions'
 
 export default function CursoDetailsPage() {
@@ -31,6 +33,8 @@ export default function CursoDetailsPage() {
   const [isEditDiscOpen, setIsEditDiscOpen] = useState(false)
   const [isDeleteDiscOpen, setIsDeleteDiscOpen] = useState(false)
   const [selectedDisciplinaId, setSelectedDisciplinaId] = useState<string | null>(null)
+  const [isCoordDialogOpen, setIsCoordDialogOpen] = useState(false)
+  const [coordUsuarioId, setCoordUsuarioId] = useState('')
   const { data: disciplinaDetalhe } = useQuery({
     queryKey: ['disciplina', selectedDisciplinaId],
     queryFn: async () => {
@@ -65,6 +69,12 @@ export default function CursoDetailsPage() {
 
   return (
     <div className="space-y-6">
+      {(() => {
+        const disciplinas = (item as any).disciplinas ?? []
+        return (
+          <></>
+        )
+      })()}
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <Link href="/dashboard" className="hover:text-foreground">Dashboard</Link>
@@ -136,16 +146,6 @@ export default function CursoDetailsPage() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card className="relative border-primary/30">
           <CornerAccent />
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium tech-label">Total de Disciplinas</CardTitle>
-            <BookOpen className="h-4 w-4 text-primary" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{item.disciplinas.length}</div>
-          </CardContent>
-        </Card>
-        <Card className="relative border-primary/30">
-          <CornerAccent />
           <CardHeader className="flex flex-row items-center justify之间 space-y-0 pb-2">
             <CardTitle className="text-sm font-medium tech-label">Total de Turmas</CardTitle>
             <Users className="h-4 w-4 text-primary" />
@@ -165,6 +165,76 @@ export default function CursoDetailsPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Coordenador do Curso */}
+      <Card className="relative border-primary/30">
+        <CornerAccent />
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <div>
+            <CardTitle className="text-sm font-medium tech-label">Coordenador do Curso</CardTitle>
+            <CardDescription>Gerencie o responsável pelo curso</CardDescription>
+          </div>
+          <Button
+            variant="outline"
+            className="border-primary/30"
+            onClick={() => {
+              setCoordUsuarioId(item.coordenadorCurso?.usuarioId ?? '')
+              setIsCoordDialogOpen(true)
+            }}
+          >
+            {item.coordenadorCurso ? 'Alterar' : 'Inserir'}
+          </Button>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="coordNome">Nome</Label>
+              <Input id="coordNome" value={item.coordenadorCurso?.usuarioNome ?? '-'} className="border-primary/30" disabled />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="coordEmail">Email</Label>
+              <Input id="coordEmail" value={(item.coordenadorCurso as any)?.usuarioEmail ?? '-'} className="border-primary/30" disabled />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Dialog open={isCoordDialogOpen} onOpenChange={setIsCoordDialogOpen}>
+        <DialogContent className="border-primary/30">
+          <DialogHeader>
+            <DialogTitle>{item.coordenadorCurso ? 'Alterar Coordenador do Curso' : 'Inserir Coordenador do Curso'}</DialogTitle>
+            <DialogDescription>Informe o ID do usuário que será definido como Coordenador do Curso</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <Label htmlFor="coordUsuarioId">Usuário ID</Label>
+            <Input
+              id="coordUsuarioId"
+              placeholder="UUID do usuário"
+              className="border-primary/30"
+              value={coordUsuarioId}
+              onChange={(e) => setCoordUsuarioId(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" className="border-primary/30" onClick={() => setIsCoordDialogOpen(false)}>Cancelar</Button>
+            <Button
+              onClick={async () => {
+                try {
+                  if (!coordUsuarioId) return
+                  await setCoordenadorCurso(item.id, { usuarioId: coordUsuarioId })
+                  SoftToast.success('Coordenador do Curso atualizado com sucesso')
+                  setIsCoordDialogOpen(false)
+                  refetch()
+                } catch (err: any) {
+                  SoftToast.error('Falha ao atualizar Coordenador do Curso', { description: err.message ?? 'Tente novamente' })
+                }
+              }}
+            >
+              Salvar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Disciplinas */}
       <Card className="relative border-primary/30">
@@ -206,7 +276,7 @@ export default function CursoDetailsPage() {
         <CardContent>
           <DataTable
             columns={disciplinasColumns}
-            data={item.disciplinas}
+            data={(item as any).disciplinas ?? []}
             onEdit={(disc: any) => {
               setSelectedDisciplinaId(disc.id)
               setIsEditDiscOpen(true)

@@ -16,7 +16,7 @@ import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from '@/components/ui/dialog'
 import { CampusForm } from '@/components/forms/campus-form'
 import { SoftToast } from '@/components/elements/soft-toast'
-import { deleteCampusById } from '@/services/campus-actions'
+import { deleteCampusById, setDiretorEnsino } from '@/services/campus-actions'
 
 export default function InstituicaoDetailPage() {
   const params = useParams<{ slug: string }>()
@@ -26,6 +26,8 @@ export default function InstituicaoDetailPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [isDiretorDialogOpen, setIsDiretorDialogOpen] = useState(false)
+  const [diretorUsuarioId, setDiretorUsuarioId] = useState('')
 
   if (isLoading) {
     return (
@@ -56,7 +58,7 @@ export default function InstituicaoDetailPage() {
     cidade: 'Mato Grosso do Sul',
     endereco: item.endereco ?? '',
     telefone: item.telefone ?? '',
-    coordenador: 'Alex Monteiro',
+    coordenador: item.diretorEnsino?.usuarioNome ?? '-',
   }
 
   const campusCursos: Campus['cursos'] = Array.isArray(item.cursos) ? item.cursos : []
@@ -197,13 +199,82 @@ export default function InstituicaoDetailPage() {
               <Input id="telefone" value={form.telefone} className="border-primary/30" disabled />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="coordenador">Coordenador</Label>
-              <Input id="coordenador" value={form.coordenador} className="border-primary/30" disabled />
+              {/* Campo removido: Diretor de Ensino será um card separado abaixo */}
             </div>
           </div>
           
         </CardContent>
       </Card>
+
+      {/* Diretor de Ensino */}
+      <Card className="relative border-primary/30">
+        <CornerAccent />
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <div>
+            <CardTitle className="text-sm font-medium tech-label">Diretor de Ensino</CardTitle>
+            <CardDescription>Gerencie o responsável acadêmico do campus</CardDescription>
+          </div>
+          <Button
+            variant="outline"
+            className="border-primary/30"
+            onClick={() => {
+              setDiretorUsuarioId(item.diretorEnsino?.usuarioId ?? '')
+              setIsDiretorDialogOpen(true)
+            }}
+          >
+            {item.diretorEnsino ? 'Alterar' : 'Inserir'}
+          </Button>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="diretorNome">Nome</Label>
+              <Input id="diretorNome" value={item.diretorEnsino?.usuarioNome ?? '-'} className="border-primary/30" disabled />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="diretorEmail">Email</Label>
+              <Input id="diretorEmail" value={item.diretorEnsino?.usuarioEmail ?? '-'} className="border-primary/30" disabled />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Dialog open={isDiretorDialogOpen} onOpenChange={setIsDiretorDialogOpen}>
+        <DialogContent className="border-primary/30">
+          <DialogHeader>
+            <DialogTitle>{item.diretorEnsino ? 'Alterar Diretor de Ensino' : 'Inserir Diretor de Ensino'}</DialogTitle>
+            <DialogDescription>Informe o ID do usuário que será definido como Diretor de Ensino</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <Label htmlFor="diretorUsuarioId">Usuário ID</Label>
+            <Input
+              id="diretorUsuarioId"
+              placeholder="UUID do usuário"
+              className="border-primary/30"
+              value={diretorUsuarioId}
+              onChange={(e) => setDiretorUsuarioId(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" className="border-primary/30" onClick={() => setIsDiretorDialogOpen(false)}>Cancelar</Button>
+            <Button
+              onClick={async () => {
+                try {
+                  if (!diretorUsuarioId) return
+                  await setDiretorEnsino(item.id, { usuarioId: diretorUsuarioId })
+                  SoftToast.success('Diretor de Ensino atualizado com sucesso')
+                  setIsDiretorDialogOpen(false)
+                  refetch()
+                } catch (err: any) {
+                  SoftToast.error('Falha ao atualizar Diretor de Ensino', { description: err.message ?? 'Tente novamente' })
+                }
+              }}
+            >
+              Salvar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Cursos do Campus */}
       <Card className="relative border-primary/30">
@@ -223,8 +294,7 @@ export default function InstituicaoDetailPage() {
                 <TableHead>Nome</TableHead>
                 <TableHead>Sigla</TableHead>
                 <TableHead>Coordenador</TableHead>
-                <TableHead>Disciplinas</TableHead>
-                <TableHead>Turmas</TableHead>
+                <TableHead>Email</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
@@ -235,9 +305,8 @@ export default function InstituicaoDetailPage() {
                   <TableCell>
                     <Badge variant="outline" className="tech-label">{c.sigla}</Badge>
                   </TableCell>
-                  <TableCell>{'-'}</TableCell>
-                  <TableCell>{'-'}</TableCell>
-                  <TableCell>{'-'}</TableCell>
+                  <TableCell className="font-medium">{c.coordenador?.usuarioNome ?? '-'}</TableCell>
+                  <TableCell className="text-muted-foreground">{c.coordenador?.usuarioEmail ?? '-'}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Link href={`/dashboard/cursos/${c.id}`}>
