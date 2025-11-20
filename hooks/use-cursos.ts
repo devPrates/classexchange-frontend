@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { listCursos, getCursoBySlug, getCursoById, listEstudantesByCursoId } from '@/services/curso-actions'
-import type { Curso, EstudanteCurso } from '@/types/cursos'
+import { listCursos, getCursoBySlug, getCursoById, listEstudantesByCursoId, listPeriodosByCursoId } from '@/services/curso-actions'
+import type { Curso, EstudanteCurso, PeriodoCurso } from '@/types/cursos'
 
 export function useCursos(searchQuery?: string) {
   return useQuery<Curso[]>({
@@ -36,6 +36,18 @@ export function useEstudantesDoCurso(cursoId?: string) {
     queryFn: async () => {
       if (!cursoId) return []
       return await listEstudantesByCursoId(cursoId)
+    },
+    enabled: !!cursoId,
+    staleTime: 60_000,
+  })
+}
+
+export function usePeriodosDoCurso(cursoId?: string) {
+  return useQuery<PeriodoCurso[]>({
+    queryKey: ['curso', cursoId, 'periodos'],
+    queryFn: async () => {
+      if (!cursoId) return []
+      return await listPeriodosByCursoId(cursoId)
     },
     enabled: !!cursoId,
     staleTime: 60_000,

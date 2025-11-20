@@ -9,15 +9,17 @@ import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/elements/data-table'
 import { createEstudantesColumns } from './estudantes-columns'
 import { turmasColumns } from './turmas-columns'
-import { ArrowLeft, Edit, Trash2, Plus, Users } from 'lucide-react'
+import { ArrowLeft, Edit, Trash2, Plus, Users, ChevronDown, ChevronRight } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from '@/components/ui/dialog'
 import { CursoForm } from '@/components/forms/curso-form'
-import { useCursoBySlugOrId, useEstudantesDoCurso } from '@/hooks/use-cursos'
+import { useCursoBySlugOrId, useEstudantesDoCurso, usePeriodosDoCurso } from '@/hooks/use-cursos'
 import { useQuery } from '@tanstack/react-query'
 import { SoftToast } from '@/components/elements/soft-toast'
 import { deleteCursoById, setCoordenadorCurso } from '@/services/curso-actions'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Badge } from '@/components/ui/badge'
 
 export default function CursoDetailsPage() {
   const params = useParams<{ slug: string }>()
@@ -30,7 +32,17 @@ export default function CursoDetailsPage() {
   const [isCoordDialogOpen, setIsCoordDialogOpen] = useState(false)
   const [coordUsuarioId, setCoordUsuarioId] = useState('')
   const { data: estudantes = [] } = useEstudantesDoCurso(item?.id)
+  const { data: periodos = [] } = usePeriodosDoCurso(item?.id)
   const [showMatricula, setShowMatricula] = useState(false)
+  const [expandedPeriods, setExpandedPeriods] = useState<Set<string>>(new Set())
+  const togglePeriod = (id: string) => {
+    setExpandedPeriods((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
 
   if (isLoading) {
     return (
@@ -230,6 +242,115 @@ export default function CursoDetailsPage() {
         </CardHeader>
         <CardContent>
           <DataTable columns={createEstudantesColumns(showMatricula, () => setShowMatricula((v) => !v))} data={estudantes} />
+        </CardContent>
+      </Card>
+
+      <Card className="relative border-primary/30">
+        <CornerAccent />
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <div>
+              <CardTitle>Períodos e Disciplinas</CardTitle>
+              <CardDescription>Grade curricular organizada por períodos</CardDescription>
+            </div>
+            <Button className="relative border border-primary/30 hover:border-primary/50">
+              <Plus className="mr-2 h-4 w-4" />
+              Novo Período
+              <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/40" />
+              <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-primary/40" />
+              <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-l border-b border-primary/40" />
+              <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-primary/40" />
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {periodos.map((periodo) => (
+            <div key={periodo.id} className="border border-primary/20 rounded-lg overflow-hidden">
+              <div className="flex items-center justify-between p-4 bg-muted/50 border-b border-dashed border-primary/20">
+                <div className="flex items-center gap-3">
+                  <Button variant="ghost" size="sm" onClick={() => togglePeriod(periodo.id)} className="h-8 w-8 p-0">
+                    {expandedPeriods.has(periodo.id) ? (
+                      <ChevronDown className="h-4 w-4" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4" />
+                    )}
+                  </Button>
+                  <div>
+                    <h3 className="font-semibold text-lg">{periodo.nome}</h3>
+                    <p className="text-sm text-muted-foreground tech-label">
+                      {periodo.disciplinas.length} disciplina(s)
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="relative border-primary/30 hover:border-primary/50 bg-transparent"
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Adicionar Disciplina
+                    <div className="absolute top-0 left-0 w-1 h-1 border-l border-t border-primary/40" />
+                    <div className="absolute top-0 right-0 w-1 h-1 border-r border-t border-primary/40" />
+                    <div className="absolute bottom-0 left-0 w-1 h-1 border-l border-b border-primary/40" />
+                    <div className="absolute bottom-0 right-0 w-1 h-1 border-r border-b border-primary/40" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="text-yellow-600 dark:text-yellow-500 hover:bg-yellow-500/10"
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button size="sm" variant="ghost" className="text-destructive hover:bg-destructive/10">
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+
+              {expandedPeriods.has(periodo.id) && (
+                <div className="p-4">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Nome</TableHead>
+                        <TableHead>Código</TableHead>
+                        <TableHead>Carga Horária</TableHead>
+                        <TableHead className="text-right">Ações</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {periodo.disciplinas.map((disciplina) => (
+                        <TableRow key={disciplina.id}>
+                          <TableCell className="font-medium">{disciplina.nome}</TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="tech-label">
+                              {(disciplina as any).codigo}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{(disciplina as any).cargaHoraria}h</TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-yellow-600 dark:text-yellow-500 hover:bg-yellow-500/10"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10">
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </div>
+          ))}
         </CardContent>
       </Card>
 

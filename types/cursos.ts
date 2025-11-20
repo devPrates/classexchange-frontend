@@ -51,3 +51,25 @@ export type EstudanteCurso = {
     situacao: string;
     vinculoCurso: string;
 }
+
+export type DisciplinaPeriodoResumo = {
+    id: string;
+    nome: string;
+    slug: string;
+    codigo?: string;
+    cargaHoraria?: number;
+};
+
+export type PeriodoCurso = {
+    id: string;
+    nome: string;
+    slug: string;
+    tipoPeriodo: 'ANUAL' | 'SEMESTRAL';
+    numero: number;
+    ano: number;
+    inicio: string;
+    fim: string;
+    disciplinas: DisciplinaPeriodoResumo[];
+    createdAt: string;
+    updatedAt: string;
+};

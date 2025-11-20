@@ -1,6 +1,6 @@
 "use server"
 
-import type { Curso, CreateCurso, UpdateCurso, EstudanteCurso } from '@/types/cursos'
+import type { Curso, CreateCurso, UpdateCurso, EstudanteCurso, PeriodoCurso } from '@/types/cursos'
 import api from '@/services/api'
 
 export async function listCursos(): Promise<Curso[]> {
@@ -40,4 +40,9 @@ export async function setCoordenadorCurso(cursoId: string, payload: { usuarioId:
 export async function listEstudantesByCursoId(id: string): Promise<EstudanteCurso[]> {
   const { data } = await api.get(`/cursos/${id}/estudantes`)
   return data as EstudanteCurso[]
+}
+
+export async function listPeriodosByCursoId(id: string): Promise<PeriodoCurso[]> {
+  const { data } = await api.get(`/cursos/${id}/periodos`)
+  return data as PeriodoCurso[]
 }
