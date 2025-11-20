@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, getFilteredRowModel, useReactTable } from "@tanstack/react-table"
+import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, getFilteredRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Edit, Trash2, Search, Upload, Download } from "lucide-react"
@@ -67,6 +67,7 @@ export function DataTable<TData>({ columns, data, onEdit, onDelete }: DataTableP
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
   })
 
   return (
