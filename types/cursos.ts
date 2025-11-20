@@ -42,3 +42,12 @@ export type UpdateCurso = {
     sigla: string;
     campusId: string;
 }
+
+export type EstudanteCurso = {
+    id: string;
+    nome: string;
+    email: string;
+    matricula: string;
+    situacao: string;
+    vinculoCurso: string;
+}

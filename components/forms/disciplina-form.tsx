@@ -16,6 +16,7 @@ import { createDisciplina, updateDisciplinaById } from '@/services/disciplina-ac
 
 const schema = z.object({
   nome: z.string().min(2, { message: 'Informe o nome' }),
+  periodoId: z.string().min(1, { message: 'Informe o período' }),
   cargaHoraria: z.number().min(1, { message: 'Informe a carga horária' }),
   ementa: z.string().min(2, { message: 'Informe a ementa' }),
 })
@@ -33,6 +34,7 @@ export function DisciplinaForm({ cursoId, defaultValues, onSuccess, mode = 'crea
     resolver: zodResolver(schema),
     defaultValues: {
       nome: defaultValues?.nome ?? '',
+      periodoId: (defaultValues as any)?.periodoId ?? '',
       cargaHoraria: defaultValues?.cargaHoraria ?? 60,
       ementa: defaultValues?.ementa ?? '',
     },
@@ -41,6 +43,7 @@ export function DisciplinaForm({ cursoId, defaultValues, onSuccess, mode = 'crea
   useEffect(() => {
     form.reset({
       nome: defaultValues?.nome ?? '',
+      periodoId: (defaultValues as any)?.periodoId ?? '',
       cargaHoraria: defaultValues?.cargaHoraria ?? 60,
       ementa: defaultValues?.ementa ?? '',
     })
@@ -51,6 +54,7 @@ export function DisciplinaForm({ cursoId, defaultValues, onSuccess, mode = 'crea
       if (mode === 'edit' && id) {
         const payload: UpdateDisciplina = {
           nome: values.nome,
+          periodoId: values.periodoId,
           cargaHoraria: values.cargaHoraria,
           ementa: values.ementa,
           cursoId,
@@ -59,6 +63,7 @@ export function DisciplinaForm({ cursoId, defaultValues, onSuccess, mode = 'crea
       }
       const payload: CreateDisciplina = {
         nome: values.nome,
+        periodoId: values.periodoId,
         cargaHoraria: values.cargaHoraria,
         ementa: values.ementa,
         cursoId,
@@ -87,6 +92,20 @@ export function DisciplinaForm({ cursoId, defaultValues, onSuccess, mode = 'crea
               <FormLabel>Nome da Disciplina</FormLabel>
               <FormControl>
                 <Input placeholder="Algoritmos" className="border-primary/30" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="periodoId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Período</FormLabel>
+              <FormControl>
+                <Input placeholder="UUID do período" className="border-primary/30" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

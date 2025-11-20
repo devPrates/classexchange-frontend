@@ -3,6 +3,9 @@ export type Disciplina = {
     id: string
     nome: string
     slug: string
+    periodoId: string
+    periodoNome: string
+    periodoSlug: string
     cargaHoraria: number
     ementa: string
     cursoId: string
@@ -13,6 +16,7 @@ export type Disciplina = {
 
 export type CreateDisciplina = {
     nome: string
+    periodoId: string
     cargaHoraria: number
     ementa: string
     cursoId: string
@@ -20,6 +24,7 @@ export type CreateDisciplina = {
 
 export type UpdateDisciplina = {
     nome?: string
+    periodoId?: string
     cargaHoraria?: number
     ementa?: string
     cursoId?: string

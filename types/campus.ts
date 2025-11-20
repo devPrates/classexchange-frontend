@@ -29,6 +29,7 @@ export type Campus = {
     endereco: string;
     diretorEnsino: DiretorEnsinoResumo;
     cursos: CursoResumo[];
+    usuariosCount: number;
     createdAt: string;
     updatedAt: string;
 };

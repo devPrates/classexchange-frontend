@@ -160,51 +160,14 @@ export default function InstituicaoDetailPage() {
         <Card className="relative border-primary/30">
           <CornerAccent />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium tech-label">Professores</CardTitle>
+            <CardTitle className="text-sm font-medium tech-label">Servidores</CardTitle>
             <Users className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{'-'}</div>
+            <div className="text-2xl font-bold">{item.usuariosCount}</div>
           </CardContent>
         </Card>
       </div>
-
-      {/* Informações do Campus */}
-      <Card className="relative border-primary/30">
-        <CornerAccent />
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <div>
-              <CardTitle>Informações do Campus</CardTitle>
-              <CardDescription>Edite os detalhes básicos do campus</CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="nome">Nome</Label>
-              <Input id="nome" value={form.nome} className="border-primary/30" disabled />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="cidade">Cidade</Label>
-              <Input id="cidade" value={form.cidade} className="border-primary/30" disabled />
-            </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="endereco">Endereço</Label>
-              <Input id="endereco" value={form.endereco} className="border-primary/30" disabled />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="telefone">Telefone</Label>
-              <Input id="telefone" value={form.telefone} className="border-primary/30" disabled />
-            </div>
-            <div className="space-y-2">
-              {/* Campo removido: Diretor de Ensino será um card separado abaixo */}
-            </div>
-          </div>
-          
-        </CardContent>
-      </Card>
 
       {/* Diretor de Ensino */}
       <Card className="relative border-primary/30">
@@ -275,6 +238,45 @@ export default function InstituicaoDetailPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Informações do Campus */}
+      <Card className="relative border-primary/30">
+        <CornerAccent />
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <div>
+              <CardTitle>Informações do Campus</CardTitle>
+              <CardDescription>Edite os detalhes básicos do campus</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="nome">Nome</Label>
+              <Input id="nome" value={form.nome} className="border-primary/30" disabled />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="cidade">Cidade</Label>
+              <Input id="cidade" value={form.cidade} className="border-primary/30" disabled />
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="endereco">Endereço</Label>
+              <Input id="endereco" value={form.endereco} className="border-primary/30" disabled />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="telefone">Telefone</Label>
+              <Input id="telefone" value={form.telefone} className="border-primary/30" disabled />
+            </div>
+            <div className="space-y-2">
+              {/* Campo removido: Diretor de Ensino será um card separado abaixo */}
+            </div>
+          </div>
+          
+        </CardContent>
+      </Card>
+
+      
 
       {/* Cursos do Campus */}
       <Card className="relative border-primary/30">

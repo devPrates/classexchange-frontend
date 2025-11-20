@@ -36,6 +36,8 @@ const menuItems = [
       { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
       { icon: Building2, label: 'Instituição', href: '/dashboard/instituicao' },
       { icon: RiBookMarkedLine, label: 'Cursos', href: '/dashboard/cursos' },
+      { icon: Users, label: 'Estudantes', href: '/dashboard/estudantes' },
+      { icon: Users, label: 'Professores', href: '/dashboard/professores' },
     ],
   },
   {

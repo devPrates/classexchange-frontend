@@ -82,9 +82,9 @@ export function CampusCard({ campus }: { campus: Campus }) {
             </span>
           </div>
           <div className="flex flex-col items-center justify-center gap-1 h-full">
-            <p className="text-sm text-muted-foreground">Professores</p>
+            <p className="text-sm text-muted-foreground">Servidores</p>
             <span className="inline-block px-2 py-0.5 rounded-md text-sm font-semibold bg-primary/10 text-primary border border-primary/20">
-              {'-'}
+              {typeof campus.usuariosCount === 'number' ? campus.usuariosCount : 0}
             </span>
           </div>
         </div>
