@@ -62,13 +62,22 @@ export function CourseCard({ curso }: { curso: Curso }) {
       
         <div className="blueprint-divider my-4" />
 
-        <div className="grid grid-cols-1 gap-4 items-stretch auto-rows-fr">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-stretch auto-rows-fr">
           <div className="flex items-center justify-center gap-2 h-full w-full">
             <Calendar className="h-4 w-4 text-muted-foreground" />
             <div className="flex items-center gap-1.5">
               <span className="text-xs text-muted-foreground">Turmas:</span>
               <span className="inline-block px-2 py-0.5 rounded-md text-sm font-semibold bg-primary/10 text-primary border border-primary/20 w-fit">
                 {curso.turmas.length}
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center justify-center gap-2 h-full w-full">
+            <Users className="h-4 w-4 text-muted-foreground" />
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs text-muted-foreground">Alunos:</span>
+              <span className="inline-block px-2 py-0.5 rounded-md text-sm font-semibold bg-primary/10 text-primary border border-primary/20 w-fit">
+                {curso.studentsCount}
               </span>
             </div>
           </div>

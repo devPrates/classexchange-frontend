@@ -1,4 +1,4 @@
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CornerAccent } from '@/components/elements/corner-accent'
 
 type StatCardProps = {
@@ -12,16 +12,12 @@ export function StatCard({ label, value, Icon, color = 'text-primary' }: StatCar
   return (
     <Card className="relative border-primary/30 hover:border-primary/50 transition-colors">
       <CornerAccent />
-      <CardContent className="p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm tech-label text-muted-foreground mb-1">{label}</p>
-            <p className="text-3xl font-bold">{value}</p>
-          </div>
-          <div className={`p-3 rounded-lg bg-primary/10 border border-primary/20 ${color}`}>
-            <Icon className="h-6 w-6" />
-          </div>
-        </div>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium tech-label">{label}</CardTitle>
+        <Icon className={`h-4 w-4 ${color}`} />
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{value}</div>
       </CardContent>
     </Card>
   )

@@ -1,20 +1,199 @@
-'use client'
+"use client"
 
-import { CornerAccent } from '@/components/elements/corner-accent'
-import { Card, CardContent } from '@/components/ui/card'
+import { useState } from "react"
+import { CornerAccent } from "@/components/elements/corner-accent"
+import { StatCard } from "@/components/elements/stat-card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Badge } from "@/components/ui/badge"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { UserCircle, BookOpen, Users, Plus, Search, ChevronDown, ChevronRight, Edit, Trash2 } from "lucide-react"
 
 export default function ProfessoresPage() {
+  const [expandedCourses, setExpandedCourses] = useState<Set<string>>(new Set(["1", "2"]))
+  const [searchTerm, setSearchTerm] = useState("")
+
+  const cursos = [
+    {
+      id: "1",
+      nome: "Ciência da Computação",
+      sigla: "CC",
+      professores: [
+        {
+          id: "1",
+          nome: "Dr. Carlos Mendes",
+          siape: "1234567",
+          disciplinas: "Algoritmos, POO",
+          email: "carlos@email.com",
+        },
+        { id: "2", nome: "Profa. Ana Paula", siape: "2345678", disciplinas: "Banco de Dados", email: "ana@email.com" },
+      ],
+    },
+    {
+      id: "2",
+      nome: "Engenharia Civil",
+      sigla: "EC",
+      professores: [
+        {
+          id: "3",
+          nome: "Prof. Roberto Lima",
+          siape: "3456789",
+          disciplinas: "Cálculo, Física",
+          email: "roberto@email.com",
+        },
+        {
+          id: "4",
+          nome: "Dra. Mariana Costa",
+          siape: "4567890",
+          disciplinas: "Estruturas",
+          email: "mariana@email.com",
+        },
+      ],
+    },
+    {
+      id: "3",
+      nome: "Administração",
+      sigla: "ADM",
+      professores: [
+        {
+          id: "5",
+          nome: "Prof. Fernando Souza",
+          siape: "5678901",
+          disciplinas: "Marketing, Finanças",
+          email: "fernando@email.com",
+        },
+      ],
+    },
+  ]
+
+  const totalProfessores = cursos.reduce((acc, curso) => acc + curso.professores.length, 0)
+  const totalCursos = cursos.length
+  const totalTurmas = 18
+
+  const toggleCourse = (cursoId: string) => {
+    const newExpanded = new Set(expandedCourses)
+    if (newExpanded.has(cursoId)) {
+      newExpanded.delete(cursoId)
+    } else {
+      newExpanded.add(cursoId)
+    }
+    setExpandedCourses(newExpanded)
+  }
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Professores</h1>
-        <p className="text-muted-foreground mt-1">Gerencie os professores da instituição</p>
+        <p className="text-muted-foreground mt-1">Gerenciamento de professores por curso</p>
       </div>
 
+      {/* Stats Cards */}
+      <div className="grid gap-4 md:grid-cols-3">
+        <StatCard label="Total de Cursos" value={totalCursos} Icon={BookOpen} />
+        <StatCard label="Total de Professores" value={totalProfessores} Icon={UserCircle} />
+        <StatCard label="Total de Turmas" value={totalTurmas} Icon={Users} />
+      </div>
+
+      {/* Main Content */}
       <Card className="relative border-primary/30">
         <CornerAccent />
-        <CardContent className="p-8">
-          <p className="text-muted-foreground">Em breve: listagem e gestão de professores</p>
+        <CardHeader>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <CardTitle>Professores por Curso</CardTitle>
+              <CardDescription>Lista de professores organizados por curso</CardDescription>
+            </div>
+            <div className="flex gap-2 w-full sm:w-auto">
+              <div className="relative flex-1 sm:flex-initial">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Buscar professor..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-9 border-primary/30 w-full sm:w-[250px]"
+                />
+              </div>
+              <Button className="relative border border-primary/30 hover:border-primary/50">
+                <Plus className="mr-2 h-4 w-4" />
+                Novo Professor
+                <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/40" />
+                <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-primary/40" />
+                <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-l border-b border-primary/40" />
+                <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-primary/40" />
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {cursos.map((curso) => (
+            <div key={curso.id} className="border border-primary/20 rounded-lg overflow-hidden">
+              {/* Course Header */}
+              <div className="flex items-center justify-between p-4 bg-muted/50 border-b border-dashed border-primary/20">
+                <div className="flex items-center gap-3">
+                  <Button variant="ghost" size="sm" onClick={() => toggleCourse(curso.id)} className="h-8 w-8 p-0">
+                    {expandedCourses.has(curso.id) ? (
+                      <ChevronDown className="h-4 w-4" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4" />
+                    )}
+                  </Button>
+                  <div>
+                    <h3 className="font-semibold text-lg">{curso.nome}</h3>
+                    <p className="text-sm text-muted-foreground tech-label">{curso.professores.length} professor(es)</p>
+                  </div>
+                </div>
+                <Badge variant="outline" className="tech-label bg-primary/10">
+                  {curso.sigla}
+                </Badge>
+              </div>
+
+              {/* Professors Table */}
+              {expandedCourses.has(curso.id) && (
+                <div className="p-4">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Nome</TableHead>
+                        <TableHead>SIAPE</TableHead>
+                        <TableHead>Disciplinas</TableHead>
+                        <TableHead>E-mail</TableHead>
+                        <TableHead className="text-right">Ações</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {curso.professores.map((professor) => (
+                        <TableRow key={professor.id}>
+                          <TableCell className="font-medium">{professor.nome}</TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="tech-label">
+                              {professor.siape}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-sm">{professor.disciplinas}</TableCell>
+                          <TableCell className="text-muted-foreground text-sm">{professor.email}</TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-yellow-600 dark:text-yellow-500 hover:bg-yellow-500/10"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10">
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </div>
+          ))}
         </CardContent>
       </Card>
     </div>

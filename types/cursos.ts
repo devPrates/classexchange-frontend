@@ -27,6 +27,7 @@ export type Curso = {
     campusNome: string;
     turmas: TurmaResumo[];
     coordenadorCurso: CoordenadorCursoResumo;
+    studentsCount: number;
     createdAt: string;
     updatedAt: string;
 };
