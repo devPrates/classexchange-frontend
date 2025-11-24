@@ -7,21 +7,20 @@ import { CornerAccent } from '@/components/elements/corner-accent'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/elements/data-table'
-import { createEstudantesColumns } from './estudantes-columns'
 import { turmasColumns } from './turmas-columns'
-import { ArrowLeft, Edit, Trash2, Plus, Users, ChevronDown, ChevronRight, GraduationCap } from 'lucide-react'
+import { ArrowLeft, Edit, Trash2, Plus, Users, GraduationCap, UserCheck, AlertTriangle, Eye } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from '@/components/ui/dialog'
 import { CursoForm } from '@/components/forms/curso-form'
-import { useCursoBySlugOrId, useEstudantesDoCurso, usePeriodosDoCurso } from '@/hooks/use-cursos'
+import { useCursoBySlugOrId } from '@/hooks/use-cursos'
 import { useQuery } from '@tanstack/react-query'
 import { SoftToast } from '@/components/elements/soft-toast'
 import { deleteCursoById, setCoordenadorCurso } from '@/services/curso-actions'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
-import { PeriodoHeader } from '@/components/elements/periodo-header'
 import { StatCard } from '@/components/elements/stat-card'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { SquareBadge } from '@/components/elements/square-badge'
+ 
 
 export default function CursoDetailsPage() {
   const params = useParams<{ slug: string }>()
@@ -33,18 +32,19 @@ export default function CursoDetailsPage() {
   const [isDeleting, setIsDeleting] = useState(false)
   const [isCoordDialogOpen, setIsCoordDialogOpen] = useState(false)
   const [coordUsuarioId, setCoordUsuarioId] = useState('')
-  const { data: estudantes = [] } = useEstudantesDoCurso(item?.id)
-  const { data: periodos = [] } = usePeriodosDoCurso(item?.id)
-  const [showMatricula, setShowMatricula] = useState(false)
-  const [expandedPeriods, setExpandedPeriods] = useState<Set<string>>(new Set())
-  const togglePeriod = (id: string) => {
-    setExpandedPeriods((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
-    })
-  }
+  type TurmaMock = { id: string; nome: string; numero: number; alunos: number; disciplinas: string[] }
+  const turmas: TurmaMock[] = [
+    { id: '1', nome: 'CC-2024-A', numero: 3222, alunos: 35, disciplinas: ['Algoritmos'] },
+    { id: '2', nome: 'CC-2024-B', numero: 3223, alunos: 32, disciplinas: ['Estrutura de Dados'] },
+    { id: '3', nome: 'CC-2024-C', numero: 3224, alunos: 28, disciplinas: ['Banco de Dados'] },
+  ]
+  type ProfessorResumo = { id: string; nome: string; email: string; disciplinas: string[]; status: string }
+  const professores: ProfessorResumo[] = [
+    { id: '1', nome: 'Dr. João Silva', email: 'joao.silva@exemplo.com', disciplinas: ['Algoritmos', 'Estrutura de Dados'], status: 'Ativo' },
+    { id: '2', nome: 'Profa. Maria Santos', email: 'maria.santos@exemplo.com', disciplinas: ['Banco de Dados'], status: 'Ativo' },
+    { id: '3', nome: 'Prof. Carlos Oliveira', email: 'carlos.oliveira@exemplo.com', disciplinas: ['Engenharia de Software', 'Sistemas Operacionais'], status: 'Ativo' },
+  ]
+ 
 
   if (isLoading) {
     return (
@@ -142,6 +142,7 @@ export default function CursoDetailsPage() {
       <div className="grid gap-4 md:grid-cols-3">
         <StatCard label="Total de Turmas" value={item.turmas.length} Icon={Users} />
         <StatCard label="Alunos Matriculados" value={item.studentsCount} Icon={GraduationCap} />
+        <StatCard label="Professores" value={professores.length} Icon={UserCheck} />
       </div>
 
       {/* Coordenador do Curso */}
@@ -214,94 +215,9 @@ export default function CursoDetailsPage() {
         </DialogContent>
       </Dialog>
 
-      <Card className="relative border-primary/30">
-        <CornerAccent />
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <div>
-              <CardTitle>Estudantes</CardTitle>
-              <CardDescription>Lista de estudantes vinculados ao curso</CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <DataTable columns={createEstudantesColumns(showMatricula, () => setShowMatricula((v) => !v))} data={estudantes} />
-        </CardContent>
-      </Card>
+      
 
-      <Card className="relative border-primary/30">
-        <CornerAccent />
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <div>
-              <CardTitle>Períodos e Disciplinas</CardTitle>
-              <CardDescription>Grade curricular organizada por períodos</CardDescription>
-            </div>
-            <Button className="relative border border-primary/30 hover:border-primary/50">
-              <Plus className="mr-2 h-4 w-4" />
-              Novo Período
-              <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/40" />
-              <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-primary/40" />
-              <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-l border-b border-primary/40" />
-              <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-primary/40" />
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {periodos.map((periodo) => (
-                <div key={periodo.id} className="border border-primary/20 rounded-lg overflow-hidden">
-              <PeriodoHeader
-                title={periodo.nome}
-                disciplineCount={periodo.disciplinas.length}
-                expanded={expandedPeriods.has(periodo.id)}
-                onToggle={() => togglePeriod(periodo.id)}
-              />
-
-              {expandedPeriods.has(periodo.id) && (
-                <div className="p-4">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Nome</TableHead>
-                        <TableHead>Código</TableHead>
-                        <TableHead>Carga Horária</TableHead>
-                        <TableHead className="text-right">Ações</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {periodo.disciplinas.map((disciplina) => (
-                        <TableRow key={disciplina.id}>
-                          <TableCell className="font-medium">{disciplina.nome}</TableCell>
-                          <TableCell>
-                            <Badge variant="outline" className="tech-label">
-                              {(disciplina as any).codigo}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>{(disciplina as any).cargaHoraria}h</TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex justify-end gap-2">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="text-yellow-600 dark:text-yellow-500 hover:bg-yellow-500/10"
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10">
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              )}
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+      
 
 
       {/* Turmas */}
@@ -324,27 +240,152 @@ export default function CursoDetailsPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <DataTable columns={turmasColumns} data={item.turmas} />
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Nome</TableHead>
+                <TableHead>Número</TableHead>
+                <TableHead>Qtd. Disciplinas</TableHead>
+                <TableHead>Alunos</TableHead>
+                <TableHead className="text-right">Ações</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {turmas.map((turma) => (
+                <TableRow key={turma.id}>
+                  <TableCell className="font-medium">{turma.nome}</TableCell>
+                  <TableCell>
+                    <SquareBadge text={String(turma.numero)} className="text-xs" />
+                  </TableCell>
+                  <TableCell>
+                    <SquareBadge text={String(turma.disciplinas.length)} className="text-xs" />
+                  </TableCell>
+                  <TableCell>{turma.alunos}</TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-yellow-600 dark:text-yellow-500 hover:bg-yellow-500/10"
+                        asChild
+                      >
+                        <Link href={`/dashboard/turmas/${turma.id}`}>
+                          <Eye className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-destructive hover:bg-destructive/10"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
 
-      {/* Zona de Perigo */}
-      <Card className="relative border-red-300 bg-white">
+      <Card className="relative border-primary/30">
         <CornerAccent />
         <CardHeader>
           <div className="flex justify-between items-center">
             <div>
-              <CardTitle className="text-red-700">Zona de Perigo</CardTitle>
-              <CardDescription className="text-red-600">Excluir este curso permanentemente</CardDescription>
+              <CardTitle>Professores</CardTitle>
+              <CardDescription>Professores vinculados ao curso</CardDescription>
+            </div>
+            <Button className="relative border border-primary/30 hover:border-primary/50">
+              <Plus className="mr-2 h-4 w-4" />
+              Adicionar Professor
+              <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/40" />
+              <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-primary/40" />
+              <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-l border-b border-primary/40" />
+              <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-primary/40" />
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Nome</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Disciplinas</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Ações</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {professores.map((professor) => (
+                <TableRow key={professor.id}>
+                  <TableCell className="font-medium">
+                    <div className="flex items-center gap-2">
+                      <UserCheck className="h-4 w-4 text-primary" />
+                      {professor.nome}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">{professor.email}</TableCell>
+                  <TableCell>
+                    <SquareBadge text={String(professor.disciplinas.length)} className="text-xs" />
+                  </TableCell>
+                  <TableCell>
+                    <SquareBadge text={professor.status} className="border-primary/30 text-primary" />
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-yellow-600 dark:text-yellow-500 hover:bg-yellow-500/10"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-destructive hover:bg-destructive/10"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      {/* Zona de Perigo */}
+      <Card className="relative border-destructive/50 bg-destructive/5">
+        <CornerAccent className="border-destructive" />
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-destructive" />
+            <CardTitle className="text-destructive">Zona de Perigo</CardTitle>
+          </div>
+          <CardDescription>Ações irreversíveis que afetam permanentemente o curso</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 border border-dashed border-destructive/30 rounded-lg">
+            <div>
+              <h4 className="font-semibold text-destructive">Excluir Curso</h4>
+              <p className="text-sm text-muted-foreground mt-1">
+                Esta ação não pode ser desfeita. Todos os dados relacionados serão permanentemente removidos.
+              </p>
             </div>
             <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
               <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="border-red-300 text-red-700 hover:bg-red-50 hover:text-red-800 hover:border-red-400"
-                >
-                  <Trash2 className="h-4 w-4" />
+                <Button variant="destructive" className="relative shrink-0">
+                  <Trash2 className="mr-2 h-4 w-4" />
                   Excluir Curso
+                  <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-destructive-foreground/40" />
+                  <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-destructive-foreground/40" />
+                  <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-l border-b border-destructive-foreground/40" />
+                  <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-destructive-foreground/40" />
                 </Button>
               </DialogTrigger>
               <DialogContent className="border-red-300">
@@ -388,11 +429,6 @@ export default function CursoDetailsPage() {
               </DialogContent>
             </Dialog>
           </div>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-red-700">
-            Ao excluir, todos os dados relacionados a este curso poderão ser removidos ou tornar-se inacessíveis.
-          </p>
         </CardContent>
       </Card>
     </div>
