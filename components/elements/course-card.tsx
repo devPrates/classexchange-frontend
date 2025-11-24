@@ -55,7 +55,7 @@ export function CourseCard({ curso }: { curso: Curso }) {
           <div className="flex flex-1 gap-2">
             <span className="text-sm text-muted-foreground">Coordenador:</span>
             <p className="text-sm font-medium">
-              {curso.coordenadorCurso ? `${curso.coordenadorCurso.usuarioNome}${curso.coordenadorCurso.usuarioEmail ? ' • ' + curso.coordenadorCurso.usuarioEmail : ''}` : '-'}
+              {curso.coordenadorCurso ? curso.coordenadorCurso.usuarioNome : '-'}
             </p>
           </div>
         </div>
@@ -75,9 +75,9 @@ export function CourseCard({ curso }: { curso: Curso }) {
           <div className="flex items-center justify-center gap-2 h-full w-full">
             <Users className="h-4 w-4 text-muted-foreground" />
             <div className="flex items-center gap-1.5">
-              <span className="text-xs text-muted-foreground">Alunos:</span>
+              <span className="text-xs text-muted-foreground">Professores:</span>
               <span className="inline-block px-2 py-0.5 rounded-md text-sm font-semibold bg-primary/10 text-primary border border-primary/20 w-fit">
-                {curso.studentsCount}
+                {curso.professoresCount}
               </span>
             </div>
           </div>

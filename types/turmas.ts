@@ -10,6 +10,12 @@ export type Turma = {
     updatedAt: string
 }
 
+import type { Periodo } from '@/types/periodos'
+
+export type TurmaDetalhe = Turma & {
+    periodos: Periodo[]
+}
+
 export type CreateTurma = {
     nome: string
     numero: number

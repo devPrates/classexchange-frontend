@@ -7,15 +7,23 @@ export type DisciplinaResumo = {
 export type TurmaResumo = {
     id: string;
     nome: string;
+    numero: number;
 };
 
 export type CoordenadorCursoResumo = {
     id: string;
     usuarioId: string;
     usuarioNome: string;
-    usuarioEmail?: string;
     inicio: string;
     fim: string;
+};
+
+export type ProfessorCurso = {
+    id: string;
+    usuarioId: string;
+    usuarioNome: string;
+    usuarioEmail: string;
+    usuarioSiape: string;
 };
 
 export type Curso = {
@@ -26,6 +34,7 @@ export type Curso = {
     campusId: string;
     campusNome: string;
     turmas: TurmaResumo[];
+    professoresCount: number;
     coordenadorCurso: CoordenadorCursoResumo;
     studentsCount: number;
     createdAt: string;
@@ -44,14 +53,7 @@ export type UpdateCurso = {
     campusId: string;
 }
 
-export type EstudanteCurso = {
-    id: string;
-    nome: string;
-    email: string;
-    matricula: string;
-    situacao: string;
-    vinculoCurso: string;
-}
+export type EstudanteCurso = never
 
 export type DisciplinaPeriodoResumo = {
     id: string;

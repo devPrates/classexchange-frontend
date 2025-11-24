@@ -9,9 +9,10 @@ import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/elements/data-table'
 import { turmasColumns } from './turmas-columns'
 import { ArrowLeft, Edit, Trash2, Plus, Users, GraduationCap, UserCheck, AlertTriangle, Eye } from 'lucide-react'
+import { getTurmaById } from '@/services/turma-actions'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from '@/components/ui/dialog'
 import { CursoForm } from '@/components/forms/curso-form'
-import { useCursoBySlugOrId } from '@/hooks/use-cursos'
+import { useCursoBySlugOrId, useProfessoresDoCurso } from '@/hooks/use-cursos'
 import { useQuery } from '@tanstack/react-query'
 import { SoftToast } from '@/components/elements/soft-toast'
 import { deleteCursoById, setCoordenadorCurso } from '@/services/curso-actions'
@@ -32,18 +33,7 @@ export default function CursoDetailsPage() {
   const [isDeleting, setIsDeleting] = useState(false)
   const [isCoordDialogOpen, setIsCoordDialogOpen] = useState(false)
   const [coordUsuarioId, setCoordUsuarioId] = useState('')
-  type TurmaMock = { id: string; nome: string; numero: number; alunos: number; disciplinas: string[] }
-  const turmas: TurmaMock[] = [
-    { id: '1', nome: 'CC-2024-A', numero: 3222, alunos: 35, disciplinas: ['Algoritmos'] },
-    { id: '2', nome: 'CC-2024-B', numero: 3223, alunos: 32, disciplinas: ['Estrutura de Dados'] },
-    { id: '3', nome: 'CC-2024-C', numero: 3224, alunos: 28, disciplinas: ['Banco de Dados'] },
-  ]
-  type ProfessorResumo = { id: string; nome: string; email: string; disciplinas: string[]; status: string }
-  const professores: ProfessorResumo[] = [
-    { id: '1', nome: 'Dr. João Silva', email: 'joao.silva@exemplo.com', disciplinas: ['Algoritmos', 'Estrutura de Dados'], status: 'Ativo' },
-    { id: '2', nome: 'Profa. Maria Santos', email: 'maria.santos@exemplo.com', disciplinas: ['Banco de Dados'], status: 'Ativo' },
-    { id: '3', nome: 'Prof. Carlos Oliveira', email: 'carlos.oliveira@exemplo.com', disciplinas: ['Engenharia de Software', 'Sistemas Operacionais'], status: 'Ativo' },
-  ]
+  const { data: professoresCurso = [] } = useProfessoresDoCurso(item?.id)
  
 
   if (isLoading) {
@@ -142,7 +132,7 @@ export default function CursoDetailsPage() {
       <div className="grid gap-4 md:grid-cols-3">
         <StatCard label="Total de Turmas" value={item.turmas.length} Icon={Users} />
         <StatCard label="Alunos Matriculados" value={item.studentsCount} Icon={GraduationCap} />
-        <StatCard label="Professores" value={professores.length} Icon={UserCheck} />
+        <StatCard label="Professores" value={item.professoresCount} Icon={UserCheck} />
       </div>
 
       {/* Coordenador do Curso */}
@@ -251,16 +241,16 @@ export default function CursoDetailsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {turmas.map((turma) => (
+              {item.turmas.map((turma) => (
                 <TableRow key={turma.id}>
                   <TableCell className="font-medium">{turma.nome}</TableCell>
                   <TableCell>
                     <SquareBadge text={String(turma.numero)} className="text-xs" />
                   </TableCell>
                   <TableCell>
-                    <SquareBadge text={String(turma.disciplinas.length)} className="text-xs" />
+                    <SquareBadge text={"0"} className="text-xs" />
                   </TableCell>
-                  <TableCell>{turma.alunos}</TableCell>
+                  <TableCell className="text-muted-foreground">0</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button
@@ -269,7 +259,18 @@ export default function CursoDetailsPage() {
                         className="text-yellow-600 dark:text-yellow-500 hover:bg-yellow-500/10"
                         asChild
                       >
-                        <Link href={`/dashboard/turmas/${turma.id}`}>
+                        <Link
+                          href={`/dashboard/turma/${turma.id}`}
+                          onClick={async (e) => {
+                            e.preventDefault()
+                            try {
+                              const t = await getTurmaById(turma.id as any)
+                              router.push(`/dashboard/turma/${t.slug}`)
+                            } catch {
+                              router.push(`/dashboard/turma/${turma.id}`)
+                            }
+                          }}
+                        >
                           <Eye className="h-4 w-4" />
                         </Link>
                       </Button>
@@ -313,26 +314,22 @@ export default function CursoDetailsPage() {
               <TableRow>
                 <TableHead>Nome</TableHead>
                 <TableHead>Email</TableHead>
-                <TableHead>Disciplinas</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>SIAPE</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {professores.map((professor) => (
-                <TableRow key={professor.id}>
+              {professoresCurso.map((prof) => (
+                <TableRow key={prof.id}>
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-2">
                       <UserCheck className="h-4 w-4 text-primary" />
-                      {professor.nome}
+                      {prof.usuarioNome}
                     </div>
                   </TableCell>
-                  <TableCell className="text-muted-foreground">{professor.email}</TableCell>
+                  <TableCell className="text-muted-foreground">{prof.usuarioEmail}</TableCell>
                   <TableCell>
-                    <SquareBadge text={String(professor.disciplinas.length)} className="text-xs" />
-                  </TableCell>
-                  <TableCell>
-                    <SquareBadge text={professor.status} className="border-primary/30 text-primary" />
+                    <SquareBadge text={prof.usuarioSiape} className="text-xs" />
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
