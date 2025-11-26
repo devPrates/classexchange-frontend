@@ -129,22 +129,7 @@
         scroll-behavior: smooth;
     }
 
-    body::before {
-        content: '';
-        position: fixed;
-        inset: 0;
-        background-image:
-            linear-gradient(to right, oklch(0.52 0.15 155 / 0.08) 1px, transparent 1px),
-            linear-gradient(to bottom, oklch(0.52 0.15 155 / 0.08) 1px, transparent 1px);
-        background-size: 24px 24px;
-        pointer-events: none;
-        z-index: 0;
-    }
-
-    body>* {
-        position: relative;
-        z-index: 1;
-    }
+    
 }
 
 @layer utilities {
