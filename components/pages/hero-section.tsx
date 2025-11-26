@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { CrowdCanvas } from '@/components/elements/skiper39'
+import { CrowdCanvas } from '../ui/skiper-ui/skiper39'
+
 
 export function HeroSection() {
   const [isVisible, setIsVisible] = useState(false)
