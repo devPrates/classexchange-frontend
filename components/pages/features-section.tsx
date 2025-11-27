@@ -93,6 +93,8 @@ export function FeaturesSection() {
                   isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                 }`}
                 data-delay={`${index * 150}`}
+                overlayImageSrc={`/people-${String(index + 1).padStart(2, '0')}.svg`}
+                overlayClassName="absolute bottom-0 right-0 w-1/3 opacity-90 pointer-events-none select-none"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="relative w-12 h-12 border border-primary/40 bg-primary/5 flex items-center justify-center">
@@ -112,7 +114,11 @@ export function FeaturesSection() {
             ))}
           </div>
 
-          <BlueprintCard className="p-8 md:p-12 text-center bg-primary/5">
+          <BlueprintCard
+            className="p-8 md:p-12 text-center bg-primary/5"
+            overlayImageSrc="/peeps.svg"
+            overlayClassName="absolute bottom-2 md:bottom-4 right-[-2rem] md:right-[-3rem] w-[85%] md:w-[75%] lg:w-[65%] max-h-[85%] object-contain opacity-95 pointer-events-none select-none z-0"
+          >
             <span className="tech-label mb-6 block">CTA — Call to Action</span>
             <h3 className="text-3xl md:text-4xl font-bold font-mono mb-4">
               Pronto para Simplificar sua Rotina?

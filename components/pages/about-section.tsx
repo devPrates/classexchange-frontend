@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { Users, Clock, Shield } from 'lucide-react'
 import { BlueprintCard } from '../elements/blueprint-card'
+import { BackgroundLines } from '@/components/ui/background-lines'
+import { AnimatedBeamDemo } from '@/components/elements/beam-system'
 
 
 export function AboutSection() {
@@ -62,60 +64,57 @@ export function AboutSection() {
                 }`}
                 data-delay={`${index * 150}`}
               >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="relative w-12 h-12 border border-primary/40 bg-primary/5 flex items-center justify-center">
-                    <stat.icon className="w-6 h-6 text-primary relative z-10" />
-                    <div className="absolute top-0 left-0 w-2 h-2 border-l border-t border-primary/60" />
-                    <div className="absolute bottom-0 right-0 w-2 h-2 border-r border-b border-primary/60" />
+                <div className="relative">
+                  <BackgroundLines className="absolute inset-0 h-full md:h-full bg-transparent dark:bg-transparent pointer-events-none" svgOptions={{ duration: 10 }}>
+                    {null}
+                  </BackgroundLines>
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="relative w-12 h-12 border border-primary/40 bg-primary/5 flex items-center justify-center">
+                      <stat.icon className="w-6 h-6 text-primary relative z-10" />
+                      <div className="absolute top-0 left-0 w-2 h-2 border-l border-t border-primary/60" />
+                      <div className="absolute bottom-0 right-0 w-2 h-2 border-r border-b border-primary/60" />
+                    </div>
+                    <span className="tech-label">{stat.id}</span>
                   </div>
-                  <span className="tech-label">{stat.id}</span>
+                  <div className="text-3xl font-bold font-mono mb-2 text-primary">{stat.value}</div>
+                  <div className="text-sm text-muted-foreground uppercase tracking-wide">{stat.label}</div>
                 </div>
-                <div className="text-3xl font-bold font-mono mb-2 text-primary">{stat.value}</div>
-                <div className="text-sm text-muted-foreground uppercase tracking-wide">{stat.label}</div>
               </BlueprintCard>
             ))}
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
             <BlueprintCard className="p-8">
-              <span className="tech-label mb-4 block">Missão — v1.0</span>
-              <h3 className="text-2xl font-bold font-mono mb-4">
-                Nossa Missão
-              </h3>
-              <p className="text-muted-foreground leading-relaxed mb-6">
-                Criar uma comunidade colaborativa onde professores possam trocar experiências, organizar horários de forma eficiente e garantir continuidade no aprendizado dos alunos.
-              </p>
-              <div className="pt-4 border-t border-dashed border-primary/20">
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="tech-label block mb-1">Satisfação</span>
-                    <span className="font-mono text-2xl text-primary">98%</span>
-                  </div>
-                  <div>
-                    <span className="tech-label block mb-1">Disponibilidade</span>
-                    <span className="font-mono text-2xl text-primary">24/7</span>
+              <BackgroundLines className="relative h-auto md:h-auto min-h-72 md:min-h-88 bg-transparent dark:bg-transparent overflow-hidden rounded-md" svgOptions={{ duration: 12 }}>
+                <span className="tech-label mb-4 block">Missão — v1.0</span>
+                <h3 className="text-2xl font-bold font-mono mb-4">
+                  Nossa Missão
+                </h3>
+                <p className="text-muted-foreground leading-relaxed mb-6">
+                  Criar uma comunidade colaborativa onde professores possam trocar experiências, organizar horários de forma eficiente e garantir continuidade no aprendizado dos alunos.
+                </p>
+                <div className="pt-4 border-t border-dashed border-primary/20">
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="tech-label block mb-1">Satisfação</span>
+                      <span className="font-mono text-2xl text-primary">98%</span>
+                    </div>
+                    <div>
+                      <span className="tech-label block mb-1">Disponibilidade</span>
+                      <span className="font-mono text-2xl text-primary">24/7</span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </BackgroundLines>
             </BlueprintCard>
 
             <BlueprintCard className="p-8">
-              <span className="tech-label mb-4 block">Métricas — Sistema</span>
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  { label: 'Tempo de Resposta', value: '5min' },
-                  { label: 'Escolas Parceiras', value: '500+' },
-                  { label: 'Taxa de Sucesso', value: '99%' },
-                  { label: 'Suporte Ativo', value: '24h' }
-                ].map((metric, i) => (
-                  <div key={i} className="border border-primary/30 p-4 relative bg-background/50">
-                    <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/50" />
-                    <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-primary/50" />
-                    <div className="text-2xl font-bold font-mono text-primary mb-1">{metric.value}</div>
-                    <div className="text-xs text-muted-foreground uppercase tracking-wide">{metric.label}</div>
-                  </div>
-                ))}
-              </div>
+              <BackgroundLines className="relative h-auto md:h-auto min-h-72 md:min-h-88 bg-transparent dark:bg-transparent overflow-hidden rounded-md" svgOptions={{ duration: 12 }}>
+                <span className="tech-label mb-4 block">Métricas — Sistema</span>
+                <div className="relative">
+                  <AnimatedBeamDemo />
+                </div>
+              </BackgroundLines>
             </BlueprintCard>
           </div>
         </div>
