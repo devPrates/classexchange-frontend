@@ -1,9 +1,10 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Calendar, MessageSquare, Bell, CheckCircle2, Search, BarChart3 } from 'lucide-react'
+import { Calendar, MessageSquare, Bell, CheckCircle2, Search, BarChart3, Monitor, Smartphone, TabletSmartphone } from 'lucide-react'
 import { BlueprintCard } from '../elements/blueprint-card'
-
+import { Safari } from '@/components/ui/safari'
+import { Iphone } from '@/components/ui/iphone'
 export function FeaturesSection() {
   const [isVisible, setIsVisible] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
@@ -67,7 +68,7 @@ export function FeaturesSection() {
   return (
     <section id="features" ref={sectionRef} className="min-h-screen py-20 md:py-32 relative flex items-center">
       <div className="section-divider bottom-0" />
-      
+
       <div className="container mx-auto px-4">
         <div className={`max-w-6xl mx-auto transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <div className="mb-16 text-center">
@@ -89,9 +90,8 @@ export function FeaturesSection() {
             {features.map((feature, index) => (
               <BlueprintCard
                 key={index}
-                className={`p-6 transition-all duration-500 hover:shadow-lg hover:border-primary/50 ${
-                  isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-                }`}
+                className={`p-6 transition-all duration-500 hover:shadow-lg hover:border-primary/50 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                  }`}
                 data-delay={`${index * 150}`}
                 overlayImageSrc={`/people-${String(index + 1).padStart(2, '0')}.svg`}
                 overlayClassName="absolute bottom-0 right-0 w-1/3 opacity-90 pointer-events-none select-none"
@@ -114,32 +114,44 @@ export function FeaturesSection() {
             ))}
           </div>
 
-          <BlueprintCard
-            className="p-8 md:p-12 text-center bg-primary/5"
-            overlayImageSrc="/peeps.svg"
-            overlayClassName="absolute bottom-2 md:bottom-4 right-[-2rem] md:right-[-3rem] w-[85%] md:w-[75%] lg:w-[65%] max-h-[85%] object-contain opacity-95 pointer-events-none select-none z-0"
-          >
-            <span className="tech-label mb-6 block">CTA — Call to Action</span>
-            <h3 className="text-3xl md:text-4xl font-bold font-mono mb-4">
-              Pronto para Simplificar sua Rotina?
-            </h3>
-            <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-              Milhares de professores já economizam tempo e reduzem estresse com nossa plataforma técnica.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="relative bg-primary text-primary-foreground px-8 py-4 font-mono text-sm font-semibold transition-all hover:shadow-lg group">
-                <span className="relative z-10">Comece Grátis por 30 Dias</span>
-                <div className="absolute inset-0 border border-primary-foreground/20 group-hover:border-primary-foreground/40 transition-colors" />
-              </button>
-              <button className="relative border border-primary/40 bg-background px-8 py-4 font-mono text-sm font-semibold hover:border-primary/60 transition-colors">
-                <span className="relative z-10">Falar com Vendas</span>
-                <div className="absolute top-0 left-0 w-2 h-2 border-l border-t border-primary/40" />
-                <div className="absolute top-0 right-0 w-2 h-2 border-r border-t border-primary/40" />
-                <div className="absolute bottom-0 left-0 w-2 h-2 border-l border-b border-primary/40" />
-                <div className="absolute bottom-0 right-0 w-2 h-2 border-r border-b border-primary/40" />
-              </button>
+          <BlueprintCard className="p-8 md:p-12 relative overflow-hidden">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="h-px flex-1 bg-linear-to-r from-transparent via-primary/40 to-primary/40" />
+              <span className="tech-label">Multiplataforma — Sistema</span>
+              <div className="h-px flex-1 bg-linear-to-l from-transparent via-primary/40 to-primary/40" />
+            </div>
+            <div className="mt-4 mb-10 grid grid-cols-3 gap-4 max-w-md mx-auto">
+              {[
+                { icon: Monitor, label: 'Desktop', desc: 'Windows, Mac, Linux' },
+                { icon: TabletSmartphone, label: 'Tablet', desc: 'iPad, Android' },
+                { icon: Smartphone, label: 'Mobile', desc: 'iOS, Android' },
+              ].map((platform, i) => (
+                <div
+                  key={i}
+                  className={`text-center transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+                  style={{ transitionDelay: `${(i + 2) * 150}ms` }}
+                >
+                  <div className="w-12 h-12 mx-auto mb-2 border border-primary/30 bg-primary/5 flex items-center justify-center relative">
+                    <platform.icon className="w-6 h-6 text-primary" />
+                    <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/50" />
+                    <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-primary/50" />
+                  </div>
+                  <div className="font-mono text-sm font-bold mb-1">{platform.label}</div>
+                  <div className="tech-label text-xs">{platform.desc}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className={`flex flex-col md:flex-row items-center justify-center gap-10 md:gap-12 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'} transition-all duration-700`}>
+              <div className="max-w-[640px] mx-auto md:flex-1">
+                <Safari url="magicui.design" videoSrc="https://videos.pexels.com/video-files/27180348/12091515_2560_1440_50fps.mp4" />
+              </div>
+              <div className="max-w-[200px] mx-auto md:flex-1">
+                <Iphone videoSrc="https://videos.pexels.com/video-files/8946986/8946986-uhd_1440_2732_25fps.mp4" />
+              </div>
             </div>
           </BlueprintCard>
+
         </div>
       </div>
     </section>
