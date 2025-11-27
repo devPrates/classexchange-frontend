@@ -4,17 +4,15 @@ import { useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { Search, Plus, Edit, Trash2, Building2, MapPin } from 'lucide-react'
+import { Search, Plus, Building2 } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { CornerAccent } from '@/components/elements/corner-accent'
 import { CampusCard } from '@/components/elements/campus-card'

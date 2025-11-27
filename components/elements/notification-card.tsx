@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { CornerAccent } from '@/components/elements/corner-accent'
-import { Bell, CheckCheck, Trash2, AlertCircle, Info } from 'lucide-react'
+import { Bell, Trash2, AlertCircle, Info } from 'lucide-react'
 import { RiExchangeBoxLine, RiExchange2Line } from 'react-icons/ri'
 import { Button } from '@/components/ui/button'
 import { formatDate } from '@/lib/utils'
