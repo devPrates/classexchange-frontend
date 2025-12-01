@@ -3,6 +3,10 @@ import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import { ReactQueryProvider } from '@/components/providers/react-query-provider'
 import { Toaster } from "@/components/ui/sonner"
+import { Geist, Geist_Mono } from 'next/font/google'
+
+const _geist = Geist({ subsets: ["latin"] });
+const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 
 export const metadata: Metadata = {
