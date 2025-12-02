@@ -1,6 +1,6 @@
 'use client'
 
-import { Menu, Search, Bell, SettingsIcon } from 'lucide-react'
+import { Menu, Search, Bell, SettingsIcon, LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Badge } from '@/components/ui/badge'
+import { signOut } from 'next-auth/react'
 
 interface TopbarProps {
   onToggleSidebar: () => void
@@ -102,6 +103,20 @@ export function Topbar({ onToggleSidebar }: TopbarProps) {
 
         {/* Theme Toggle */}
         <ThemeToggle />
+
+        <Button
+          variant="ghost"
+          size="icon"
+          className="border border-primary/30 hover:border-primary/50 relative"
+          onClick={() => signOut({ callbackUrl: '/login' })}
+          aria-label="Sair"
+        >
+          <LogOut className="h-5 w-5" />
+          <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/40" />
+          <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-primary/40" />
+          <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-l border-b border-primary/40" />
+          <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-primary/40" />
+        </Button>
 
         {/* User Menu */}
         <DropdownMenu>

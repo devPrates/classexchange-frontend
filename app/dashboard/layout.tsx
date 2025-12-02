@@ -3,9 +3,18 @@
 import { useState } from 'react'
 import { Sidebar } from '@/components/dashboard/sidebar'
 import { Topbar } from '@/components/dashboard/topbar'
+import { useSession } from 'next-auth/react'
+import { useEffect } from 'react'
+import { setAuthToken } from '@/services/api'
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const { data: session } = useSession()
+
+  useEffect(() => {
+    const token = (session as any)?.accessToken as string | undefined
+    setAuthToken(token ?? null)
+  }, [session])
 
   return (
     <div className="min-h-screen w-full relative">

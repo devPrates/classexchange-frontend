@@ -9,28 +9,38 @@ import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from '@/comp
 import { Label } from '@/components/ui/label'
 
 import { ArrowLeft } from 'lucide-react'
+import { signIn } from 'next-auth/react'
+const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.API_BASE_URL || '').replace(/\/$/, '')
 import { CornerAccent } from '@/components/elements/corner-accent'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
-  const [otp, setOtp] = useState('')
-  const [step, setStep] = useState<'email' | 'otp'>('email')
+  const [password, setPassword] = useState('')
+  const [step, setStep] = useState<'email' | 'password'>('email')
   const router = useRouter()
 
-  const handleSendOTP = (e: React.FormEvent) => {
+  const handleVerifyEmail = (e: React.FormEvent) => {
     e.preventDefault()
     if (email) {
-      setStep('otp')
+      setStep('password')
     }
   }
 
-  const handleVerifyOTP = (e: React.FormEvent) => {
+  const handlePasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    router.push('/dashboard')
+    const res = await signIn('credentials', { email, password, redirect: false })
+    if (res && res.ok) {
+      // Após autenticar, o token ficará disponível na sessão; o axios será configurado no layout do dashboard
+      router.push('/dashboard')
+    }
   }
 
   const handleSocialLogin = (provider: string) => {
-    console.log('Login com:', provider)
+    if (provider === 'google') {
+      const isApiPrefixed = /\/api$/.test(API_BASE)
+      const path = isApiPrefixed ? '/auth/oauth2/google' : '/api/auth/oauth2/google'
+      window.location.href = `${API_BASE}${path}`
+    }
   }
 
   return (
@@ -107,9 +117,9 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* OTP Form */}
+          {/* Forms */}
           {step === 'email' ? (
-            <form onSubmit={handleSendOTP} className="space-y-4">
+            <form onSubmit={handleVerifyEmail} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-mono uppercase tracking-wider flex justify-center w-full text-center">
                   E-mail Institucional
@@ -129,38 +139,25 @@ export default function LoginPage() {
                 type="submit"
                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground relative overflow-hidden group"
               >
-                <span className="relative z-10">Receber OTP</span>
+                <span className="relative z-10">Verificar e-mail</span>
                 <div className="absolute inset-0 bg-accent opacity-0 group-hover:opacity-20 transition-opacity" />
               </Button>
             </form>
           ) : (
-            <form onSubmit={handleVerifyOTP} className="space-y-4">
+            <form onSubmit={handlePasswordLogin} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="otp" className="text-sm font-mono uppercase tracking-wider flex justify-center w-full text-center">
-                  Código OTP
+                <Label htmlFor="password" className="text-sm font-mono uppercase tracking-wider flex justify-center w-full text-center">
+                  Senha
                 </Label>
-                <InputOTP
-                  id="otp"
-                  maxLength={6}
-                  value={otp}
-                  onChange={(value) => setOtp(value.replace(/\D/g, '').slice(0, 6))}
-                  containerClassName="justify-center"
-                >
-                  <InputOTPGroup>
-                    <InputOTPSlot index={0} />
-                    <InputOTPSlot index={1} />
-                    <InputOTPSlot index={2} />
-                  </InputOTPGroup>
-                  <InputOTPSeparator />
-                  <InputOTPGroup>
-                    <InputOTPSlot index={3} />
-                    <InputOTPSlot index={4} />
-                    <InputOTPSlot index={5} />
-                  </InputOTPGroup>
-                </InputOTP>
-                <p className="text-xs text-muted-foreground text-center">
-                  Código enviado para {email}
-                </p>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="Sua senha"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="relative border-primary/20 focus:border-primary input-placeholder-center"
+                  required
+                />
               </div>
 
               <div className="space-y-2">
@@ -168,7 +165,7 @@ export default function LoginPage() {
                   type="submit"
                   className="w-full bg-primary hover:bg-primary/90 text-primary-foreground relative overflow-hidden group"
                 >
-                  <span className="relative z-10">Verificar Código</span>
+                  <span className="relative z-10">Entrar</span>
                   <div className="absolute inset-0 bg-accent opacity-0 group-hover:opacity-20 transition-opacity" />
                 </Button>
 

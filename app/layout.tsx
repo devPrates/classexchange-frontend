@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import { ReactQueryProvider } from '@/components/providers/react-query-provider'
+import { AuthProvider } from '@/components/providers/auth-provider'
 import { Toaster } from "@/components/ui/sonner"
 import { Geist, Geist_Mono } from 'next/font/google'
 
@@ -40,11 +41,13 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <body className={`font-sans antialiased`}>
-        <ReactQueryProvider>
-          {children}
-          <Analytics />
-          <Toaster />
-        </ReactQueryProvider>
+        <AuthProvider>
+          <ReactQueryProvider>
+            {children}
+            <Analytics />
+            <Toaster />
+          </ReactQueryProvider>
+        </AuthProvider>
       </body>
     </html>
   )
