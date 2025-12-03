@@ -1,9 +1,9 @@
-import NextAuth from "next-auth"
+import NextAuth, { type AuthOptions } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 
 const apiBase = (process.env.API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080").replace(/\/$/, "")
 
-const handler = NextAuth({
+export const authOptions: AuthOptions = {
   providers: [
     Credentials({
       name: "credentials",
@@ -34,7 +34,7 @@ const handler = NextAuth({
       },
     }),
   ],
-  session: { strategy: "jwt" },
+  session: { strategy: "jwt" as const },
   callbacks: {
     async jwt({ token, user }) {
       if (user && (user as any).accessToken) {
@@ -74,6 +74,8 @@ const handler = NextAuth({
     signIn: "/login",
   },
   secret: process.env.NEXTAUTH_SECRET || "dev-secret",
-})
+}
+
+const handler = NextAuth(authOptions)
 
 export { handler as GET, handler as POST }

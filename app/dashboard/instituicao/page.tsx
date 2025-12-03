@@ -24,7 +24,7 @@ export default function InstituicaoPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const { data, isLoading, isError, refetch } = useCampi(searchQuery)
 
-  const filteredCampus = data ?? []
+  const filteredCampus = Array.isArray(data) ? data : []
 
   return (
     <div className="space-y-6">
