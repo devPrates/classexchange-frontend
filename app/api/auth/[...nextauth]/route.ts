@@ -1,7 +1,7 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 
-const apiBase = (process.env.API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL || "").replace(/\/$/, "")
+const apiBase = (process.env.API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080").replace(/\/$/, "")
 
 const handler = NextAuth({
   providers: [
@@ -17,10 +17,13 @@ const handler = NextAuth({
           if (credentials?.token) {
             return { id: "token-login", email: "", accessToken: credentials.token as string }
           }
-          const res = await fetch(`${apiBase}/api/auth/login`, {
+          const email = (credentials?.email as string | undefined)?.trim().toLowerCase()
+          const senha = (credentials?.password as string | undefined)?.trim()
+          const loginPath = apiBase.endsWith('/api') ? '/auth/login' : '/api/auth/login'
+          const res = await fetch(`${apiBase}${loginPath}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: credentials?.email, senha: credentials?.password }),
+            body: JSON.stringify({ email, senha }),
           })
           if (!res.ok) return null
           const data = await res.json()

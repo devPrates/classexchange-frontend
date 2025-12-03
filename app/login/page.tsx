@@ -16,6 +16,7 @@ import { CornerAccent } from '@/components/elements/corner-accent'
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [errorMsg, setErrorMsg] = useState('')
   const [step, setStep] = useState<'email' | 'password'>('email')
   const router = useRouter()
 
@@ -23,6 +24,7 @@ export default function LoginPage() {
     e.preventDefault()
     if (email) {
       setStep('password')
+      setErrorMsg('')
     }
   }
 
@@ -32,6 +34,8 @@ export default function LoginPage() {
     if (res && res.ok) {
       // Após autenticar, o token ficará disponível na sessão; o axios será configurado no layout do dashboard
       router.push('/dashboard')
+    } else {
+      setErrorMsg('Email ou senha inválidos')
     }
   }
 
@@ -168,6 +172,9 @@ export default function LoginPage() {
                   <span className="relative z-10">Entrar</span>
                   <div className="absolute inset-0 bg-accent opacity-0 group-hover:opacity-20 transition-opacity" />
                 </Button>
+                {errorMsg && (
+                  <p className="text-xs text-destructive text-center">{errorMsg}</p>
+                )}
 
                 <Button
                   type="button"
