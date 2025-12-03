@@ -1,8 +1,45 @@
-import { withAuth } from "next-auth/middleware"
+import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
+import { getToken } from "next-auth/jwt"
 
-export default withAuth({
-  pages: { signIn: "/login" },
-})
+export async function middleware(req: NextRequest) {
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+  const path = req.nextUrl.pathname
+  const safePaths = ["/dashboard/forbidden"]
+  if (safePaths.some((p) => path.startsWith(p))) {
+    return NextResponse.next()
+  }
+  if (!token) {
+    return NextResponse.redirect(new URL("/login", req.nextUrl))
+  }
+  const roles: string[] = ((token as any).roles ?? []) as string[]
+  const adminPrefixes = [
+    "/dashboard/instituicao",
+    "/dashboard/cursos",
+    "/dashboard/estudantes",
+    "/dashboard/professores",
+  ]
+  const menuPrefixes = [
+    "/dashboard/professor",
+    "/dashboard/calendario",
+    "/dashboard/notificacoes",
+    "/dashboard/solicitacoes",
+    "/dashboard/troca",
+    "/dashboard/substituicao",
+  ]
+  const isAdminRoot = path === "/dashboard"
+  if (isAdminRoot || adminPrefixes.some((p) => path.startsWith(p))) {
+    if (!roles.includes("ADMINISTRADOR")) {
+      return NextResponse.redirect(new URL("/dashboard/forbidden", req.nextUrl))
+    }
+  }
+  if (menuPrefixes.some((p) => path.startsWith(p))) {
+    if (!(roles.includes("PROFESSOR") || roles.includes("ADMINISTRADOR"))) {
+      return NextResponse.redirect(new URL("/dashboard/forbidden", req.nextUrl))
+    }
+  }
+  return NextResponse.next()
+}
 
 export const config = {
   matcher: ["/dashboard/:path*"],

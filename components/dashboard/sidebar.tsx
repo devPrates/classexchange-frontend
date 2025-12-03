@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { LayoutDashboard, Building2, Calendar, Bell, Users, ChevronDown, ChevronsUpDown, ClipboardList } from 'lucide-react'
@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
+import { useSession } from 'next-auth/react'
 
 interface SidebarProps {
   collapsed: boolean
@@ -41,7 +42,7 @@ const menuItems = [
     ],
   },
   {
-    group: 'Professor',
+    group: 'Menu',
     items: [
       { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard/professor' },
       { icon: Calendar, label: 'Calendário', href: '/dashboard/calendario' },
@@ -56,7 +57,25 @@ const menuItems = [
 export function Sidebar({ collapsed }: SidebarProps) {
   const pathname = usePathname()
   const [selectedTeam, setSelectedTeam] = useState('Equipe Principal')
-  const allItems = menuItems.flatMap((s) => s.items)
+  const { data: session } = useSession()
+  const userEmail = session?.user?.email || 'usuario@exemplo.com'
+  const userName = session?.user?.name || userEmail.split('@')[0]
+  const userInitials = (userName || '').split(' ').map((p) => p[0]).join('').substring(0,2).toUpperCase()
+
+  useEffect(() => {
+    const safe = { user: session?.user, expires: (session as any)?.expires }
+    console.log('useSession data:', safe)
+  }, [session])
+  const roles: string[] = ((session?.user as any)?.roles ?? []) as string[]
+  const canAdmin = roles.includes('ADMINISTRADOR')
+  const canMenu = roles.includes('PROFESSOR') || roles.includes('ADMINISTRADOR')
+  const filteredSections = menuItems.filter((s) => {
+    if (s.group === 'Usuários') return canAdmin
+    if (s.group === 'Administração') return canAdmin
+    if (s.group === 'Menu') return canMenu
+    return true
+  })
+  const allItems = filteredSections.flatMap((s) => s.items)
   const activeItem = allItems.reduce<typeof allItems[number] | null>((best, item) => {
     const href = item.href
     const exact = pathname === href
@@ -105,7 +124,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
 
       {/* Menu Items */}
       <div className="flex-1 overflow-y-auto py-4">
-        {menuItems.map((section) => (
+        {filteredSections.map((section) => (
           <div key={section.group} className="mb-6">
             {!collapsed && (
               <div className="px-4 mb-2">
@@ -155,11 +174,11 @@ export function Sidebar({ collapsed }: SidebarProps) {
               <Button variant="ghost" className="w-full justify-start p-2 h-auto hover:bg-secondary/50">
                 <Avatar className="h-8 w-8 border border-primary/30">
                   <AvatarImage src="/placeholder.svg" alt="User" />
-                  <AvatarFallback>JD</AvatarFallback>
+                  <AvatarFallback>{userInitials}</AvatarFallback>
                 </Avatar>
                 <div className="ml-2 flex-1 text-left overflow-hidden">
-                  <p className="text-sm font-medium">João da Silva</p>
-                  <p className="text-xs text-muted-foreground truncate">joao@exemplo.com</p>
+                  <p className="text-sm font-medium">{userName}</p>
+                  <p className="text-xs text-muted-foreground truncate">{userEmail}</p>
                 </div>
                 <ChevronDown className="ml-auto h-4 w-4 opacity-50" />
               </Button>

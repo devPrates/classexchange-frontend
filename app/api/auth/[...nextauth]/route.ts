@@ -40,10 +40,33 @@ const handler = NextAuth({
       if (user && (user as any).accessToken) {
         token.accessToken = (user as any).accessToken
       }
+      const access = (token as any).accessToken as string | undefined
+      if (access) {
+        try {
+          const seg = access.split(".")[1]
+          const base64 = seg.replace(/-/g, "+").replace(/_/g, "/")
+          const json = Buffer.from(base64, "base64").toString("utf8")
+          const claims = JSON.parse(json)
+          ;(token as any).sub = claims.sub
+          ;(token as any).id = claims.id
+          ;(token as any).nome = claims.nome
+          ;(token as any).email = claims.email
+          ;(token as any).campus_id = claims.campus_id ?? null
+          ;(token as any).roles = claims.roles ?? []
+        } catch {}
+      }
       return token
     },
     async session({ session, token }) {
       ;(session as any).accessToken = (token as any).accessToken
+      ;(session as any).user = {
+        ...(session as any).user,
+        name: (token as any).nome || (session as any).user?.name,
+        email: (token as any).email || (session as any).user?.email,
+        roles: (token as any).roles || [],
+        campusId: (token as any).campus_id ?? null,
+        id: (token as any).id || (token as any).sub || undefined,
+      }
       return session
     },
   },
