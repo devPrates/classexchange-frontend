@@ -250,12 +250,7 @@ export default function CursoDetailsPage() {
                   <TableCell className="text-muted-foreground">0</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-yellow-600 dark:text-yellow-500 hover:bg-yellow-500/10"
-                        asChild
-                      >
+                      <Button variant="outline" size="icon" asChild aria-label="Ver turma">
                         <Link
                           href={`/dashboard/turma/${turma.id}`}
                           onClick={async (e) => {
@@ -271,12 +266,8 @@ export default function CursoDetailsPage() {
                           <Eye className="h-4 w-4" />
                         </Link>
                       </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-destructive hover:bg-destructive/10"
-                      >
-                        <Trash2 className="h-4 w-4" />
+                      <Button variant="ghost" size="icon" className="hover:bg-red-300" aria-label="Excluir">
+                        <Trash2 className="h-4 w-4 text-red-600" />
                       </Button>
                     </div>
                   </TableCell>

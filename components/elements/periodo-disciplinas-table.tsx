@@ -30,22 +30,22 @@ export function PeriodoDisciplinasTable({ disciplinas, onEdit, onDelete }: Props
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
                   <Button
-                    variant="outline"
-                    size="sm"
-                    className="bg-yellow-500/10 text-yellow-700 hover:bg-yellow-500/20 hover:text-yellow-700 border border-yellow-500/30 rounded-md"
-                    style={{ borderRadius: 6 }}
+                    variant="ghost"
+                    size="icon"
+                    className="hover:bg-yellow-300"
                     onClick={() => onEdit?.(d)}
+                    aria-label="Editar"
                   >
-                    <Edit className="h-4 w-4" />
+                    <Edit className="h-4 w-4 text-yellow-600" />
                   </Button>
                   <Button
-                    variant="outline"
-                    size="sm"
-                    className="bg-red-500/10 text-red-700 hover:bg-red-500/20 hover:text-red-700 border border-red-500/30 rounded-md"
-                    style={{ borderRadius: 6 }}
+                    variant="ghost"
+                    size="icon"
+                    className="hover:bg-red-300"
                     onClick={() => onDelete?.(d)}
+                    aria-label="Excluir"
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-4 w-4 text-red-600" />
                   </Button>
                 </div>
               </TableCell>

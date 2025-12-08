@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from 'react'
+import { useSession } from 'next-auth/react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CornerAccent } from '@/components/elements/corner-accent'
 import { Button } from '@/components/ui/button'
@@ -21,6 +22,7 @@ export default function ServidoresPage() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [isHydrated, setIsHydrated] = useState(false)
+  const { data: session } = useSession()
   const { data, isLoading, isError, refetch } = useUsuarios(searchQuery)
   const usuarios = data ?? []
   const { data: usuarioDetalhe } = useUsuario(selectedId ?? undefined)
@@ -28,6 +30,13 @@ export default function ServidoresPage() {
   useEffect(() => {
     setIsHydrated(true)
   }, [])
+
+  useEffect(() => {
+    const token = (session as any)?.accessToken as string | undefined
+    if (token) {
+      refetch()
+    }
+  }, [session, refetch])
 
   return (
     <div className="space-y-6">

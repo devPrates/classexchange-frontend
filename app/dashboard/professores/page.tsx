@@ -174,15 +174,11 @@ export default function ProfessoresPage() {
                           <TableCell className="text-muted-foreground text-sm">{professor.email}</TableCell>
                           <TableCell className="text-right">
                             <div className="flex justify-end gap-2">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="text-yellow-600 dark:text-yellow-500 hover:bg-yellow-500/10"
-                              >
-                                <Edit className="h-4 w-4" />
+                              <Button variant="ghost" size="icon" className="hover:bg-yellow-300" aria-label="Editar">
+                                <Edit className="h-4 w-4 text-yellow-600" />
                               </Button>
-                              <Button variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10">
-                                <Trash2 className="h-4 w-4" />
+                              <Button variant="ghost" size="icon" className="hover:bg-red-300" aria-label="Excluir">
+                                <Trash2 className="h-4 w-4 text-red-600" />
                               </Button>
                             </div>
                           </TableCell>
