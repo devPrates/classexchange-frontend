@@ -13,9 +13,10 @@ interface DataTableProps<TData> {
   data: TData[]
   onEdit?: (item: TData) => void
   onDelete?: (item: TData) => void
+  searchable?: boolean
 }
 
-export function DataTable<TData>({ columns, data, onEdit, onDelete }: DataTableProps<TData>) {
+export function DataTable<TData>({ columns, data, onEdit, onDelete, searchable = true }: DataTableProps<TData>) {
   const [query, setQuery] = useState("")
   const idColumn: ColumnDef<TData> = {
     id: "rowIndex",
@@ -51,15 +52,7 @@ export function DataTable<TData>({ columns, data, onEdit, onDelete }: DataTableP
     ),
   }
 
-  const displayData = query
-    ? data.filter((d) => {
-        try {
-          return JSON.stringify(d).toLowerCase().includes(query.toLowerCase())
-        } catch {
-          return false
-        }
-      })
-    : data
+  const displayData = data
 
   const table = useReactTable({
     data: displayData,
@@ -73,15 +66,19 @@ export function DataTable<TData>({ columns, data, onEdit, onDelete }: DataTableP
   return (
     <div className="overflow-hidden rounded-md border" style={{ borderRadius: 6 }}>
       <div className="flex items-center justify-between px-2 py-2 border-b">
-        <div className="relative w-full max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Buscar..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="pl-9 border-primary/30"
-          />
-        </div>
+        {searchable ? (
+          <div className="relative w-full max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="pl-9 border-primary/30"
+            />
+          </div>
+        ) : (
+          <div />
+        )}
         <div className="flex items-center gap-2">
           <Button
             variant="outline"

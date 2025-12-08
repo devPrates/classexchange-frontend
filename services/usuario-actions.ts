@@ -1,5 +1,3 @@
-"use server"
-
 import api from '@/services/api'
 import type { Usuario, CreateUsuario, UpdateUsuario } from '@/types/usuarios'
 

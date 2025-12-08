@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CornerAccent } from '@/components/elements/corner-accent'
 import { Button } from '@/components/ui/button'
@@ -20,9 +20,14 @@ export default function ServidoresPage() {
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [isHydrated, setIsHydrated] = useState(false)
   const { data, isLoading, isError, refetch } = useUsuarios(searchQuery)
   const usuarios = data ?? []
   const { data: usuarioDetalhe } = useUsuario(selectedId ?? undefined)
+
+  useEffect(() => {
+    setIsHydrated(true)
+  }, [])
 
   return (
     <div className="space-y-6">
@@ -83,13 +88,14 @@ export default function ServidoresPage() {
             </div>
           </div>
         </CardHeader>
-        <CardContent>
-          {isLoading || isError ? (
+        <CardContent suppressHydrationWarning>
+          {(!isHydrated) || isLoading || isError ? (
             <div className="text-muted-foreground">Carregando...</div>
           ) : (
             <DataTable
               columns={usuariosColumns}
               data={usuarios}
+              searchable={false}
               onEdit={(u) => {
                 setSelectedId((u as any).id)
                 setIsEditOpen(true)
