@@ -67,10 +67,10 @@ export function Sidebar({ collapsed }: SidebarProps) {
     console.log('useSession data:', safe)
   }, [session])
   const roles: string[] = ((session?.user as any)?.roles ?? []) as string[]
-  const canAdmin = roles.includes('ADMINISTRADOR')
-  const canMenu = roles.includes('PROFESSOR') || roles.includes('ADMINISTRADOR')
+  const canAdmin = roles.includes('ADMINISTRADOR') || roles.includes('COORDENACAO') || roles.includes('DIRETORENSINO') || roles.includes('COORDENADORCURSO')
+  const canMenu = roles.includes('PROFESSOR') || canAdmin
   const filteredSections = menuItems.filter((s) => {
-    if (s.group === 'Usuários') return canAdmin
+    if (s.group === 'Usuários') return roles.includes('ADMINISTRADOR')
     if (s.group === 'Administração') return canAdmin
     if (s.group === 'Menu') return canMenu
     return true

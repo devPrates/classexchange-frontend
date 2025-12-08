@@ -28,13 +28,15 @@ export async function middleware(req: NextRequest) {
     "/dashboard/substituicao",
   ]
   const isAdminRoot = path === "/dashboard"
+  const hasAdminAccess = roles.includes("ADMINISTRADOR") || roles.includes("COORDENACAO") || roles.includes("DIRETORENSINO") || roles.includes("COORDENADORCURSO")
   if (isAdminRoot || adminPrefixes.some((p) => path.startsWith(p))) {
-    if (!roles.includes("ADMINISTRADOR")) {
+    if (!hasAdminAccess) {
       return NextResponse.redirect(new URL("/dashboard/forbidden", req.nextUrl))
     }
   }
   if (menuPrefixes.some((p) => path.startsWith(p))) {
-    if (!(roles.includes("PROFESSOR") || roles.includes("ADMINISTRADOR"))) {
+    const hasMenuAccess = roles.includes("PROFESSOR") || hasAdminAccess
+    if (!hasMenuAccess) {
       return NextResponse.redirect(new URL("/dashboard/forbidden", req.nextUrl))
     }
   }

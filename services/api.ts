@@ -2,8 +2,10 @@ import axios from 'axios'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
+const rawBase = (process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8080').replace(/\/$/, '')
+const apiBase = rawBase.endsWith('/api') ? rawBase : `${rawBase}/api`
 const api = axios.create({
-  baseURL: process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL,
+  baseURL: apiBase,
 })
 
 api.defaults.headers.common['Content-Type'] = 'application/json'
@@ -26,8 +28,10 @@ export function setAuthToken(token: string | null) {
 
 export async function apiServer() {
   const session = await getServerSession(authOptions)
+  const rawBase = (process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8080').replace(/\/$/, '')
+  const base = rawBase.endsWith('/api') ? rawBase : `${rawBase}/api`
   const instance = axios.create({
-    baseURL: process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL,
+    baseURL: base,
   })
   instance.defaults.headers.common['Content-Type'] = 'application/json'
   instance.defaults.headers.common['Accept'] = 'application/json'
