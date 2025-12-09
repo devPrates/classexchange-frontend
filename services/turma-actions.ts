@@ -1,30 +1,36 @@
 "use server"
 
+import { apiServer } from '@/services/api'
 import api from '@/services/api'
 import type { TurmaDetalhe, Turma, CreateTurma } from '@/types/turmas'
 
 export async function getTurmaBySlug(slug: string): Promise<TurmaDetalhe> {
-  const { data } = await api.get(`/turmas/slug/${slug}`)
+  const client = await apiServer()
+  const { data } = await client.get(`/turmas/slug/${slug}`)
   return data as TurmaDetalhe
 }
 
 export async function getTurmaById(id: string): Promise<Turma> {
-  const { data } = await api.get(`/turmas/${id}`)
+  const client = await apiServer()
+  const { data } = await client.get(`/turmas/${id}`)
   return data as Turma
 }
 
 export async function createTurma(payload: CreateTurma): Promise<Turma> {
-  const { data } = await api.post('/turmas', payload)
+  const client = await apiServer()
+  const { data } = await client.post('/turmas', payload)
   return data as Turma
 }
 
 export async function listTurmasByCursoId(cursoId: string): Promise<Turma[]> {
-  const { data } = await api.get(`/turmas/curso/${cursoId}`)
+  const client = await apiServer()
+  const { data } = await client.get(`/turmas/curso/${cursoId}`)
   return data as Turma[]
 }
 
 export async function listTurmasByCursoSlug(slug: string): Promise<Turma[]> {
-  const { data } = await api.get(`/turmas/curso/slug/${slug}`)
+  const client = await apiServer()
+  const { data } = await client.get(`/turmas/curso/slug/${slug}`)
   return data as Turma[]
 }
 

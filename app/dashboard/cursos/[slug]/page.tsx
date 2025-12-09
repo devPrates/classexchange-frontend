@@ -41,6 +41,7 @@ export default function CursoDetailsPage() {
   const [coordFim, setCoordFim] = useState('')
   const { data: professoresCurso = [] } = useProfessoresDoCurso(item?.id)
   const { data: coordAtivo, refetch: refetchCoord } = useCoordenadorCursoAtivo(item?.id)
+  // Usa o slug diretamente para garantir estabilidade da chave de cache e evitar transição de slug->id
   const { data: turmas = [], refetch: refetchTurmas } = useTurmasDoCurso(slug)
   const [isTurmaDialogOpen, setIsTurmaDialogOpen] = useState(false)
   const turmaSchema = z.object({
@@ -145,9 +146,9 @@ export default function CursoDetailsPage() {
 
       {/* Stats */}
       <div className="grid gap-4 md:grid-cols-3">
-        <StatCard label="Total de Turmas" value={item.turmas.length} Icon={Users} />
-        <StatCard label="Alunos Matriculados" value={item.studentsCount} Icon={GraduationCap} />
-        <StatCard label="Professores" value={item.professoresCount} Icon={UserCheck} />
+        <StatCard label="Total de Turmas" value={turmas?.length ?? item.turmas?.length ?? 0} Icon={Users} />
+        <StatCard label="Alunos Matriculados" value={item.studentsCount ?? 0} Icon={GraduationCap} />
+        <StatCard label="Professores" value={item.professoresCount ?? 0} Icon={UserCheck} />
       </div>
 
       {/* Coordenador do Curso */}
@@ -249,10 +250,7 @@ export default function CursoDetailsPage() {
         </DialogContent>
       </Dialog>
 
-      
-
-      
-
+    
 
       {/* Turmas */}
       <Card className="relative border-primary/30">
@@ -282,22 +280,25 @@ export default function CursoDetailsPage() {
                 <form
                   onSubmit={turmaForm.handleSubmit(async (values) => {
                     try {
+                      console.log('[DEBUG] Tentando criar turma. Payload:', { nome: values.nome, numero: values.numero, cursoId: item.id })
                       const created = await createTurma({ nome: values.nome, numero: values.numero, cursoId: item.id })
-                      // Optimistic update: adiciona a turma criada ao cache do curso atual
-                      queryClient.setQueryData(['curso', slug], (prev: any) => {
-                        if (!prev) return prev
-                        return {
-                          ...prev,
-                          turmas: [...(prev.turmas ?? []), { id: created.id, nome: created.nome, numero: created.numero }],
-                        }
-                      })
+                      console.log('[DEBUG] Turma criada com sucesso. Resposta API:', created)
+                      
+                      // Invalida as queries para forçar o recarregamento dos dados reais do backend
+                      console.log('[DEBUG] Invalidando queries...')
+                      await queryClient.invalidateQueries({ queryKey: ['curso', slug] })
+                      await queryClient.invalidateQueries({ queryKey: ['curso', slug, 'turmas'] })
+                      
                       SoftToast.success('Turma criada com sucesso')
                       setIsTurmaDialogOpen(false)
                       turmaForm.reset({ nome: '', numero: 0 })
-                      await queryClient.invalidateQueries({ queryKey: ['curso', slug] })
-                      refetch()
-                      refetchTurmas()
+                      
+                      console.log('[DEBUG] Refetching manual...')
+                      await refetch()
+                      await refetchTurmas()
+                      console.log('[DEBUG] Processo finalizado.')
                     } catch (err: any) {
+                      console.error('[DEBUG] Erro ao criar turma:', err)
                       SoftToast.error('Falha ao criar turma', { description: err.message ?? 'Tente novamente' })
                     }
                   })}
@@ -353,18 +354,7 @@ export default function CursoDetailsPage() {
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button variant="outline" size="icon" asChild aria-label="Ver turma">
-                        <Link
-                          href={`/dashboard/turma/${turma.id}`}
-                          onClick={async (e) => {
-                            e.preventDefault()
-                            try {
-                              const t = await getTurmaById(turma.id as any)
-                              router.push(`/dashboard/turma/${t.slug}`)
-                            } catch {
-                              router.push(`/dashboard/turma/${turma.id}`)
-                            }
-                          }}
-                        >
+                        <Link href={`/dashboard/turma/${turma.slug}`}>
                           <Eye className="h-4 w-4" />
                         </Link>
                       </Button>
