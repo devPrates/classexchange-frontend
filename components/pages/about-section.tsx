@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Users, Clock, Shield } from 'lucide-react'
 import { BlueprintCard } from '../elements/blueprint-card'
-import { BackgroundLines } from '@/components/ui/background-lines'
 import { AnimatedBeamDemo } from '@/components/elements/beam-system'
 
 
@@ -65,9 +64,6 @@ export function AboutSection() {
                 data-delay={`${index * 150}`}
               >
                 <div className="relative">
-                  <BackgroundLines className="absolute inset-0 h-full md:h-full bg-transparent dark:bg-transparent pointer-events-none" svgOptions={{ duration: 10 }}>
-                    {null}
-                  </BackgroundLines>
                   <div className="flex items-start justify-between mb-4">
                     <div className="relative w-12 h-12 border border-primary/40 bg-primary/5 flex items-center justify-center">
                       <stat.icon className="w-6 h-6 text-primary relative z-10" />
@@ -85,7 +81,7 @@ export function AboutSection() {
 
           <div className="grid md:grid-cols-2 gap-8">
             <BlueprintCard className="p-8">
-              <BackgroundLines className="relative h-auto md:h-auto min-h-72 md:min-h-88 bg-transparent dark:bg-transparent overflow-hidden rounded-md" svgOptions={{ duration: 12 }}>
+              <div className="relative h-auto md:h-auto min-h-72 md:min-h-88 bg-transparent dark:bg-transparent overflow-hidden rounded-md">
                 <span className="tech-label mb-4 block">Missão — v1.0</span>
                 <h3 className="text-2xl font-bold font-mono mb-4">
                   Nossa Missão
@@ -105,16 +101,16 @@ export function AboutSection() {
                     </div>
                   </div>
                 </div>
-              </BackgroundLines>
+              </div>
             </BlueprintCard>
 
             <BlueprintCard className="p-8">
-              <BackgroundLines className="relative h-auto md:h-auto min-h-72 md:min-h-88 bg-transparent dark:bg-transparent overflow-hidden rounded-md" svgOptions={{ duration: 12 }}>
+              <div className="relative h-auto md:h-auto min-h-72 md:min-h-88 bg-transparent dark:bg-transparent overflow-hidden rounded-md">
                 <span className="tech-label mb-4 block">Métricas — Sistema</span>
                 <div className="relative">
                   <AnimatedBeamDemo />
                 </div>
-              </BackgroundLines>
+              </div>
             </BlueprintCard>
           </div>
         </div>

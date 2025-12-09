@@ -13,7 +13,7 @@ const Circle = forwardRef<
     <div
       ref={ref}
       className={cn(
-        "z-10 flex size-12 items-center justify-center rounded-full border-2 bg-white p-3 shadow-[0_0_20px_-12px_rgba(0,0,0,0.8)]",
+        "z-10 flex size-14 items-center justify-center rounded-full border-2 bg-white p-3 shadow-[0_0_20px_-12px_rgba(0,0,0,0.8)]",
         className
       )}
     >
@@ -42,29 +42,29 @@ export function AnimatedBeamDemo() {
       <div className="flex size-full max-h-[200px] max-w-lg flex-col items-stretch justify-between gap-10">
         <div className="flex flex-row items-center justify-between">
           <Circle ref={div1Ref}>
-            <img src="/people-01.svg" alt="" className="w-8 h-8" />
+            <img src="/people-01.svg" alt="" className="w-10 h-10" />
           </Circle>
           <Circle ref={div5Ref}>
-            <img src="/people-02.svg" alt="" className="w-8 h-8" />
+            <img src="/people-02.svg" alt="" className="w-10 h-10" />
           </Circle>
         </div>
         <div className="flex flex-row items-center justify-between">
           <Circle ref={div2Ref}>
-            <img src="/people-03.svg" alt="" className="w-8 h-8" />
+            <img src="/people-03.svg" alt="" className="w-10 h-10" />
           </Circle>
           <Circle ref={div4Ref} className="size-16">
             <Icons.openai />
           </Circle>
           <Circle ref={div6Ref}>
-            <img src="/people-04.svg" alt="" className="w-8 h-8" />
+            <img src="/people-04.svg" alt="" className="w-10 h-10" />
           </Circle>
         </div>
         <div className="flex flex-row items-center justify-between">
           <Circle ref={div3Ref}>
-            <img src="/people-05.svg" alt="" className="w-8 h-8" />
+            <img src="/people-05.svg" alt="" className="w-10 h-10" />
           </Circle>
           <Circle ref={div7Ref}>
-            <img src="/people-06.svg" alt="" className="w-8 h-8" />
+            <img src="/people-06.svg" alt="" className="w-10 h-10" />
           </Circle>
         </div>
       </div>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import Image from 'next/image'
 import { Menu, X } from 'lucide-react'
 import { ThemeToggle } from '../theme-toggle'
 
@@ -72,13 +73,15 @@ export function Navigation() {
           
           <div className="flex items-center gap-3">
             <div className="relative w-8 h-8 border border-primary/40 bg-primary/5">
-              <div className="absolute inset-0.5 bg-primary/20" />
+              <div className="absolute inset-0.5">
+                <Image src="/Icone.svg" alt="ClassExchange" fill style={{ objectFit: 'contain' }} />
+              </div>
               <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/60" />
               <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-primary/60" />
               <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-l border-b border-primary/60" />
               <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-primary/60" />
             </div>
-            <span className="text-xl font-mono font-bold tracking-tight">ClassExchange</span>
+            <Image src="/Titulo.svg" alt="ClassExchange" width={80} height={20} />
           </div>
 
           <div className="hidden md:flex items-center gap-8">
