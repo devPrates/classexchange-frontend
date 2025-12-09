@@ -15,6 +15,12 @@ export async function getDiretorEnsinoById(id: string): Promise<DiretorEnsino> {
   return data as DiretorEnsino
 }
 
+export async function getDiretorEnsinoAtivoPorCampus(campusId: string): Promise<DiretorEnsino> {
+  const api = await apiServer()
+  const { data } = await api.get(`/diretorEnsino/campus/${campusId}`)
+  return data as DiretorEnsino
+}
+
 export async function createDiretorEnsino(payload: CreateDiretorEnsino): Promise<DiretorEnsino> {
   const api = await apiServer()
   const { data } = await api.post('/diretorEnsino', payload)

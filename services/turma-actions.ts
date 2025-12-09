@@ -17,3 +17,25 @@ export async function createTurma(payload: CreateTurma): Promise<Turma> {
   const { data } = await api.post('/turmas', payload)
   return data as Turma
 }
+
+export async function listTurmasByCursoId(cursoId: string): Promise<Turma[]> {
+  const { data } = await api.get(`/turmas/curso/${cursoId}`)
+  return data as Turma[]
+}
+
+export async function listTurmasByCursoSlug(slug: string): Promise<Turma[]> {
+  const { data } = await api.get(`/turmas/curso/slug/${slug}`)
+  return data as Turma[]
+}
+
+export async function listTurmasByCursoIdClient(cursoId: string, token?: string): Promise<Turma[]> {
+  const headers = token ? { Authorization: `Bearer ${token}` } : undefined
+  const { data } = await api.get(`/turmas/curso/${cursoId}`, { headers })
+  return data as Turma[]
+}
+
+export async function listTurmasByCursoSlugClient(slug: string, token?: string): Promise<Turma[]> {
+  const headers = token ? { Authorization: `Bearer ${token}` } : undefined
+  const { data } = await api.get(`/turmas/curso/slug/${slug}`, { headers })
+  return data as Turma[]
+}

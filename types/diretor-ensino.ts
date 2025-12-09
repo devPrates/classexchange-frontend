@@ -13,7 +13,7 @@ export type DiretorEnsino = {
 
 export type CreateDiretorEnsino = {
     inicio: string
-    fim: string
+    fim?: string
     usuarioId: string
     campusId: string
 }

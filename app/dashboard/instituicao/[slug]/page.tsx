@@ -21,7 +21,7 @@ import { deleteCampusById } from '@/services/campus-actions'
 import { createDiretorEnsino, updateDiretorEnsinoById } from '@/services/diretor-ensino-actions'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useUsuarios } from '@/hooks/use-usuarios'
-import { useDiretorEnsino } from '@/hooks/use-diretor-ensino'
+import { useDiretorEnsinoPorCampus } from '@/hooks/use-diretor-ensino'
 
 export default function InstituicaoDetailPage() {
   const queryClient = useQueryClient()
@@ -38,7 +38,7 @@ export default function InstituicaoDetailPage() {
   const [diretorFim, setDiretorFim] = useState('')
   const { data: usuariosLista, isLoading: isUsuariosLoading, isError: isUsuariosError } = useUsuarios()
   const usuariosDoCampus = (usuariosLista ?? []).filter((u) => u.campusId === item?.id)
-  const { data: diretorDetalhe } = useDiretorEnsino(item?.diretorEnsino?.id)
+  const { data: diretorDetalhe } = useDiretorEnsinoPorCampus(item?.id)
 
   if (isLoading) {
     return (
@@ -84,6 +84,7 @@ export default function InstituicaoDetailPage() {
         <span>/</span>
         <span className="text-foreground">{item.nome}</span>
       </div>
+
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -180,6 +181,42 @@ export default function InstituicaoDetailPage() {
         </Card>
       </div>
 
+      {/* Informações do Campus */}
+      <Card className="relative border-primary/30">
+        <CornerAccent />
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <div>
+              <CardTitle>Informações do Campus</CardTitle>
+              <CardDescription>Edite os detalhes básicos do campus</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="nome">Nome</Label>
+              <Input id="nome" value={form.nome} className="border-primary/30" disabled />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="cidade">Cidade</Label>
+              <Input id="cidade" value={form.cidade} className="border-primary/30" disabled />
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="endereco">Endereço</Label>
+              <Input id="endereco" value={form.endereco} className="border-primary/30" disabled />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="telefone">Telefone</Label>
+              <Input id="telefone" value={form.telefone} className="border-primary/30" disabled />
+            </div>
+            <div className="space-y-2">
+            </div>
+          </div>
+          
+        </CardContent>
+      </Card>
+
       {/* Diretor de Ensino */}
       <Card className="relative border-primary/30">
         <CornerAccent />
@@ -191,26 +228,22 @@ export default function InstituicaoDetailPage() {
           <Button
             variant="outline"
             className="border-primary/30"
-            onClick={() => {
-              setDiretorUsuarioId(item.diretorEnsino?.usuarioId ?? '')
-              const today = new Date().toISOString().slice(0, 10)
-              setDiretorInicio(today)
-              setDiretorFim(today)
-              setIsDiretorDialogOpen(true)
-            }}
+          onClick={() => {
+            setDiretorUsuarioId(item.diretorEnsino?.usuarioId ?? '')
+            const today = new Date().toISOString().slice(0, 10)
+            setDiretorInicio(today)
+            setDiretorFim('')
+            setIsDiretorDialogOpen(true)
+          }}
           >
             {item.diretorEnsino ? 'Alterar' : 'Inserir'}
           </Button>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="diretorNome">Nome</Label>
-              <Input id="diretorNome" value={item.diretorEnsino?.usuarioNome ?? '-'} className="border-primary/30" disabled />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="diretorEmail">Email</Label>
-              <Input id="diretorEmail" value={item.diretorEnsino?.usuarioEmail ?? '-'} className="border-primary/30" disabled />
+              <Input id="diretorNome" value={diretorDetalhe?.usuarioNome ?? item.diretorEnsino?.usuarioNome ?? '-'} className="border-primary/30" disabled />
             </div>
             <div className="space-y-2">
               <Label htmlFor="diretorInicio">Início</Label>
@@ -277,7 +310,7 @@ export default function InstituicaoDetailPage() {
                       inicio: diretorInicio || undefined,
                       fim: diretorFim || undefined,
                     })
-                    queryClient.setQueryData(['diretor-ensino', updated.id], updated)
+                    queryClient.setQueryData(['diretor-ensino-por-campus', item.id], updated)
                     const usuario = (usuariosLista ?? []).find((u) => u.id === diretorUsuarioId)
                     queryClient.setQueryData(['campus', slug], (prev: Campus | undefined) => {
                       if (!prev) return prev
@@ -293,9 +326,10 @@ export default function InstituicaoDetailPage() {
                     })
                   } else {
                     const inicio = diretorInicio || new Date().toISOString().slice(0, 10)
-                    const fim = diretorFim || inicio
-                    const created = await createDiretorEnsino({ inicio, fim, usuarioId: diretorUsuarioId, campusId: item.id })
-                    queryClient.setQueryData(['diretor-ensino', created.id], created)
+                    const payload: any = { inicio, usuarioId: diretorUsuarioId, campusId: item.id }
+                    if (diretorFim) payload.fim = diretorFim
+                    const created = await createDiretorEnsino(payload)
+                    queryClient.setQueryData(['diretor-ensino-por-campus', item.id], created)
                     const usuario = (usuariosLista ?? []).find((u) => u.id === diretorUsuarioId)
                     queryClient.setQueryData(['campus', slug], (prev: Campus | undefined) => {
                       if (!prev) return prev
@@ -313,6 +347,7 @@ export default function InstituicaoDetailPage() {
                   SoftToast.success('Diretor de Ensino atualizado com sucesso')
                   setIsDiretorDialogOpen(false)
                   await queryClient.invalidateQueries({ queryKey: ['campus', slug] })
+                  await queryClient.invalidateQueries({ queryKey: ['diretor-ensino-por-campus', item.id] })
                   refetch()
                 } catch (err: any) {
                   SoftToast.error('Falha ao atualizar Diretor de Ensino', { description: err.message ?? 'Tente novamente' })
@@ -325,42 +360,7 @@ export default function InstituicaoDetailPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Informações do Campus */}
-      <Card className="relative border-primary/30">
-        <CornerAccent />
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <div>
-              <CardTitle>Informações do Campus</CardTitle>
-              <CardDescription>Edite os detalhes básicos do campus</CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="nome">Nome</Label>
-              <Input id="nome" value={form.nome} className="border-primary/30" disabled />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="cidade">Cidade</Label>
-              <Input id="cidade" value={form.cidade} className="border-primary/30" disabled />
-            </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="endereco">Endereço</Label>
-              <Input id="endereco" value={form.endereco} className="border-primary/30" disabled />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="telefone">Telefone</Label>
-              <Input id="telefone" value={form.telefone} className="border-primary/30" disabled />
-            </div>
-            <div className="space-y-2">
-              {/* Campo removido: Diretor de Ensino será um card separado abaixo */}
-            </div>
-          </div>
-          
-        </CardContent>
-      </Card>
+      
 
       
 
@@ -412,7 +412,7 @@ export default function InstituicaoDetailPage() {
       </Card>
 
       {/* Zona de Perigo */}
-      <Card className="relative border-red-300 bg-white">
+      <Card className="relative border-primary/30">
         <CornerAccent />
         <CardHeader>
           <div className="flex justify-between items-center">
@@ -424,7 +424,7 @@ export default function InstituicaoDetailPage() {
               <DialogTrigger asChild>
                 <Button
                   variant="outline"
-                  className="border-red-300 text-red-700 hover:bg-red-50 hover:text-red-800 hover:border-red-400"
+                  className="border-primary/30 text-red-700"
                 >
                   <Trash2 className="h-4 w-4" />
                   Excluir Campus
@@ -462,7 +462,7 @@ export default function InstituicaoDetailPage() {
                         setIsDeleting(false)
                       }
                     }}
-                    className="bg-red-600 hover:bg-red-700 text-white"
+                    className="text-red-700"
                     disabled={isDeleting}
                   >
                     {isDeleting ? 'Excluindo...' : 'Confirmar exclusão'}

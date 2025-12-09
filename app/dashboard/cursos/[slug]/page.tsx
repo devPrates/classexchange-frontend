@@ -14,11 +14,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from '@/components/ui/dialog'
 import { CursoForm } from '@/components/forms/curso-form'
-import { useCursoBySlugOrId, useProfessoresDoCurso } from '@/hooks/use-cursos'
+import { useCursoBySlugOrId, useProfessoresDoCurso, useCoordenadorCursoAtivo, useTurmasDoCurso } from '@/hooks/use-cursos'
 import { SoftToast } from '@/components/elements/soft-toast'
-import { deleteCursoById, setCoordenadorCurso } from '@/services/curso-actions'
+import { deleteCursoById } from '@/services/curso-actions'
+import { createCoordenadorCurso, updateCoordenadorCurso } from '@/services/coordenador-curso-actions'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { StatCard } from '@/components/elements/stat-card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { SquareBadge } from '@/components/elements/square-badge'
@@ -35,7 +37,11 @@ export default function CursoDetailsPage() {
   const [isDeleting, setIsDeleting] = useState(false)
   const [isCoordDialogOpen, setIsCoordDialogOpen] = useState(false)
   const [coordUsuarioId, setCoordUsuarioId] = useState('')
+  const [coordInicio, setCoordInicio] = useState('')
+  const [coordFim, setCoordFim] = useState('')
   const { data: professoresCurso = [] } = useProfessoresDoCurso(item?.id)
+  const { data: coordAtivo, refetch: refetchCoord } = useCoordenadorCursoAtivo(item?.id)
+  const { data: turmas = [], refetch: refetchTurmas } = useTurmasDoCurso(slug)
   const [isTurmaDialogOpen, setIsTurmaDialogOpen] = useState(false)
   const turmaSchema = z.object({
     nome: z.string().min(1, 'Nome é obrigatório'),
@@ -156,7 +162,10 @@ export default function CursoDetailsPage() {
             variant="outline"
             className="border-primary/30"
             onClick={() => {
-              setCoordUsuarioId(item.coordenadorCurso?.usuarioId ?? '')
+              setCoordUsuarioId(coordAtivo?.usuarioId ?? item.coordenadorCurso?.usuarioId ?? '')
+              const today = new Date().toISOString().slice(0, 10)
+              setCoordInicio((coordAtivo?.inicio as any) ?? item.coordenadorCurso?.inicio ?? today)
+              setCoordFim((coordAtivo?.fim as any) ?? item.coordenadorCurso?.fim ?? '')
               setIsCoordDialogOpen(true)
             }}
           >
@@ -164,14 +173,18 @@ export default function CursoDetailsPage() {
           </Button>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="coordNome">Nome</Label>
-              <Input id="coordNome" value={item.coordenadorCurso?.usuarioNome ?? '-'} className="border-primary/30" disabled />
+              <Input id="coordNome" value={coordAtivo?.usuarioNome ?? item.coordenadorCurso?.usuarioNome ?? '-'} className="border-primary/30" disabled />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="coordEmail">Email</Label>
-              <Input id="coordEmail" value={(item.coordenadorCurso as any)?.usuarioEmail ?? '-'} className="border-primary/30" disabled />
+              <Label htmlFor="coordInicio">Início</Label>
+              <Input id="coordInicio" value={(coordAtivo?.inicio as any) ?? item.coordenadorCurso?.inicio ?? '-'} className="border-primary/30" disabled />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="coordFim">Fim</Label>
+              <Input id="coordFim" value={(coordAtivo?.fim as any) ?? item.coordenadorCurso?.fim ?? '-'} className="border-primary/30" disabled />
             </div>
           </div>
         </CardContent>
@@ -181,28 +194,50 @@ export default function CursoDetailsPage() {
         <DialogContent className="border-primary/30">
           <DialogHeader>
             <DialogTitle>{item.coordenadorCurso ? 'Alterar Coordenador do Curso' : 'Inserir Coordenador do Curso'}</DialogTitle>
-            <DialogDescription>Informe o ID do usuário que será definido como Coordenador do Curso</DialogDescription>
+            <DialogDescription>Selecione o professor e informe as datas</DialogDescription>
           </DialogHeader>
-          <div className="space-y-2">
-            <Label htmlFor="coordUsuarioId">Usuário ID</Label>
-            <Input
-              id="coordUsuarioId"
-              placeholder="UUID do usuário"
-              className="border-primary/30"
-              value={coordUsuarioId}
-              onChange={(e) => setCoordUsuarioId(e.target.value)}
-            />
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="coordUsuarioId">Professor</Label>
+              <Select value={coordUsuarioId} onValueChange={setCoordUsuarioId}>
+                <SelectTrigger className="border-primary/30">
+                  <SelectValue placeholder="Selecione o professor" />
+                </SelectTrigger>
+                <SelectContent>
+                  {professoresCurso.map((p) => (
+                    <SelectItem key={p.usuarioId} value={p.usuarioId}>{p.usuarioNome} • {p.usuarioEmail}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="coordInicio">Início</Label>
+                <Input id="coordInicio" type="date" className="border-primary/30" value={coordInicio} onChange={(e) => setCoordInicio(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="coordFim">Fim</Label>
+                <Input id="coordFim" type="date" className="border-primary/30" value={coordFim} onChange={(e) => setCoordFim(e.target.value)} />
+              </div>
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" className="border-primary/30" onClick={() => setIsCoordDialogOpen(false)}>Cancelar</Button>
             <Button
               onClick={async () => {
                 try {
-                  if (!coordUsuarioId) return
-                  await setCoordenadorCurso(item.id, { usuarioId: coordUsuarioId })
+                  if (!coordUsuarioId || !coordInicio) return
+                  const payload: any = { usuarioId: coordUsuarioId, cursoId: item.id, inicio: coordInicio }
+                  if (coordFim) payload.fim = coordFim
+                  if (item.coordenadorCurso?.id) {
+                    await updateCoordenadorCurso(item.coordenadorCurso.id, payload)
+                  } else {
+                    await createCoordenadorCurso(payload)
+                  }
                   SoftToast.success('Coordenador do Curso atualizado com sucesso')
                   setIsCoordDialogOpen(false)
                   refetch()
+                  refetchCoord()
                 } catch (err: any) {
                   SoftToast.error('Falha ao atualizar Coordenador do Curso', { description: err.message ?? 'Tente novamente' })
                 }
@@ -261,6 +296,7 @@ export default function CursoDetailsPage() {
                       turmaForm.reset({ nome: '', numero: 0 })
                       await queryClient.invalidateQueries({ queryKey: ['curso', slug] })
                       refetch()
+                      refetchTurmas()
                     } catch (err: any) {
                       SoftToast.error('Falha ao criar turma', { description: err.message ?? 'Tente novamente' })
                     }
@@ -304,7 +340,7 @@ export default function CursoDetailsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {item.turmas.map((turma, idx) => (
+              {(Array.isArray(turmas) ? turmas : []).map((turma, idx) => (
                 <TableRow key={turma.id ?? `${turma.nome}-${idx}`}>
                   <TableCell className="font-medium">{turma.nome}</TableCell>
                   <TableCell>
@@ -411,32 +447,22 @@ export default function CursoDetailsPage() {
       </Card>
 
       {/* Zona de Perigo */}
-      <Card className="relative border-destructive/50 bg-destructive/5">
-        <CornerAccent className="border-destructive" />
+      <Card className="relative border-primary/30">
+        <CornerAccent />
         <CardHeader>
-          <div className="flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-destructive" />
-            <CardTitle className="text-destructive">Zona de Perigo</CardTitle>
-          </div>
-          <CardDescription>Ações irreversíveis que afetam permanentemente o curso</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 border border-dashed border-destructive/30 rounded-lg">
+          <div className="flex justify-between items-center">
             <div>
-              <h4 className="font-semibold text-destructive">Excluir Curso</h4>
-              <p className="text-sm text-muted-foreground mt-1">
-                Esta ação não pode ser desfeita. Todos os dados relacionados serão permanentemente removidos.
-              </p>
+              <CardTitle className="text-red-700">Zona de Perigo</CardTitle>
+              <CardDescription className="text-red-600">Excluir este curso permanentemente</CardDescription>
             </div>
             <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
               <DialogTrigger asChild>
-                <Button variant="destructive" className="relative shrink-0">
-                  <Trash2 className="mr-2 h-4 w-4" />
+                <Button
+                  variant="outline"
+                  className="border-primary/30 text-red-700"
+                >
+                  <Trash2 className="h-4 w-4" />
                   Excluir Curso
-                  <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-destructive-foreground/40" />
-                  <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-destructive-foreground/40" />
-                  <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-l border-b border-destructive-foreground/40" />
-                  <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-destructive-foreground/40" />
                 </Button>
               </DialogTrigger>
               <DialogContent className="border-red-300">
@@ -471,7 +497,7 @@ export default function CursoDetailsPage() {
                         setIsDeleting(false)
                       }
                     }}
-                    className="bg-red-600 hover:bg-red-700 text-white"
+                    className="text-red-700"
                     disabled={isDeleting}
                   >
                     {isDeleting ? 'Excluindo...' : 'Confirmar exclusão'}
@@ -480,6 +506,11 @@ export default function CursoDetailsPage() {
               </DialogContent>
             </Dialog>
           </div>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-red-700">
+            Ao excluir, todos os dados relacionados a este curso poderão ser removidos ou tornar-se inacessíveis.
+          </p>
         </CardContent>
       </Card>
     </div>

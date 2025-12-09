@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { listUsuarios, getUsuarioById } from '@/services/usuario-actions'
+import { listUsuariosClient, getUsuarioById } from '@/services/usuario-actions'
 import type { Usuario } from '@/types/usuarios'
 import api, { setAuthToken } from '@/services/api'
 import { useSession } from 'next-auth/react'
@@ -15,7 +15,8 @@ export function useUsuarios(searchQuery?: string) {
   return useQuery<Usuario[]>({
     queryKey: ['usuarios', searchQuery ?? ''],
     queryFn: async () => {
-      return await listUsuarios()
+      const token = (session as any)?.accessToken as string | undefined
+      return await listUsuariosClient(token)
     },
     select: (data) => {
       if (!searchQuery) return data

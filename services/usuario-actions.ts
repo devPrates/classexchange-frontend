@@ -6,6 +6,12 @@ export async function listUsuarios(): Promise<Usuario[]> {
   return data as Usuario[]
 }
 
+export async function listUsuariosClient(token?: string): Promise<Usuario[]> {
+  const headers = token ? { Authorization: `Bearer ${token}` } : undefined
+  const { data } = await api.get('/usuarios', { headers })
+  return data as Usuario[]
+}
+
 export async function getUsuarioById(id: string): Promise<Usuario> {
   const { data } = await api.get(`/usuarios/${id}`)
   return data as Usuario

@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Sidebar } from '@/components/dashboard/sidebar'
+import dynamic from 'next/dynamic'
+const Sidebar = dynamic(() => import('@/components/dashboard/sidebar').then(m => m.Sidebar), { ssr: false })
 import { Topbar } from '@/components/dashboard/topbar'
 import { useSession } from 'next-auth/react'
 import { useEffect } from 'react'
