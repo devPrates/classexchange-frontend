@@ -7,7 +7,11 @@ import { CornerAccent } from '@/components/elements/corner-accent'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Edit, Trash2, Plus, Users, GraduationCap, UserCheck, AlertTriangle, Eye } from 'lucide-react'
-import { getTurmaById } from '@/services/turma-actions'
+import { createTurma, getTurmaById } from '@/services/turma-actions'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useQueryClient } from '@tanstack/react-query'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from '@/components/ui/dialog'
 import { CursoForm } from '@/components/forms/curso-form'
 import { useCursoBySlugOrId, useProfessoresDoCurso } from '@/hooks/use-cursos'
@@ -24,6 +28,7 @@ export default function CursoDetailsPage() {
   const params = useParams<{ slug: string }>()
   const router = useRouter()
   const slug = params.slug
+  const queryClient = useQueryClient()
   const { data: item, isLoading, isError, refetch } = useCursoBySlugOrId(slug)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
@@ -31,6 +36,13 @@ export default function CursoDetailsPage() {
   const [isCoordDialogOpen, setIsCoordDialogOpen] = useState(false)
   const [coordUsuarioId, setCoordUsuarioId] = useState('')
   const { data: professoresCurso = [] } = useProfessoresDoCurso(item?.id)
+  const [isTurmaDialogOpen, setIsTurmaDialogOpen] = useState(false)
+  const turmaSchema = z.object({
+    nome: z.string().min(1, 'Nome é obrigatório'),
+    numero: z.number().int().nonnegative('Número deve ser >= 0'),
+  })
+  type TurmaForm = z.infer<typeof turmaSchema>
+  const turmaForm = useForm<TurmaForm>({ resolver: zodResolver(turmaSchema), defaultValues: { nome: '', numero: 0 } })
  
 
   if (isLoading) {
@@ -211,21 +223,75 @@ export default function CursoDetailsPage() {
       <Card className="relative border-primary/30">
         <CornerAccent />
         <CardHeader>
-          <div className="flex justify-between items-center">
-            <div>
-              <CardTitle>Turmas</CardTitle>
-              <CardDescription>Lista de turmas do curso</CardDescription>
+            <div className="flex justify-between items-center">
+              <div>
+                <CardTitle>Turmas</CardTitle>
+                <CardDescription>Lista de turmas do curso</CardDescription>
+              </div>
+            <Dialog open={isTurmaDialogOpen} onOpenChange={setIsTurmaDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="relative border border-primary/30 hover:border-primary/50">
+                  <Plus className="h-4 w-4" />
+                  Nova Turma
+                  <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/40" />
+                  <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-primary/40" />
+                  <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-l border-b border-primary/40" />
+                  <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-primary/40" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="border-primary/30">
+                <DialogHeader>
+                  <DialogTitle>Nova Turma</DialogTitle>
+                  <DialogDescription>Crie uma nova turma para este curso</DialogDescription>
+                </DialogHeader>
+                <form
+                  onSubmit={turmaForm.handleSubmit(async (values) => {
+                    try {
+                      const created = await createTurma({ nome: values.nome, numero: values.numero, cursoId: item.id })
+                      // Optimistic update: adiciona a turma criada ao cache do curso atual
+                      queryClient.setQueryData(['curso', slug], (prev: any) => {
+                        if (!prev) return prev
+                        return {
+                          ...prev,
+                          turmas: [...(prev.turmas ?? []), { id: created.id, nome: created.nome, numero: created.numero }],
+                        }
+                      })
+                      SoftToast.success('Turma criada com sucesso')
+                      setIsTurmaDialogOpen(false)
+                      turmaForm.reset({ nome: '', numero: 0 })
+                      await queryClient.invalidateQueries({ queryKey: ['curso', slug] })
+                      refetch()
+                    } catch (err: any) {
+                      SoftToast.error('Falha ao criar turma', { description: err.message ?? 'Tente novamente' })
+                    }
+                  })}
+                  className="space-y-4"
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="turmaNome">Nome</Label>
+                      <Input id="turmaNome" className="border-primary/30" placeholder="Ex.: 1º Semestre - A" {...turmaForm.register('nome')} />
+                      {turmaForm.formState.errors.nome?.message && (
+                        <p className="text-sm text-red-600">{turmaForm.formState.errors.nome.message}</p>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="turmaNumero">Número</Label>
+                      <Input id="turmaNumero" type="number" className="border-primary/30" placeholder="Ex.: 1" {...turmaForm.register('numero', { valueAsNumber: true })} />
+                      {turmaForm.formState.errors.numero?.message && (
+                        <p className="text-sm text-red-600">{turmaForm.formState.errors.numero.message}</p>
+                      )}
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button type="button" variant="outline" className="border-primary/30" onClick={() => setIsTurmaDialogOpen(false)}>Cancelar</Button>
+                    <Button type="submit">Salvar</Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
             </div>
-            <Button className="relative border border-primary/30 hover:border-primary/50">
-              <Plus className="h-4 w-4" />
-              Nova Turma
-              <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/40" />
-              <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-primary/40" />
-              <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-l border-b border-primary/40" />
-              <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-primary/40" />
-            </Button>
-          </div>
-        </CardHeader>
+          </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
@@ -238,8 +304,8 @@ export default function CursoDetailsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {item.turmas.map((turma) => (
-                <TableRow key={turma.id}>
+              {item.turmas.map((turma, idx) => (
+                <TableRow key={turma.id ?? `${turma.nome}-${idx}`}>
                   <TableCell className="font-medium">{turma.nome}</TableCell>
                   <TableCell>
                     <SquareBadge text={String(turma.numero)} className="text-xs" />

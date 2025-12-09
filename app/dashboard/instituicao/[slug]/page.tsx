@@ -4,6 +4,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import Link from 'next/link'
 import { useCampusBySlug } from '@/hooks/use-campi'
+import { useQueryClient } from '@tanstack/react-query'
 import type { Campus } from '@/types/campus'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CornerAccent } from '@/components/elements/corner-accent'
@@ -16,9 +17,14 @@ import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from '@/components/ui/dialog'
 import { CampusForm } from '@/components/forms/campus-form'
 import { SoftToast } from '@/components/elements/soft-toast'
-import { deleteCampusById, setDiretorEnsino } from '@/services/campus-actions'
+import { deleteCampusById } from '@/services/campus-actions'
+import { createDiretorEnsino, updateDiretorEnsinoById } from '@/services/diretor-ensino-actions'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useUsuarios } from '@/hooks/use-usuarios'
+import { useDiretorEnsino } from '@/hooks/use-diretor-ensino'
 
 export default function InstituicaoDetailPage() {
+  const queryClient = useQueryClient()
   const params = useParams<{ slug: string }>()
   const router = useRouter()
   const slug = params.slug
@@ -28,6 +34,11 @@ export default function InstituicaoDetailPage() {
   const [isDeleting, setIsDeleting] = useState(false)
   const [isDiretorDialogOpen, setIsDiretorDialogOpen] = useState(false)
   const [diretorUsuarioId, setDiretorUsuarioId] = useState('')
+  const [diretorInicio, setDiretorInicio] = useState('')
+  const [diretorFim, setDiretorFim] = useState('')
+  const { data: usuariosLista, isLoading: isUsuariosLoading, isError: isUsuariosError } = useUsuarios()
+  const usuariosDoCampus = (usuariosLista ?? []).filter((u) => u.campusId === item?.id)
+  const { data: diretorDetalhe } = useDiretorEnsino(item?.diretorEnsino?.id)
 
   if (isLoading) {
     return (
@@ -182,6 +193,9 @@ export default function InstituicaoDetailPage() {
             className="border-primary/30"
             onClick={() => {
               setDiretorUsuarioId(item.diretorEnsino?.usuarioId ?? '')
+              const today = new Date().toISOString().slice(0, 10)
+              setDiretorInicio(today)
+              setDiretorFim(today)
               setIsDiretorDialogOpen(true)
             }}
           >
@@ -198,6 +212,14 @@ export default function InstituicaoDetailPage() {
               <Label htmlFor="diretorEmail">Email</Label>
               <Input id="diretorEmail" value={item.diretorEnsino?.usuarioEmail ?? '-'} className="border-primary/30" disabled />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="diretorInicio">Início</Label>
+              <Input id="diretorInicio" value={diretorDetalhe?.inicio ?? '-'} className="border-primary/30" disabled />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="diretorFim">Fim</Label>
+              <Input id="diretorFim" value={diretorDetalhe?.fim ?? '-'} className="border-primary/30" disabled />
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -206,27 +228,91 @@ export default function InstituicaoDetailPage() {
         <DialogContent className="border-primary/30">
           <DialogHeader>
             <DialogTitle>{item.diretorEnsino ? 'Alterar Diretor de Ensino' : 'Inserir Diretor de Ensino'}</DialogTitle>
-            <DialogDescription>Informe o ID do usuário que será definido como Diretor de Ensino</DialogDescription>
+            <DialogDescription>Selecione o usuário do campus para definir como Diretor de Ensino</DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
-            <Label htmlFor="diretorUsuarioId">Usuário ID</Label>
-            <Input
-              id="diretorUsuarioId"
-              placeholder="UUID do usuário"
-              className="border-primary/30"
-              value={diretorUsuarioId}
-              onChange={(e) => setDiretorUsuarioId(e.target.value)}
-            />
+            <Label>Usuário</Label>
+            {isUsuariosLoading ? (
+              <div className="text-muted-foreground text-sm">Carregando usuários...</div>
+            ) : isUsuariosError ? (
+              <div className="text-red-600 text-sm">Falha ao carregar usuários</div>
+            ) : (
+              <Select value={diretorUsuarioId} onValueChange={setDiretorUsuarioId}>
+                <SelectTrigger className="border-primary/30">
+                  <SelectValue placeholder="Selecione o usuário" />
+                </SelectTrigger>
+                <SelectContent>
+                  {usuariosDoCampus.length === 0 ? (
+                    <div className="text-muted-foreground px-2 py-1 text-sm">Nenhum usuário para este campus</div>
+                  ) : (
+                    usuariosDoCampus.map((u) => (
+                      <SelectItem key={u.id} value={u.id}>{u.nome}</SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+            )}
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <div className="space-y-2">
+              <Label>Início</Label>
+              <Input type="date" className="border-primary/30" value={diretorInicio} onChange={(e) => setDiretorInicio(e.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <Label>Fim</Label>
+              <Input type="date" className="border-primary/30" value={diretorFim} onChange={(e) => setDiretorFim(e.target.value)} />
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" className="border-primary/30" onClick={() => setIsDiretorDialogOpen(false)}>Cancelar</Button>
             <Button
+              disabled={!diretorUsuarioId}
               onClick={async () => {
                 try {
                   if (!diretorUsuarioId) return
-                  await setDiretorEnsino(item.id, { usuarioId: diretorUsuarioId })
+                  if (item.diretorEnsino?.id) {
+                    const updated = await updateDiretorEnsinoById(item.diretorEnsino.id, {
+                      usuarioId: diretorUsuarioId,
+                      campusId: item.id,
+                      inicio: diretorInicio || undefined,
+                      fim: diretorFim || undefined,
+                    })
+                    queryClient.setQueryData(['diretor-ensino', updated.id], updated)
+                    const usuario = (usuariosLista ?? []).find((u) => u.id === diretorUsuarioId)
+                    queryClient.setQueryData(['campus', slug], (prev: Campus | undefined) => {
+                      if (!prev) return prev
+                      return {
+                        ...prev,
+                        diretorEnsino: {
+                          id: updated.id,
+                          usuarioId: diretorUsuarioId,
+                          usuarioNome: usuario?.nome ?? updated.usuarioNome ?? prev.diretorEnsino?.usuarioNome ?? '',
+                          usuarioEmail: usuario?.email ?? prev.diretorEnsino?.usuarioEmail ?? '',
+                        },
+                      }
+                    })
+                  } else {
+                    const inicio = diretorInicio || new Date().toISOString().slice(0, 10)
+                    const fim = diretorFim || inicio
+                    const created = await createDiretorEnsino({ inicio, fim, usuarioId: diretorUsuarioId, campusId: item.id })
+                    queryClient.setQueryData(['diretor-ensino', created.id], created)
+                    const usuario = (usuariosLista ?? []).find((u) => u.id === diretorUsuarioId)
+                    queryClient.setQueryData(['campus', slug], (prev: Campus | undefined) => {
+                      if (!prev) return prev
+                      return {
+                        ...prev,
+                        diretorEnsino: {
+                          id: created.id,
+                          usuarioId: diretorUsuarioId,
+                          usuarioNome: usuario?.nome ?? created.usuarioNome ?? prev.diretorEnsino?.usuarioNome ?? '',
+                          usuarioEmail: usuario?.email ?? prev.diretorEnsino?.usuarioEmail ?? '',
+                        },
+                      }
+                    })
+                  }
                   SoftToast.success('Diretor de Ensino atualizado com sucesso')
                   setIsDiretorDialogOpen(false)
+                  await queryClient.invalidateQueries({ queryKey: ['campus', slug] })
                   refetch()
                 } catch (err: any) {
                   SoftToast.error('Falha ao atualizar Diretor de Ensino', { description: err.message ?? 'Tente novamente' })
