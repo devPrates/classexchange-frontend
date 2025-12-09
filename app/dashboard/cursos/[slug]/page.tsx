@@ -280,12 +280,9 @@ export default function CursoDetailsPage() {
                 <form
                   onSubmit={turmaForm.handleSubmit(async (values) => {
                     try {
-                      console.log('[DEBUG] Tentando criar turma. Payload:', { nome: values.nome, numero: values.numero, cursoId: item.id })
-                      const created = await createTurma({ nome: values.nome, numero: values.numero, cursoId: item.id })
-                      console.log('[DEBUG] Turma criada com sucesso. Resposta API:', created)
+                      await createTurma({ nome: values.nome, numero: values.numero, cursoId: item.id })
                       
                       // Invalida as queries para forçar o recarregamento dos dados reais do backend
-                      console.log('[DEBUG] Invalidando queries...')
                       await queryClient.invalidateQueries({ queryKey: ['curso', slug] })
                       await queryClient.invalidateQueries({ queryKey: ['curso', slug, 'turmas'] })
                       
@@ -293,12 +290,9 @@ export default function CursoDetailsPage() {
                       setIsTurmaDialogOpen(false)
                       turmaForm.reset({ nome: '', numero: 0 })
                       
-                      console.log('[DEBUG] Refetching manual...')
                       await refetch()
                       await refetchTurmas()
-                      console.log('[DEBUG] Processo finalizado.')
                     } catch (err: any) {
-                      console.error('[DEBUG] Erro ao criar turma:', err)
                       SoftToast.error('Falha ao criar turma', { description: err.message ?? 'Tente novamente' })
                     }
                   })}

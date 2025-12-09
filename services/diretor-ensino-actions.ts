@@ -15,10 +15,15 @@ export async function getDiretorEnsinoById(id: string): Promise<DiretorEnsino> {
   return data as DiretorEnsino
 }
 
-export async function getDiretorEnsinoAtivoPorCampus(campusId: string): Promise<DiretorEnsino> {
+export async function getDiretorEnsinoAtivoPorCampus(campusId: string): Promise<DiretorEnsino | null> {
   const api = await apiServer()
-  const { data } = await api.get(`/diretorEnsino/campus/${campusId}`)
-  return data as DiretorEnsino
+  try {
+    const { data } = await api.get(`/diretorEnsino/campus/${campusId}`)
+    return data as DiretorEnsino
+  } catch (err: any) {
+    if (err?.response?.status === 404) return null
+    throw err
+  }
 }
 
 export async function createDiretorEnsino(payload: CreateDiretorEnsino): Promise<DiretorEnsino> {

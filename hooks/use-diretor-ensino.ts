@@ -15,10 +15,10 @@ export function useDiretorEnsino(id?: string) {
 }
 
 export function useDiretorEnsinoPorCampus(campusId?: string) {
-  return useQuery<DiretorEnsino>({
+  return useQuery<DiretorEnsino | null>({
     queryKey: ['diretor-ensino-por-campus', campusId],
     queryFn: async () => {
-      if (!campusId) throw new Error('no-campus')
+      if (!campusId) return null
       return await getDiretorEnsinoAtivoPorCampus(campusId)
     },
     enabled: !!campusId,
