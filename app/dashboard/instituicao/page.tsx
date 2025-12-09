@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useSession } from 'next-auth/react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -18,11 +19,15 @@ import { CornerAccent } from '@/components/elements/corner-accent'
 import { CampusCard } from '@/components/elements/campus-card'
 import { useCampi } from '@/hooks/use-campi'
 import { CampusForm } from '@/components/forms/campus-form'
+import { Role } from '@/types/roles'
 
 export default function InstituicaoPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const { data, isLoading, isError, refetch } = useCampi(searchQuery)
+  const { data: session } = useSession()
+  const roles: string[] = ((session?.user as any)?.roles ?? []) as string[]
+  const isAdmin = roles.includes(Role.ADMINISTRADOR)
 
   const filteredCampus = Array.isArray(data) ? data : []
 
@@ -34,25 +39,27 @@ export default function InstituicaoPage() {
           <h1 className="text-3xl font-bold tracking-tight">Instituição</h1>
           <p className="text-muted-foreground mt-1">Gerencie os campus da instituição</p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="relative border border-primary/30 hover:border-primary/50">
-              <Plus className="h-4 w-4" />
-              Novo Campus
-              <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/40" />
-              <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-primary/40" />
-              <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-l border-b border-primary/40" />
-              <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-primary/40" />
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="border-primary/30">
-            <DialogHeader>
-              <DialogTitle>Novo Campus</DialogTitle>
-              <DialogDescription>Adicione um novo campus à instituição</DialogDescription>
-            </DialogHeader>
-            <CampusForm onSuccess={() => setIsDialogOpen(false)} />
-          </DialogContent>
-        </Dialog>
+        {isAdmin && (
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="relative border border-primary/30 hover:border-primary/50">
+                <Plus className="h-4 w-4" />
+                Novo Campus
+                <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/40" />
+                <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-primary/40" />
+                <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-l border-b border-primary/40" />
+                <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-primary/40" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="border-primary/30">
+              <DialogHeader>
+                <DialogTitle>Novo Campus</DialogTitle>
+                <DialogDescription>Adicione um novo campus à instituição</DialogDescription>
+              </DialogHeader>
+              <CampusForm onSuccess={() => setIsDialogOpen(false)} />
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
 
       {/* Search */}

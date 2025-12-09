@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, type ReactNode } from "react"
 import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, getFilteredRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
-import { Edit, Trash2, Search, Upload, Download } from "lucide-react"
+import { Edit, Trash2, Search } from "lucide-react"
+import { TbTableImport, TbTableExport } from "react-icons/tb"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 
@@ -14,9 +15,10 @@ interface DataTableProps<TData> {
   onEdit?: (item: TData) => void
   onDelete?: (item: TData) => void
   searchable?: boolean
+  toolbarSearch?: ReactNode
 }
 
-export function DataTable<TData>({ columns, data, onEdit, onDelete, searchable = true }: DataTableProps<TData>) {
+export function DataTable<TData>({ columns, data, onEdit, onDelete, searchable = true, toolbarSearch }: DataTableProps<TData>) {
   const [query, setQuery] = useState("")
   const idColumn: ColumnDef<TData> = {
     id: "rowIndex",
@@ -65,9 +67,11 @@ export function DataTable<TData>({ columns, data, onEdit, onDelete, searchable =
 
   return (
     <div className="overflow-hidden rounded-md border" style={{ borderRadius: 6 }}>
-      <div className="flex items-center justify-between px-2 py-2 border-b">
-        {searchable ? (
-          <div className="relative w-full max-w-sm">
+      <div className="flex items-center justify-between px-2 py-2 border-b gap-2">
+        {toolbarSearch ? (
+          toolbarSearch
+        ) : searchable ? (
+          <div className="relative max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Buscar..."
@@ -86,7 +90,7 @@ export function DataTable<TData>({ columns, data, onEdit, onDelete, searchable =
             className="bg-blue-500/10 text-blue-700 hover:bg-blue-500/20 hover:text-blue-700 border border-blue-500/30 rounded-md"
             style={{ borderRadius: 6 }}
           >
-            <Upload className="h-4 w-4" />
+            <TbTableImport className="h-4 w-4" />
             Importar
           </Button>
           <Button
@@ -95,7 +99,7 @@ export function DataTable<TData>({ columns, data, onEdit, onDelete, searchable =
             className="bg-green-500/10 text-green-700 hover:bg-green-500/20 hover:text-green-700 border border-green-500/30 rounded-md"
             style={{ borderRadius: 6 }}
           >
-            <Download className="h-4 w-4" />
+            <TbTableExport className="h-4 w-4" />
             Exportar
           </Button>
         </div>

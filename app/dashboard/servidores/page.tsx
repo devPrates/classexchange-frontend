@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { CornerAccent } from '@/components/elements/corner-accent'
+ 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
@@ -14,6 +13,8 @@ import { useUsuarios, useUsuario } from '@/hooks/use-usuarios'
 import { UsuarioForm } from '@/components/forms/usuario-form'
 import { SoftToast } from '@/components/elements/soft-toast'
 import { deleteUsuarioById } from '@/services/usuario-actions'
+import { Card, CardContent } from '@/components/ui/card'
+import { CornerAccent } from '@/components/elements/corner-accent'
 
 export default function ServidoresPage() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -72,31 +73,10 @@ export default function ServidoresPage() {
         </Dialog>
       </div>
 
-      <div className="relative max-w-md">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          type="search"
-          placeholder="Buscar por nome, email, celular, perfil ou campus..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-9 border-primary/30 focus:border-primary/50 relative"
-        />
-        <div className="absolute top-0 left-0 w-2 h-2 border-l border-t border-primary/40 pointer-events-none" />
-        <div className="absolute top-0 right-0 w-2 h-2 border-r border-t border-primary/40 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-2 h-2 border-l border-b border-primary/40 pointer-events-none" />
-        <div className="absolute bottom-0 right-0 w-2 h-2 border-r border-b border-primary/40 pointer-events-none" />
-      </div>
+      
 
       <Card className="relative border-primary/30">
         <CornerAccent />
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <div>
-              <CardTitle>Lista de Usuários</CardTitle>
-              <CardDescription>Usuários cadastrados no sistema</CardDescription>
-            </div>
-          </div>
-        </CardHeader>
         <CardContent suppressHydrationWarning>
           {(!isHydrated) || isLoading || isError ? (
             <div className="text-muted-foreground">Carregando...</div>
@@ -105,6 +85,22 @@ export default function ServidoresPage() {
               columns={usuariosColumns}
               data={usuarios}
               searchable={false}
+              toolbarSearch={(
+                <div className="relative max-w-md">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="search"
+                    placeholder="Buscar por nome, email, celular, perfil ou campus..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-9 border-primary/30 focus:border-primary/50 relative"
+                  />
+                  <div className="absolute top-0 left-0 w-2 h-2 border-l border-t border-primary/40 pointer-events-none" />
+                  <div className="absolute top-0 right-0 w-2 h-2 border-r border-t border-primary/40 pointer-events-none" />
+                  <div className="absolute bottom-0 left-0 w-2 h-2 border-l border-b border-primary/40 pointer-events-none" />
+                  <div className="absolute bottom-0 right-0 w-2 h-2 border-r border-b border-primary/40 pointer-events-none" />
+                </div>
+              )}
               onEdit={(u) => {
                 setSelectedId((u as any).id)
                 setIsEditOpen(true)

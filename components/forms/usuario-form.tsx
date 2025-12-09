@@ -13,6 +13,7 @@ import type { Usuario, CreateUsuario, UpdateUsuario } from '@/types/usuarios'
 import { RoleUsuario } from '@/types/usuarios'
 import { createUsuario, updateUsuarioById } from '@/services/usuario-actions'
 import { useEffect } from 'react'
+import { useCampi } from '@/hooks/use-campi'
 
 const schemaCreate = z.object({
   nome: z.string().min(2, { message: 'Informe o nome' }),
@@ -108,6 +109,7 @@ export function UsuarioForm({ mode = 'create', id, defaultValues, onSuccess }: P
   })
 
   const onSubmit = (values: any) => mutation.mutate(values)
+  const { data: campi } = useCampi()
 
   return (
     <Form {...form}>
@@ -175,10 +177,19 @@ export function UsuarioForm({ mode = 'create', id, defaultValues, onSuccess }: P
 
         <FormField control={form.control} name="campusId" render={({ field }) => (
           <FormItem>
-            <FormLabel>Campus ID</FormLabel>
-            <FormControl>
-              <Input placeholder="UUID do campus" className="border-primary/30" {...field} />
-            </FormControl>
+            <FormLabel>Campus</FormLabel>
+            <Select value={field.value} onValueChange={field.onChange}>
+              <FormControl>
+                <SelectTrigger className="border-primary/30">
+                  <SelectValue placeholder="Selecione o campus" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {(campi ?? []).map((c) => (
+                  <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <FormMessage />
           </FormItem>
         )} />
