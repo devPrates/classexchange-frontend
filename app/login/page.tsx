@@ -45,6 +45,11 @@ export default function LoginPage() {
       const path = isApiPrefixed ? '/auth/oauth2/google' : '/api/auth/oauth2/google'
       window.location.href = `${API_BASE}${path}`
     }
+    if (provider === 'github') {
+      const isApiPrefixed = /\/api$/.test(API_BASE)
+      const path = isApiPrefixed ? '/auth/oauth2/github' : '/api/auth/oauth2/github'
+      window.location.href = `${API_BASE}${path}`
+    }
   }
 
   return (
