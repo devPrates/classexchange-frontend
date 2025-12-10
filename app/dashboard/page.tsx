@@ -3,6 +3,7 @@ import { CornerAccent } from '@/components/elements/corner-accent'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Calendar } from 'lucide-react'
 import { RiExchangeBoxLine, RiExchange2Line, RiBookMarkedLine } from 'react-icons/ri'
+import LineChart1 from '@/components/elements/line-chart-1'
 
 export default function DashboardPage() {
   const stats = [
@@ -58,55 +59,7 @@ export default function DashboardPage() {
         })}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card className="relative border-primary/30">
-          <CornerAccent />
-          <CardHeader>
-            <CardTitle>Próximas Aulas</CardTitle>
-            <CardDescription>Aulas programadas para hoje</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-center gap-4 p-3 border border-border rounded-sm relative">
-                <div className="absolute top-0 left-0 w-2 h-2 border-l border-t border-primary/40" />
-                <div className="absolute top-0 right-0 w-2 h-2 border-r border-t border-primary/40" />
-                <div className="absolute bottom-0 left-0 w-2 h-2 border-l border-b border-primary/40" />
-                <div className="absolute bottom-0 right-0 w-2 h-2 border-r border-b border-primary/40" />
-                <div className="flex-1">
-                  <p className="font-medium">Disciplina {i}</p>
-                  <p className="text-sm text-muted-foreground">Turma A - 10:00 às 12:00</p>
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        <Card className="relative border-primary/30">
-          <CornerAccent />
-          <CardHeader>
-            <CardTitle>Atividade Recente</CardTitle>
-            <CardDescription>Últimas ações no sistema</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {[
-              'Troca aprovada para Matemática I',
-              'Nova solicitação de substituição',
-              'Campus Norte atualizado',
-            ].map((activity, i) => (
-              <div key={i} className="flex items-center gap-4 p-3 border border-border rounded-sm relative">
-                <div className="absolute top-0 left-0 w-2 h-2 border-l border-t border-primary/40" />
-                <div className="absolute top-0 right-0 w-2 h-2 border-r border-t border-primary/40" />
-                <div className="absolute bottom-0 left-0 w-2 h-2 border-l border-b border-primary/40" />
-                <div className="absolute bottom-0 right-0 w-2 h-2 border-r border-b border-primary/40" />
-                <div className="flex-1">
-                  <p className="text-sm">{activity}</p>
-                  <p className="text-xs text-muted-foreground">Há {i + 1} hora{i > 0 ? 's' : ''}</p>
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      </div>
+      <LineChart1 />
     </div>
   )
 }

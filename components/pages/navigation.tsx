@@ -67,9 +67,6 @@ export function Navigation() {
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20 relative">
-          {/* Corner accents for nav */}
-          <div className="absolute top-0 left-0 w-2 h-2 border-l border-t border-primary/40" />
-          <div className="absolute top-0 right-0 w-2 h-2 border-r border-t border-primary/40" />
           
           <div className="flex items-center gap-3">
             <div className="relative w-8 h-8 border border-primary/40 bg-primary/5">
