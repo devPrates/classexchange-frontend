@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Building2, Calendar, Bell, Users, ChevronDown, ChevronsUpDown, ClipboardList } from 'lucide-react'
+import { LayoutDashboard, Building2, Calendar, Bell, Users, ChevronDown, ClipboardList } from 'lucide-react'
 import { RiBookMarkedLine } from 'react-icons/ri'
 import { FaRegAddressBook } from 'react-icons/fa'
 import { RiExchangeBoxLine, RiExchange2Line } from 'react-icons/ri'
@@ -57,7 +57,7 @@ const menuItems = [
 
 export function Sidebar({ collapsed }: SidebarProps) {
   const pathname = usePathname()
-  const [selectedTeam, setSelectedTeam] = useState('Equipe Principal')
+  
   const { data: session } = useSession()
   const userEmail = session?.user?.email || 'usuario@exemplo.com'
   const userName = session?.user?.name || userEmail.split('@')[0]
@@ -88,34 +88,19 @@ export function Sidebar({ collapsed }: SidebarProps) {
 
   return (
     <div className="flex flex-col h-full bg-card border-r border-border">
-      {/* Header - Team Switcher */}
+      {/* Header - Brand */}
       <div className="p-4 border-b border-border">
         {!collapsed ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                className="w-full justify-between border-primary/30 hover:border-primary/50 relative"
-              >
-                <span className="truncate">{selectedTeam}</span>
-                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                <div className="absolute top-0 left-0 w-2 h-2 border-l border-t border-primary/40" />
-                <div className="absolute top-0 right-0 w-2 h-2 border-r border-t border-primary/40" />
-                <div className="absolute bottom-0 left-0 w-2 h-2 border-l border-b border-primary/40" />
-                <div className="absolute bottom-0 right-0 w-2 h-2 border-r border-b border-primary/40" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-[200px]">
-              <DropdownMenuLabel className="tech-label">Equipes</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setSelectedTeam('Equipe Principal')}>
-                Equipe Principal
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setSelectedTeam('Equipe Secundária')}>
-                Equipe Secundária
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Button
+            variant="outline"
+            className="w-full justify-center border-primary/30 hover:border-primary/50 relative"
+          >
+            <span className="font-semibold">ClassExchange</span>
+            <div className="absolute top-0 left-0 w-2 h-2 border-l border-t border-primary/40" />
+            <div className="absolute top-0 right-0 w-2 h-2 border-r border-t border-primary/40" />
+            <div className="absolute bottom-0 left-0 w-2 h-2 border-l border-b border-primary/40" />
+            <div className="absolute bottom-0 right-0 w-2 h-2 border-r border-b border-primary/40" />
+          </Button>
         ) : (
           <div className="flex items-center justify-center">
             <Building2 className="h-6 w-6 text-primary" />

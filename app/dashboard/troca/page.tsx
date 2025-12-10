@@ -86,7 +86,7 @@ export default function TrocaPage() {
   }
 
   const handleRealizarSolicitacao = () => {
-    router.push('/dashboard/professor/solicitacoes')
+    router.push('/dashboard/solicitacoes')
   }
 
   const isFormComplete = turma && aula && data

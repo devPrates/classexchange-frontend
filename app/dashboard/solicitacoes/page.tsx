@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { CornerAccent } from '@/components/elements/corner-accent'
 import { Card, CardContent } from '@/components/ui/card'
@@ -109,9 +110,11 @@ export default function SolicitacoesPage() {
     )
   }
 
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Solicitações</h1>
         <p className="text-muted-foreground mt-1">
@@ -119,62 +122,71 @@ export default function SolicitacoesPage() {
         </p>
       </div>
 
-      {/* Tabs */}
-      <Tabs defaultValue="aceitas" className="space-y-4">
-        <TabsList className="border-primary/30">
-          <TabsTrigger value="aceitas" className="data-[state=active]:border-primary/50">
-            Aceitas ({aceitas.length})
-          </TabsTrigger>
-          <TabsTrigger value="pendentes" className="data-[state=active]:border-primary/50">
-            Pendentes ({pendentes.length})
-          </TabsTrigger>
-          <TabsTrigger value="recusadas" className="data-[state=active]:border-primary/50">
-            Recusadas ({recusadas.length})
-          </TabsTrigger>
-        </TabsList>
+      {mounted ? (
+        <Tabs defaultValue="aceitas" className="space-y-4">
+          <TabsList className="border-primary/30">
+            <TabsTrigger value="aceitas" className="data-[state=active]:border-primary/50">
+              Aceitas ({aceitas.length})
+            </TabsTrigger>
+            <TabsTrigger value="pendentes" className="data-[state=active]:border-primary/50">
+              Pendentes ({pendentes.length})
+            </TabsTrigger>
+            <TabsTrigger value="recusadas" className="data-[state=active]:border-primary/50">
+              Recusadas ({recusadas.length})
+            </TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="pendentes" className="space-y-3">
-          {pendentes.length === 0 ? (
-            <Card className="relative border-primary/30">
-              <CornerAccent />
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
-                <p className="text-muted-foreground">Nenhuma solicitação pendente</p>
-              </CardContent>
-            </Card>
-          ) : (
-            pendentes.map(renderSolicitacao)
-          )}
-        </TabsContent>
+          <TabsContent value="pendentes" className="space-y-3">
+            {pendentes.length === 0 ? (
+              <Card className="relative border-primary/30">
+                <CornerAccent />
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
+                  <p className="text-muted-foreground">Nenhuma solicitação pendente</p>
+                </CardContent>
+              </Card>
+            ) : (
+              pendentes.map(renderSolicitacao)
+            )}
+          </TabsContent>
 
-        <TabsContent value="aceitas" className="space-y-3">
-          {aceitas.length === 0 ? (
-            <Card className="relative border-primary/30">
-              <CornerAccent />
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
-                <p className="text-muted-foreground">Nenhuma solicitação aceita</p>
-              </CardContent>
-            </Card>
-          ) : (
-            aceitas.map(renderSolicitacao)
-          )}
-        </TabsContent>
+          <TabsContent value="aceitas" className="space-y-3">
+            {aceitas.length === 0 ? (
+              <Card className="relative border-primary/30">
+                <CornerAccent />
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
+                  <p className="text-muted-foreground">Nenhuma solicitação aceita</p>
+                </CardContent>
+              </Card>
+            ) : (
+              aceitas.map(renderSolicitacao)
+            )}
+          </TabsContent>
 
-        <TabsContent value="recusadas" className="space-y-3">
-          {recusadas.length === 0 ? (
-            <Card className="relative border-primary/30">
-              <CornerAccent />
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
-                <p className="text-muted-foreground">Nenhuma solicitação recusada</p>
-              </CardContent>
-            </Card>
-          ) : (
-            recusadas.map(renderSolicitacao)
-          )}
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="recusadas" className="space-y-3">
+            {recusadas.length === 0 ? (
+              <Card className="relative border-primary/30">
+                <CornerAccent />
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
+                  <p className="text-muted-foreground">Nenhuma solicitação recusada</p>
+                </CardContent>
+              </Card>
+            ) : (
+              recusadas.map(renderSolicitacao)
+            )}
+          </TabsContent>
+        </Tabs>
+      ) : (
+        <Card className="relative border-primary/30">
+          <CornerAccent />
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
+            <p className="text-muted-foreground">Carregando solicitações...</p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

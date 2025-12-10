@@ -119,33 +119,7 @@ export function Topbar({ onToggleSidebar }: TopbarProps) {
           <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-primary/40" />
         </Button>
 
-        {/* User Menu */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-              <Button id="user-menu-trigger" variant="ghost" className="relative h-10 w-10 rounded-full border border-primary/30 hover:border-primary/50 p-0">
-              <Avatar className="h-10 w-10">
-                <AvatarImage src="./placeholder.svg" alt="User" />
-              </Avatar>
-              <div className="absolute top-0 left-0 w-2 h-2 border-l border-t border-primary/40" />
-              <div className="absolute top-0 right-0 w-2 h-2 border-r border-t border-primary/40" />
-              <div className="absolute bottom-0 left-0 w-2 h-2 border-l border-b border-primary/40" />
-              <div className="absolute bottom-0 right-0 w-2 h-2 border-r border-b border-primary/40" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>
-              <div>
-                <p className="font-medium">João da Silva</p>
-                <p className="text-xs text-muted-foreground">joao@exemplo.com</p>
-              </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Perfil</DropdownMenuItem>
-            <DropdownMenuItem>Configurações</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Sair</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        
       </div>
     </div>
   )

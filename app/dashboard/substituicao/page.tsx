@@ -70,7 +70,7 @@ export default function SubstituicaoPage() {
 
   const handleRealizarSolicitacao = () => {
     // Simula envio da solicitação
-    router.push('/dashboard/professor/solicitacoes')
+    router.push('/dashboard/solicitacoes')
   }
 
   const isFormComplete = turma && aula && data
