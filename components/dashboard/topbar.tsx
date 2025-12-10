@@ -1,9 +1,10 @@
 'use client'
 
-import { Menu, Search, Bell, SettingsIcon, LogOut } from 'lucide-react'
+import { Menu, Search, Bell, SettingsIcon } from 'lucide-react'
+import { BiLogOut } from 'react-icons/bi'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import { ThemeToggle } from '@/components/theme-toggle'
 import {
   DropdownMenu,
@@ -111,7 +112,7 @@ export function Topbar({ onToggleSidebar }: TopbarProps) {
           onClick={() => signOut({ callbackUrl: '/login' })}
           aria-label="Sair"
         >
-          <LogOut className="h-5 w-5" />
+          <BiLogOut className="h-5 w-5" />
           <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/40" />
           <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-primary/40" />
           <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-l border-b border-primary/40" />
@@ -121,10 +122,9 @@ export function Topbar({ onToggleSidebar }: TopbarProps) {
         {/* User Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button id="user-menu-trigger" variant="ghost" className="relative h-10 w-10 rounded-full border border-primary/30 hover:border-primary/50 p-0">
+              <Button id="user-menu-trigger" variant="ghost" className="relative h-10 w-10 rounded-full border border-primary/30 hover:border-primary/50 p-0">
               <Avatar className="h-10 w-10">
                 <AvatarImage src="./placeholder.svg" alt="User" />
-                <AvatarFallback>JD</AvatarFallback>
               </Avatar>
               <div className="absolute top-0 left-0 w-2 h-2 border-l border-t border-primary/40" />
               <div className="absolute top-0 right-0 w-2 h-2 border-r border-t border-primary/40" />

@@ -11,21 +11,20 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '../dashboard/ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu';
 import { ArrowDown, ArrowUp, Calendar, Download, Filter, MoreHorizontal, RefreshCw, Share2 } from 'lucide-react';
 import { Area, CartesianGrid, ComposedChart, Line, ReferenceLine, XAxis, YAxis } from 'recharts';
 import { Badge } from '../dashboard/ui/badge';
 
 const salesData = [
   { mes: 'Ago 10', trocas: 7, trocasArea: 7, substituicoes: 11 },
-  { mes: 'Set 10', trocas: 3, trocasArea: 3, substituicoes: 2 },
+  { mes: 'Set 10', trocas: 15, trocasArea: 15, substituicoes: 8 },
   { mes: 'Out 10', trocas: 19, trocasArea: 19, substituicoes: 14 },
   { mes: 'Nov 10', trocas: 8, trocasArea: 8, substituicoes: 6 },
   { mes: 'Dez 10', trocas: 12, trocasArea: 12, substituicoes: 22 },
   { mes: 'Jan 10', trocas: 5, trocasArea: 5, substituicoes: 9 },
 ];
 
-// Use custom or Tailwind standard colors: https://tailwindcss.com/docs/colors
 const chartConfig = {
   trocas: {
     label: 'Trocas',
@@ -101,8 +100,8 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
 
 export default function LineChart1() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-3 lg:p-4">
-      <Card className="w-full lg:max-w-4xl">
+    <div className="min-h-screen p-3 lg:p-4">
+      <Card className="w-full lg:max-w-none">
         <CardHeader className="border-0 min-h-auto pt-3 pb-2">
           <CardTitle className="text-base font-semibold">Visão de Trocas e Substituições</CardTitle>
           <CardToolbar>
@@ -112,7 +111,7 @@ export default function LineChart1() {
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="dim" size="sm" mode="icon" className="-me-1.5">
+                <Button id="linechart-actions-trigger" variant="dim" size="sm" mode="icon" className="-me-1.5">
                   <MoreHorizontal className="size-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -144,7 +143,11 @@ export default function LineChart1() {
         </CardHeader>
 
         <CardContent className="px-2.5 flex flex-col items-end">
-          <ChartContainer config={chartConfig} className="h-[calc(100vh-220px)] w-full [&_.recharts-curve.recharts-tooltip-cursor]:stroke-initial">
+          <ChartContainer
+            id="dashboard-line-chart"
+            config={chartConfig}
+            className="aspect-auto w-full h-[38vh] md:h-[42vh] lg:h-[360px] xl:h-[420px] [&_.recharts-curve.recharts-tooltip-cursor]:stroke-initial"
+          >
             <ComposedChart data={salesData} margin={{ top: 0, right: 12, left: 4, bottom: 0 }}>
               <defs>
                 <linearGradient id="trocasGradient" x1="0" y1="0" x2="0" y2="1">

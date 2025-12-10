@@ -13,7 +13,7 @@ import type { Usuario, CreateUsuario, UpdateUsuario } from '@/types/usuarios'
 import { RoleUsuario } from '@/types/usuarios'
 import { createUsuario, updateUsuarioById } from '@/services/usuario-actions'
 import { useEffect } from 'react'
-import { useCampi } from '@/hooks/use-campi'
+import { useCursos } from '@/hooks/use-cursos'
 
 const schemaCreate = z.object({
   nome: z.string().min(2, { message: 'Informe o nome' }),
@@ -21,7 +21,7 @@ const schemaCreate = z.object({
   senha: z.string().min(6, { message: 'Informe a senha' }),
   celular: z.string().min(10, { message: 'Informe o celular válido' }),
   role: z.nativeEnum(RoleUsuario),
-  campusId: z.string().min(1, { message: 'Informe o campus' }),
+  cursoId: z.string().min(1, { message: 'Informe o curso' }),
 })
 
 const schemaEdit = z.object({
@@ -30,17 +30,19 @@ const schemaEdit = z.object({
   senha: z.string().optional(),
   celular: z.string().min(10, { message: 'Informe o celular válido' }),
   role: z.nativeEnum(RoleUsuario),
-  campusId: z.string().min(1, { message: 'Informe o campus' }),
+  cursoId: z.string().min(1, { message: 'Informe o curso' }),
 })
 
 type Props = {
   mode?: 'create' | 'edit'
   id?: string
-  defaultValues?: Partial<CreateUsuario>
+  defaultValues?: (Partial<CreateUsuario> & { cursoId?: string })
   onSuccess?: (updated: Usuario) => void
+  hideCampus?: boolean
+  hideRole?: boolean
 }
 
-export function UsuarioForm({ mode = 'create', id, defaultValues, onSuccess }: Props) {
+export function UsuarioForm({ mode = 'create', id, defaultValues, onSuccess, hideCampus = false, hideRole = false }: Props) {
   const form = useForm<any>({
     resolver: zodResolver(mode === 'create' ? schemaCreate : schemaEdit),
     defaultValues: {
@@ -49,7 +51,7 @@ export function UsuarioForm({ mode = 'create', id, defaultValues, onSuccess }: P
       senha: defaultValues?.senha ?? '',
       celular: defaultValues?.celular ?? '',
       role: defaultValues?.role ?? RoleUsuario.PROFESSOR,
-      campusId: defaultValues?.campusId ?? '',
+      cursoId: (defaultValues as any)?.cursoId ?? '',
     },
   })
 
@@ -61,7 +63,7 @@ export function UsuarioForm({ mode = 'create', id, defaultValues, onSuccess }: P
         senha: defaultValues?.senha ?? '',
         celular: defaultValues?.celular ?? '',
         role: defaultValues?.role ?? RoleUsuario.PROFESSOR,
-        campusId: defaultValues?.campusId ?? '',
+        cursoId: (defaultValues as any)?.cursoId ?? '',
       })
     }
   }, [defaultValues])
@@ -70,6 +72,8 @@ export function UsuarioForm({ mode = 'create', id, defaultValues, onSuccess }: P
     mutationFn: async (values) => {
       const celularDigits = String(values.celular).replace(/\D/g, '')
       const normalizado = { ...values, celular: celularDigits }
+      const cursoSelecionado = (cursos ?? []).find((c) => c.id === normalizado.cursoId)
+      const campusIdFromCurso = cursoSelecionado?.campusId || ''
       if (mode === 'edit' && id) {
         const payload: UpdateUsuario = {
           nome: normalizado.nome,
@@ -77,7 +81,7 @@ export function UsuarioForm({ mode = 'create', id, defaultValues, onSuccess }: P
           senha: normalizado.senha || undefined,
           celular: normalizado.celular,
           role: normalizado.role,
-          campusId: normalizado.campusId,
+          campusId: campusIdFromCurso,
         }
         return await updateUsuarioById(id, payload)
       }
@@ -87,7 +91,7 @@ export function UsuarioForm({ mode = 'create', id, defaultValues, onSuccess }: P
         senha: normalizado.senha,
         celular: normalizado.celular,
         role: normalizado.role,
-        campusId: normalizado.campusId,
+        campusId: campusIdFromCurso,
       }
       return await createUsuario(payload)
     },
@@ -109,7 +113,7 @@ export function UsuarioForm({ mode = 'create', id, defaultValues, onSuccess }: P
   })
 
   const onSubmit = (values: any) => mutation.mutate(values)
-  const { data: campi } = useCampi()
+  const { data: cursos } = useCursos()
 
   return (
     <Form {...form}>
@@ -154,45 +158,49 @@ export function UsuarioForm({ mode = 'create', id, defaultValues, onSuccess }: P
           </FormItem>
         )} />
 
-        <FormField control={form.control} name="role" render={({ field }) => (
-          <FormItem>
-            <FormLabel>Perfil</FormLabel>
-            <FormControl>
+        {!hideRole && (
+          <FormField control={form.control} name="role" render={({ field }) => (
+            <FormItem>
+              <FormLabel>Perfil</FormLabel>
+              <FormControl>
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger className="border-primary/30">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={RoleUsuario.PROFESSOR}>Professor</SelectItem>
+                    <SelectItem value={RoleUsuario.COORDENACAO}>Coordenação</SelectItem>
+                    <SelectItem value={RoleUsuario.DIRETORENSINO}>Diretor de Ensino</SelectItem>
+                    <SelectItem value={RoleUsuario.COORDENADORCURSO}>Coordenador de Curso</SelectItem>
+                    <SelectItem value={RoleUsuario.ADMINISTRADOR}>Administrador</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )} />
+        )}
+
+        {!hideCampus && (
+          <FormField control={form.control} name="cursoId" render={({ field }) => (
+            <FormItem>
+              <FormLabel>Curso</FormLabel>
               <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className="border-primary/30">
-                  <SelectValue />
-                </SelectTrigger>
+                <FormControl>
+                  <SelectTrigger className="border-primary/30">
+                    <SelectValue placeholder="Selecione o curso" />
+                  </SelectTrigger>
+                </FormControl>
                 <SelectContent>
-                  <SelectItem value={RoleUsuario.PROFESSOR}>Professor</SelectItem>
-                  <SelectItem value={RoleUsuario.COORDENACAO}>Coordenação</SelectItem>
-                  <SelectItem value={RoleUsuario.DIRETORENSINO}>Diretor de Ensino</SelectItem>
-                  <SelectItem value={RoleUsuario.COORDENADORCURSO}>Coordenador de Curso</SelectItem>
-                  <SelectItem value={RoleUsuario.ADMINISTRADOR}>Administrador</SelectItem>
+                  {(cursos ?? []).map((c) => (
+                    <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )} />
-
-        <FormField control={form.control} name="campusId" render={({ field }) => (
-          <FormItem>
-            <FormLabel>Campus</FormLabel>
-            <Select value={field.value} onValueChange={field.onChange}>
-              <FormControl>
-                <SelectTrigger className="border-primary/30">
-                  <SelectValue placeholder="Selecione o campus" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                {(campi ?? []).map((c) => (
-                  <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
-        )} />
+              <FormMessage />
+            </FormItem>
+          )} />
+        )}
 
         <div className="flex justify-end gap-2">
           <Button type="submit" disabled={mutation.isPending}>

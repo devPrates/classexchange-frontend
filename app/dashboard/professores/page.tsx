@@ -9,61 +9,71 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { UserCircle, BookOpen, Users, Plus, Search, ChevronDown, ChevronRight, Edit, Trash2 } from "lucide-react"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { UsuarioForm } from "@/components/forms/usuario-form"
+import { RoleUsuario } from "@/types/usuarios"
 
 export default function ProfessoresPage() {
   const [expandedCourses, setExpandedCourses] = useState<Set<string>>(new Set(["1", "2"]))
   const [searchTerm, setSearchTerm] = useState("")
+  const [isProfDialogOpen, setIsProfDialogOpen] = useState(false)
+
+  const nomes = [
+    "João Silva",
+    "Maria Santos",
+    "Pedro Oliveira",
+    "Ana Costa",
+    "Carlos Souza",
+    "Julia Lima",
+    "Roberto Alves",
+    "Fernanda Rocha",
+    "Ricardo Lima",
+    "Juliana Alves",
+    "Fernando Costa",
+    "Mariana Pereira",
+    "Bruno Martins",
+    "Camila Nunes",
+    "André Gonçalves",
+    "Paula Fernandes",
+    "Lucas Ribeiro",
+    "Sofia Almeida",
+    "Gustavo Carvalho",
+    "Larissa Mendes",
+  ]
+
+  const nameToEmail = (nome: string, sigla: string) =>
+    `${nome
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z\s]/g, '')
+      .trim()
+      .replace(/\s+/g, '.')}.${sigla.toLowerCase()}@ifms.edu.br`
+
+  const makeProfessores = (sigla: string) =>
+    Array.from({ length: 5 }, (_, i) => {
+      const idx = i + 1
+      const id = `${sigla}-P-${idx.toString().padStart(2, '0')}`
+      const nome = nomes[i % nomes.length]
+      const siape = `${sigla}${idx.toString().padStart(6, '0')}`
+      const discList = sigla === 'SI' ? ['Algoritmos', 'POO', 'BD'] : ['Marketing', 'Finanças', 'RH']
+      const disciplinas = discList.slice(0, 2 + (i % 2)).join(', ')
+      const email = nameToEmail(nome, sigla)
+      return { id, nome, siape, disciplinas, email }
+    })
 
   const cursos = [
     {
       id: "1",
-      nome: "Ciência da Computação",
-      sigla: "CC",
-      professores: [
-        {
-          id: "1",
-          nome: "Dr. Carlos Mendes",
-          siape: "1234567",
-          disciplinas: "Algoritmos, POO",
-          email: "carlos@email.com",
-        },
-        { id: "2", nome: "Profa. Ana Paula", siape: "2345678", disciplinas: "Banco de Dados", email: "ana@email.com" },
-      ],
+      nome: "Sistemas de Informação",
+      sigla: "SI",
+      professores: makeProfessores("SI"),
     },
     {
       id: "2",
-      nome: "Engenharia Civil",
-      sigla: "EC",
-      professores: [
-        {
-          id: "3",
-          nome: "Prof. Roberto Lima",
-          siape: "3456789",
-          disciplinas: "Cálculo, Física",
-          email: "roberto@email.com",
-        },
-        {
-          id: "4",
-          nome: "Dra. Mariana Costa",
-          siape: "4567890",
-          disciplinas: "Estruturas",
-          email: "mariana@email.com",
-        },
-      ],
-    },
-    {
-      id: "3",
       nome: "Administração",
       sigla: "ADM",
-      professores: [
-        {
-          id: "5",
-          nome: "Prof. Fernando Souza",
-          siape: "5678901",
-          disciplinas: "Marketing, Finanças",
-          email: "fernando@email.com",
-        },
-      ],
+      professores: makeProfessores("ADM"),
     },
   ]
 
@@ -114,14 +124,32 @@ export default function ProfessoresPage() {
                   className="pl-9 border-primary/30 w-full sm:w-[250px]"
                 />
               </div>
-              <Button className="relative border border-primary/30 hover:border-primary/50">
-                <Plus className="mr-2 h-4 w-4" />
-                Novo Professor
-                <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/40" />
-                <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-primary/40" />
-                <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-l border-b border-primary/40" />
-                <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-primary/40" />
-              </Button>
+              <Dialog open={isProfDialogOpen} onOpenChange={setIsProfDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="relative border border-primary/30 hover:border-primary/50">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Novo Professor
+                    <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/40" />
+                    <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-primary/40" />
+                    <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-l border-b border-primary/40" />
+                    <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-primary/40" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="border-primary/30">
+                  <DialogHeader>
+                    <DialogTitle>Adicionar Professor</DialogTitle>
+                    <DialogDescription>Cadastre um novo professor</DialogDescription>
+                  </DialogHeader>
+                  <UsuarioForm
+                    mode="create"
+                    defaultValues={{ role: RoleUsuario.PROFESSOR }}
+                    hideRole
+                    onSuccess={() => {
+                      setIsProfDialogOpen(false)
+                    }}
+                  />
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         </CardHeader>

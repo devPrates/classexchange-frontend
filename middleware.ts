@@ -18,6 +18,7 @@ export async function middleware(req: NextRequest) {
     "/dashboard/cursos",
     "/dashboard/estudantes",
     "/dashboard/professores",
+    "/dashboard/calendario-academico",
   ]
   const menuPrefixes = [
     "/dashboard/professor",
@@ -29,7 +30,16 @@ export async function middleware(req: NextRequest) {
   ]
   const isAdminRoot = path === "/dashboard"
   const hasAdminAccess = roles.includes("ADMINISTRADOR") || roles.includes("COORDENACAO") || roles.includes("DIRETORENSINO") || roles.includes("COORDENADORCURSO")
-  if (isAdminRoot || adminPrefixes.some((p) => path.startsWith(p))) {
+  if (isAdminRoot) {
+    if (hasAdminAccess) {
+      return NextResponse.next()
+    }
+    if (roles.includes("PROFESSOR")) {
+      return NextResponse.redirect(new URL("/dashboard/professor", req.nextUrl))
+    }
+    return NextResponse.redirect(new URL("/dashboard/forbidden", req.nextUrl))
+  }
+  if (adminPrefixes.some((p) => path.startsWith(p))) {
     if (!hasAdminAccess) {
       return NextResponse.redirect(new URL("/dashboard/forbidden", req.nextUrl))
     }

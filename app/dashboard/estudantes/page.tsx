@@ -9,40 +9,70 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { GraduationCap, BookOpen, Users, Plus, Search, ChevronDown, ChevronRight, Edit, Trash2 } from "lucide-react"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { EstudanteForm } from "@/components/forms/estudante-form"
 
 export default function EstudantesPage() {
   const [expandedCourses, setExpandedCourses] = useState<Set<string>>(new Set(["1", "2"]))
   const [searchTerm, setSearchTerm] = useState("")
+  const [isEstudanteDialogOpen, setIsEstudanteDialogOpen] = useState(false)
+
+  const nomes = [
+    "João Silva",
+    "Maria Santos",
+    "Pedro Oliveira",
+    "Ana Costa",
+    "Carlos Souza",
+    "Julia Lima",
+    "Roberto Alves",
+    "Fernanda Rocha",
+    "Ricardo Lima",
+    "Juliana Alves",
+    "Fernando Costa",
+    "Mariana Pereira",
+    "Bruno Martins",
+    "Camila Nunes",
+    "André Gonçalves",
+    "Paula Fernandes",
+    "Lucas Ribeiro",
+    "Sofia Almeida",
+    "Gustavo Carvalho",
+    "Larissa Mendes",
+  ]
+
+  const nameToEmail = (nome: string, sigla: string) =>
+    `${nome
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z\s]/g, '')
+      .trim()
+      .replace(/\s+/g, '.')}.${sigla.toLowerCase()}@ifms.edu.br`
+
+  const makeEstudantes = (sigla: string) =>
+    Array.from({ length: 30 }, (_, i) => {
+      const idx = i + 1
+      const id = `${sigla}-${idx.toString().padStart(2, '0')}`
+      const matricula = `${new Date().getFullYear()}${idx.toString().padStart(3, '0')}`
+      const periodos = ["1º", "2º", "3º", "4º", "5º", "6º"]
+      const periodo = periodos[i % periodos.length]
+      const nome = nomes[i % nomes.length]
+      const email = nameToEmail(nome, sigla)
+      return { id, nome, matricula, periodo, email }
+    })
 
   const cursos = [
     {
       id: "1",
-      nome: "Ciência da Computação",
-      sigla: "CC",
-      estudantes: [
-        { id: "1", nome: "João Silva", matricula: "2024001", periodo: "3º", email: "joao@email.com" },
-        { id: "2", nome: "Maria Santos", matricula: "2024002", periodo: "3º", email: "maria@email.com" },
-        { id: "3", nome: "Pedro Oliveira", matricula: "2024003", periodo: "5º", email: "pedro@email.com" },
-      ],
+      nome: "Sistemas de Informação",
+      sigla: "SI",
+      estudantes: makeEstudantes("SI"),
     },
     {
       id: "2",
-      nome: "Engenharia Civil",
-      sigla: "EC",
-      estudantes: [
-        { id: "4", nome: "Ana Costa", matricula: "2024004", periodo: "2º", email: "ana@email.com" },
-        { id: "5", nome: "Carlos Souza", matricula: "2024005", periodo: "4º", email: "carlos@email.com" },
-      ],
-    },
-    {
-      id: "3",
       nome: "Administração",
       sigla: "ADM",
-      estudantes: [
-        { id: "6", nome: "Julia Lima", matricula: "2024006", periodo: "1º", email: "julia@email.com" },
-        { id: "7", nome: "Roberto Alves", matricula: "2024007", periodo: "6º", email: "roberto@email.com" },
-        { id: "8", nome: "Fernanda Rocha", matricula: "2024008", periodo: "2º", email: "fernanda@email.com" },
-      ],
+      estudantes: makeEstudantes("ADM"),
     },
   ]
 
@@ -93,14 +123,30 @@ export default function EstudantesPage() {
                   className="pl-9 border-primary/30 w-full sm:w-[250px]"
                 />
               </div>
-              <Button className="relative border border-primary/30 hover:border-primary/50">
-                <Plus className="mr-2 h-4 w-4" />
-                Novo Estudante
-                <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/40" />
-                <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-primary/40" />
-                <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-l border-b border-primary/40" />
-                <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-primary/40" />
-              </Button>
+              <Dialog open={isEstudanteDialogOpen} onOpenChange={setIsEstudanteDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="relative border border-primary/30 hover:border-primary/50">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Novo Estudante
+                    <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/40" />
+                    <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-primary/40" />
+                    <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-l border-b border-primary/40" />
+                    <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-primary/40" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="border-primary/30">
+                  <DialogHeader>
+                    <DialogTitle>Adicionar Estudante</DialogTitle>
+                    <DialogDescription>Cadastre um novo estudante</DialogDescription>
+                  </DialogHeader>
+                  <EstudanteForm
+                    mode="create"
+                    onSuccess={() => {
+                      setIsEstudanteDialogOpen(false)
+                    }}
+                  />
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         </CardHeader>

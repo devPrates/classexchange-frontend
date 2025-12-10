@@ -14,6 +14,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from '@/components/ui/dialog'
 import { CursoForm } from '@/components/forms/curso-form'
+import { UsuarioForm } from '@/components/forms/usuario-form'
 import { useCursoBySlugOrId, useProfessoresDoCurso, useCoordenadorCursoAtivo, useTurmasDoCurso } from '@/hooks/use-cursos'
 import { SoftToast } from '@/components/elements/soft-toast'
 import { deleteCursoById } from '@/services/curso-actions'
@@ -24,6 +25,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { StatCard } from '@/components/elements/stat-card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { SquareBadge } from '@/components/elements/square-badge'
+import { RoleUsuario } from '@/types/usuarios'
  
 
 export default function CursoDetailsPage() {
@@ -44,6 +46,7 @@ export default function CursoDetailsPage() {
   // Usa o slug diretamente para garantir estabilidade da chave de cache e evitar transição de slug->id
   const { data: turmas = [], refetch: refetchTurmas } = useTurmasDoCurso(slug)
   const [isTurmaDialogOpen, setIsTurmaDialogOpen] = useState(false)
+  const [isProfDialogOpen, setIsProfDialogOpen] = useState(false)
   const turmaSchema = z.object({
     nome: z.string().min(1, 'Nome é obrigatório'),
     numero: z.number().int().nonnegative('Número deve ser >= 0'),
@@ -372,14 +375,36 @@ export default function CursoDetailsPage() {
               <CardTitle>Professores</CardTitle>
               <CardDescription>Professores vinculados ao curso</CardDescription>
             </div>
-            <Button className="relative border border-primary/30 hover:border-primary/50">
-              <Plus className="mr-2 h-4 w-4" />
-              Adicionar Professor
-              <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/40" />
-              <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-primary/40" />
-              <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-l border-b border-primary/40" />
-              <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-primary/40" />
-            </Button>
+            <Dialog open={isProfDialogOpen} onOpenChange={setIsProfDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="relative border border-primary/30 hover:border-primary/50">
+                  <Plus className="h-4 w-4" />
+                  Adicionar Professor
+                  <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/40" />
+                  <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-primary/40" />
+                  <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-l border-b border-primary/40" />
+                  <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-primary/40" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="border-primary/30">
+                <DialogHeader>
+                  <DialogTitle>Adicionar Professor</DialogTitle>
+                  <DialogDescription>Cadastre um novo professor vinculado ao campus deste curso</DialogDescription>
+                </DialogHeader>
+                <UsuarioForm
+                  mode="create"
+                  defaultValues={{ role: RoleUsuario.PROFESSOR, cursoId: item.id }}
+                  hideCampus
+                  hideRole
+                  onSuccess={async () => {
+                    setIsProfDialogOpen(false)
+                    await queryClient.invalidateQueries({ queryKey: ['curso', item.id, 'professores'] })
+                    await queryClient.invalidateQueries({ queryKey: ['curso', slug] })
+                    await refetch()
+                  }}
+                />
+              </DialogContent>
+            </Dialog>
           </div>
         </CardHeader>
         <CardContent>

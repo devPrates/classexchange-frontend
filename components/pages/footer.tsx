@@ -1,4 +1,5 @@
 import { Facebook, Instagram, Linkedin, Twitter } from 'lucide-react'
+import Image from 'next/image'
 
 export function Footer() {
   const currentYear = new Date().getFullYear()
@@ -46,13 +47,15 @@ export function Footer() {
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-3 mb-4">
               <div className="relative w-8 h-8 border border-primary/40 bg-primary/5">
-                <div className="absolute inset-0.5 bg-primary/20" />
+                <div className="absolute inset-0.5">
+                  <Image src="/Icone.svg" alt="ClassExchange" fill style={{ objectFit: 'contain' }} />
+                </div>
                 <div className="absolute top-0 left-0 w-1.5 h-1.5 border-l border-t border-primary/60" />
                 <div className="absolute top-0 right-0 w-1.5 h-1.5 border-r border-t border-primary/60" />
                 <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-l border-b border-primary/60" />
                 <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-r border-b border-primary/60" />
               </div>
-              <span className="text-xl font-mono font-bold">TrocaAulas</span>
+              <Image src="/Titulo.svg" alt="ClassExchange" width={110} height={20} />
             </div>
             <p className="text-muted-foreground text-xs mb-6 leading-relaxed font-mono">
               Sistema técnico para gestão educacional.
@@ -96,7 +99,7 @@ export function Footer() {
         <div className="border-t border-dashed border-primary/20 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-xs text-muted-foreground font-mono text-center md:text-left">
-              © {currentYear} TrocaAulas v1.0 — Todos os direitos reservados
+              © {currentYear} ClassExchange v1.0 — Todos os direitos reservados
             </p>
             <div className="flex flex-wrap justify-center gap-6 text-xs text-muted-foreground font-mono">
               <a href="#privacy" className="hover:text-primary transition-colors inline-flex items-center gap-2">

@@ -39,6 +39,7 @@ const menuItems = [
       { icon: RiBookMarkedLine, label: 'Cursos', href: '/dashboard/cursos' },
       { icon: Users, label: 'Estudantes', href: '/dashboard/estudantes' },
       { icon: Users, label: 'Professores', href: '/dashboard/professores' },
+      { icon: Calendar, label: 'Calendário Acadêmico', href: '/dashboard/calendario-academico' },
     ],
   },
   {

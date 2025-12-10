@@ -60,7 +60,7 @@ export default function LoginPage() {
         className="absolute top-8 left-8 flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
-        Voltar
+        Página  Inicial
       </Link>
 
       <div className="w-full max-w-md">
@@ -130,7 +130,7 @@ export default function LoginPage() {
           {step === 'email' ? (
             <form onSubmit={handleVerifyEmail} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm font-mono uppercase tracking-wider flex justify-center w-full text-center">
+                <Label htmlFor="email" className="text-sm font-mono uppercase tracking-wider text-center block">
                   E-mail Institucional
                 </Label>
                 <Input
@@ -139,7 +139,8 @@ export default function LoginPage() {
                   placeholder="seu.email@instituicao.edu.br"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="relative border-primary/20 focus:border-primary input-placeholder-center"
+                  className="relative border-primary/20 focus:border-primary input-placeholder-center text-center"
+                  style={{ textAlign: 'center' }}
                   required
                 />
               </div>
@@ -155,7 +156,7 @@ export default function LoginPage() {
           ) : (
             <form onSubmit={handlePasswordLogin} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-mono uppercase tracking-wider flex justify-center w-full text-center">
+                <Label htmlFor="password" className="text-sm font-mono uppercase tracking-wider text-center block">
                   Senha
                 </Label>
                 <Input
@@ -164,7 +165,8 @@ export default function LoginPage() {
                   placeholder="Sua senha"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="relative border-primary/20 focus:border-primary input-placeholder-center"
+                  className="relative border-primary/20 focus:border-primary input-placeholder-center text-center"
+                  style={{ textAlign: 'center' }}
                   required
                 />
               </div>

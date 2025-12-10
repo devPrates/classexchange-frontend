@@ -24,25 +24,50 @@ export default function CalendarioPage() {
     'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
   ]
 
-  const aulasPorDia: Record<string, Array<{ horario: string; disciplina: string; turma: string; sala: string; turno: 'matutino' | 'vespertino' | 'noturno' }>> = {
-    '18': [
-      { horario: '08:00 - 10:00', disciplina: 'Programação Web', turma: 'CC - 3º Sem', sala: 'Lab 204', turno: 'matutino' },
-      { horario: '10:00 - 12:00', disciplina: 'Banco de Dados', turma: 'CC - 4º Sem', sala: 'Sala 305', turno: 'matutino' },
+  const weekdayTemplates: Record<number, Array<{ horario: string; disciplina: string; turma: string; sala: string; turno: 'matutino' | 'vespertino' | 'noturno' }>> = {
+    1: [
+      { horario: '08:00 - 10:00', disciplina: 'Programação Web', turma: 'SI - 3º Sem', sala: 'Lab 204', turno: 'matutino' },
+      { horario: '10:00 - 12:00', disciplina: 'Banco de Dados', turma: 'SI - 4º Sem', sala: 'Sala 305', turno: 'matutino' },
     ],
-    '20': [
-      { horario: '14:00 - 16:00', disciplina: 'Engenharia de Software', turma: 'ES - 5º Sem', sala: 'Sala 401', turno: 'vespertino' },
-      { horario: '19:00 - 21:00', disciplina: 'Algoritmos Avançados', turma: 'CC - 5º Sem', sala: 'Lab 305', turno: 'noturno' },
+    2: [
+      { horario: '14:00 - 16:00', disciplina: 'Engenharia de Software', turma: 'SI - 5º Sem', sala: 'Sala 401', turno: 'vespertino' },
+      { horario: '19:00 - 21:00', disciplina: 'Algoritmos Avançados', turma: 'SI - 5º Sem', sala: 'Lab 305', turno: 'noturno' },
     ],
-    '22': [
-      { horario: '08:00 - 10:00', disciplina: 'Programação Web', turma: 'CC - 3º Sem', sala: 'Lab 204', turno: 'matutino' },
-      { horario: '14:00 - 18:00', disciplina: 'Projeto Integrador', turma: 'CC - 6º Sem', sala: 'Lab 101', turno: 'vespertino' },
-      { horario: '19:00 - 22:00', disciplina: 'Redes de Computadores', turma: 'CC - 4º Sem', sala: 'Sala 201', turno: 'noturno' },
+    3: [
+      { horario: '08:00 - 10:00', disciplina: 'Programação Web', turma: 'ADM - 3º Sem', sala: 'Lab 204', turno: 'matutino' },
+      { horario: '14:00 - 18:00', disciplina: 'Projeto Integrador', turma: 'ADM - 6º Sem', sala: 'Lab 101', turno: 'vespertino' },
+      { horario: '19:00 - 22:00', disciplina: 'Redes de Computadores', turma: 'SI - 4º Sem', sala: 'Sala 201', turno: 'noturno' },
     ],
-    '25': [
-      { horario: '08:00 - 10:00', disciplina: 'Programação Web', turma: 'CC - 3º Sem', sala: 'Lab 204', turno: 'matutino' },
-      { horario: '10:00 - 12:00', disciplina: 'Banco de Dados', turma: 'CC - 4º Sem', sala: 'Sala 305', turno: 'matutino' },
+    4: [
+      { horario: '08:00 - 10:00', disciplina: 'Estruturas de Dados', turma: 'SI - 2º Sem', sala: 'Lab 103', turno: 'matutino' },
+      { horario: '16:00 - 18:00', disciplina: 'Arquitetura de Computadores', turma: 'SI - 4º Sem', sala: 'Sala 210', turno: 'vespertino' },
+    ],
+    5: [
+      { horario: '09:00 - 11:00', disciplina: 'Gestão de Projetos', turma: 'ADM - 5º Sem', sala: 'Sala 110', turno: 'matutino' },
+      { horario: '14:00 - 16:00', disciplina: 'Marketing Digital', turma: 'ADM - 4º Sem', sala: 'Sala 115', turno: 'vespertino' },
     ],
   }
+
+  const buildMonthSchedule = (date: Date) => {
+    const year = date.getFullYear()
+    const month = date.getMonth()
+    const daysInMonth = new Date(year, month + 1, 0).getDate()
+    const map: Record<string, typeof weekdayTemplates[1]> = {}
+    for (let day = 1; day <= daysInMonth; day++) {
+      const d = new Date(year, month, day)
+      const weekday = d.getDay()
+      const isWeekday = weekday >= 1 && weekday <= 5
+      const isAfterDec22 = month === 11 && day > 22
+      if (!isWeekday || isAfterDec22) continue
+      const template = weekdayTemplates[weekday]
+      if (template && template.length > 0) {
+        map[String(day)] = template
+      }
+    }
+    return map
+  }
+
+  const aulasPorDia = buildMonthSchedule(currentDate)
 
   const handleDayClick = (day: number | null) => {
     if (day) {
